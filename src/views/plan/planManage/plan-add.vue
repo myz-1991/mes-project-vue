@@ -3,10 +3,8 @@
     <el-form ref="dataForm" :model="dataForm" size="small" label-width="120px">
       <el-row>
         <el-col :span="8">
-          <el-form-item label="选择物料" prop="mateId">
-            <el-select v-model="dataForm.mateName" placeholder="请选择" style="width: 260px;" filterable>
-              <!-- <el-option v-for="item in materialList" :key="item.mateId" :label="item.mateCode" :value="item.mateId">
-						    </el-option> -->
+          <el-form-item label="产品编码" prop="mateId">
+            <el-select v-model="dataForm.mateName" placeholder="请选择产品" style="width: 260px;" filterable>
               <el-option :value="dataForm.mateName" style="height: auto">
                 <el-tree ref="tree" :load="loadNode" lazy node-key="id" highlight-current :props="props" @node-click="handleCheckChange" />
               </el-option>
@@ -26,30 +24,30 @@
       </el-row>
       <el-row>
         <el-col :span="8">
-          <el-form-item label="计划开始时间" prop="taskScheduledStartTime">
-            <el-date-picker v-model="dataForm.taskScheduledStartTime" type="date" placeholder="选择日期" style="width: 260px;" />
+          <el-form-item label="毛坯库存" prop="taskScheduledStartTime">
+            <el-input v-model="dataForm.taskName" placeholder="毛坯库存" style="width: 260px;" readonly="true" />
           </el-form-item>
         </el-col>
         <el-col :span="8">
-          <el-form-item label="计划结束时间" prop="taskScheduledEndTime">
-            <el-date-picker v-model="dataForm.taskScheduledEndTime" type="date" placeholder="选择日期" style="width: 260px;" />
+          <el-form-item label="成品库存" prop="taskScheduledEndTime">
+            <el-input v-model="dataForm.taskName" placeholder="成品库存" style="width: 260px;" readonly="true" />
           </el-form-item>
         </el-col>
         <el-col :span="8">
-          <el-form-item label="交付日期" prop="taskDeliveryDate">
-            <el-date-picker v-model="dataForm.taskDeliveryDate" type="date" placeholder="选择日期" style="width: 260px;" />
+          <el-form-item label="合计数量" prop="taskDeliveryDate">
+            <el-input v-model="dataForm.taskName" placeholder="合计数量" style="width: 260px;" readonly="true" />
           </el-form-item>
         </el-col>
       </el-row>
       <el-row>
         <el-col :span="8">
-          <el-form-item label="计划数量" prop="taskPlannedNum">
-            <el-input-number v-model="dataForm.taskPlannedNum" placeholder="计划数量" :min="1" style="width: 260px;" />
+          <el-form-item label="订单量" prop="taskPlannedNum">
+            <el-input-number v-model="dataForm.taskPlannedNum" placeholder="订单量" :min="1" style="width: 260px;" />
           </el-form-item>
         </el-col>
         <el-col :span="8">
-          <el-form-item label="投产数量" prop="taskProductionNum">
-            <el-input-number v-model="dataForm.taskProductionNum" placeholder="投产数量" :min="1" style="width: 260px;" />
+          <el-form-item label="加工量" prop="taskProductionNum">
+            <el-input-number v-model="dataForm.taskProductionNum" placeholder="加工量" :min="1" style="width: 260px;" />
           </el-form-item>
         </el-col>
         <el-col :span="8">
@@ -69,23 +67,18 @@
       </el-row>
       <el-row>
         <el-col :span="8">
-          <el-form-item label="主治车间" prop="taskWorkshopId">
-            <el-select v-model="dataForm.taskWorkshopId" placeholder="请选择" filterable style="width: 260px;" @change="((val)=>{taskWorkshopChange(val, index)})">
-              <el-option v-for="item in workshopList" :key="item.orgId" :label="item.orgName" :value="item.orgId" />
-            </el-select>
+          <el-form-item label="计划开始时间" prop="taskScheduledStartTime">
+            <el-date-picker v-model="dataForm.taskScheduledStartTime" type="date" placeholder="选择日期" style="width: 260px;" />
           </el-form-item>
         </el-col>
         <el-col :span="8">
-          <el-form-item label="生产方式" prop="taskProcessingMethodCode">
-            <el-select
-              v-model="dataForm.taskProcessingMethodCode"
-              placeholder="请选择"
-              filterable
-              style="width: 260px;"
-              @change="((val)=>{processingMethodChange(val, index)})"
-            >
-              <el-option v-for="item in processingMethodList" :key="item.dictCode" :label="item.dictName" :value="item.dictCode" />
-            </el-select>
+          <el-form-item label="计划结束时间" prop="taskScheduledEndTime">
+            <el-date-picker v-model="dataForm.taskScheduledEndTime" type="date" placeholder="选择日期" style="width: 260px;" />
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <el-form-item label="交付日期" prop="taskDeliveryDate">
+            <el-date-picker v-model="dataForm.taskDeliveryDate" type="date" placeholder="选择日期" style="width: 260px;" />
           </el-form-item>
         </el-col>
       </el-row>
@@ -143,7 +136,7 @@ export default {
       this.initWorkshopList()
     },
     loadNode(node, resolve) {
-      if (node.level === 0) {
+      if (node.level == 0) {
         this.$http({
           url: this.$http.adornBomUrl('/bom/v1/relaton/selectBomTreeByParam'),
           method: 'get'
@@ -214,7 +207,7 @@ export default {
       debugger
       let obj = {}
       obj = this.taskPriorityList.find((item) => {
-        return item.dictCode === val
+        return item.dictCode == val
       })
       this.dataForm.taskPriorityName = obj.dictName
     },
@@ -238,7 +231,7 @@ export default {
       debugger
       let obj = {}
       obj = this.processingMethodList.find((item) => {
-        return item.dictCode === val
+        return item.dictCode == val
       })
       this.dataForm.taskProcessingMethodName = obj.dictName
     },
@@ -259,7 +252,7 @@ export default {
       debugger
       let obj = {}
       obj = this.workshopList.find((item) => {
-        return item.orgId === val
+        return item.orgId == val
       })
       this.dataForm.taskWorkshopName = obj.orgName
     },
