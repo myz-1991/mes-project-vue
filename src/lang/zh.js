@@ -86,7 +86,10 @@ export default {
     shopCalendar: '工厂日历',
     plan: '计划管理',
     planManage: '计划接收',
-    planDispatch: '工单管理'
+    planDispatch: '工单管理',
+    smelting: '熔炼管理',
+    smeltingTask : '熔炼任务',
+    smeltingStock: '原料库存'
   },
   navbar: {
     dashboard: '首页',

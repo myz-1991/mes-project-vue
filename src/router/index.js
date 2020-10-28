@@ -16,6 +16,7 @@ import baseRouter from './modules/base.js'
 import bomRouter from './modules/bom.js'
 import factoryModelingRouter from './modules/factoryModeling.js'
 import planRouter from './modules/plan.js'
+import smeltingRouter from './modules/smelting.js'
 
 /**
  * Note: sub-menu only appear when route children.length >= 1
@@ -199,6 +200,7 @@ export const asyncRoutes = [
   bomRouter,
   factoryModelingRouter,
   planRouter,
+  smeltingRouter,
   // {
   //   path: '/example',
   //   component: Layout,

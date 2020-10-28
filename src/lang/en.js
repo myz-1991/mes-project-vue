@@ -86,7 +86,10 @@ export default {
     shopCalendar: 'Shop Calendar',
     plan: 'Plan Manage',
     planManage: 'Plan Receive',
-    planDispatch: 'Dispatch Job'
+    planDispatch: 'Dispatch Job',
+    smelting : 'Smelting Manage',
+    smeltingTask : 'Smelting Task',
+    smeltingStock: 'Smelting Stock'
   },
   navbar: {
     dashboard: 'Dashboard',

@@ -40,12 +40,12 @@ const baseRouter = {
 	  name: 'Fixture',
 	  meta: { title: 'fixture', icon: 'fixture' }
 	},
-	{
-	  path: 'base-equipment',
-	  component: () => import('@/views/base/Equipment/Equipment'),
-	  name: 'Equipment',
-	  meta: { title: 'equipment', icon: 'equipment' }
-	},
+	// {
+	//   path: 'base-equipment',
+	//   component: () => import('@/views/base/Equipment/Equipment'),
+	//   name: 'Equipment',
+	//   meta: { title: 'equipment', icon: 'equipment' }
+	// },
   ]
 }
 export default baseRouter

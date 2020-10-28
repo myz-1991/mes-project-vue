@@ -11,10 +11,10 @@ const factoryModelingRouter = {
   },
   children: [
 	{
-	  path: 'factory-production',
-	  component: () => import('@/views/factoryModeling/Production/production'),
-	  name: 'Production',
-	  meta: { title: 'production', icon: 'production' }
+	  path: 'factory-equipment',
+	  component: () => import('@/views/factoryModeling/Equipment/Equipment'),
+	  name: 'Equipment',
+	  meta: { title: 'equipment', icon: 'equipment' }
 	},
     {
       path: 'factoryModeling-Frequency',
