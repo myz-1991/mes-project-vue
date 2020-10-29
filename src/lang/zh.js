@@ -89,7 +89,10 @@ export default {
     planDispatch: '工单管理',
     smelting: '熔炼管理',
     smeltingTask : '熔炼任务',
-    smeltingStock: '原料库存'
+    smeltingStock: '原料库存',
+		quality : '质量管理',
+		qualityTask: '检验任务',
+		qualityHistory : '检验历史记录'
   },
   navbar: {
     dashboard: '首页',

@@ -37,7 +37,7 @@ const planRouter = {
     },
     {
       path: 'plan-dispatch',
-      component: () => import('@/views/plan/planManage/planManage'),
+      component: () => import('@/views/plan/workJobManage/workJobManage'),
       name: 'PlanDispatch',
       meta: { title: 'planDispatch', icon: 'dispatch' }
     }

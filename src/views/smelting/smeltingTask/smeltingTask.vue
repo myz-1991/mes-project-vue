@@ -12,7 +12,7 @@
           </el-form>
         </el-row>
       </el-header> -->
-      <el-aside style="width: 40%;">
+      <el-aside style="width: 40%;background-color: #FFFFFF;">
         <el-form>
           <el-form-item>
             <el-col :span="5">

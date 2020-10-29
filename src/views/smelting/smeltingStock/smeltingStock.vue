@@ -34,12 +34,11 @@
       </el-header>
       <el-main>
         <el-form style="margin-bottom: 5px;">
-          <el-button type="primary" size="small" icon="el-icon-plus" round>入库</el-button>
+          <el-button type="primary" size="small" icon="el-icon-plus" round @click="orderVisible = true">入库</el-button>
         </el-form>
         <el-table border>
           <el-table-column label="入库类型" align="center"></el-table-column>
           <el-table-column label="入库数量" align="center"></el-table-column>
-          <el-table-column label="单位" align="center"></el-table-column>
           <el-table-column label="入库时间" align="center"></el-table-column>
           <el-table-column label="入库人" align="center"></el-table-column>
         </el-table>
@@ -49,123 +48,22 @@
       </el-main>
     </el-container>
 
-    <!-- <el-row>
-      <el-table ref="taskTable" :data="taskDataList" size="small" row-key="taskId" border lazy :load="load" :tree-props="{children: 'children', hasChildren: 'leaf'}">
-        <el-table-column type="selection" width="55" />
-        <el-table-column prop="taskCode" align="center" label="订单号" width="120" />
-        <el-table-column prop="taskName" align="center" label="批次号" />
-        <el-table-column prop="mateCode" align="center" label="产品编码" />
-        <el-table-column prop="mateName" align="center" label="产品名称" />
-        <el-table-column prop="mateName" align="center" label="规格型号" />
-        <el-table-column prop="taskStatusName" align="center" label="计划状态" />
-        <el-table-column prop="taskPlannedNum" align="center" label="库存数" />
-        <el-table-column prop="taskProductionNum" align="center" label="毛坯数" />
-        <el-table-column prop="taskWorkshopName" align="center" label="订单量" />
-        <el-table-column prop="taskScheduledStartTime" align="center" label="计划开始日期" width="150">
-          <template slot-scope="scope">
-            <span>{{ dateFormat(scope.row.taskScheduledStartTime) }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column prop="taskScheduledEndTime" align="center" label="计划结束日期" width="150">
-          <template slot-scope="scope">
-            <span>{{ dateFormat(scope.row.taskScheduledEndTime) }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column prop="taskDeliveryDate" align="center" label="交付日期" width="120">
-          <template slot-scope="scope">
-            <span>{{ dateFormat(scope.row.taskDeliveryDate) }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column prop="taskPriorityName" align="center" label="优先级" />
-        <el-table-column label="操作" align="center" width="150" fixed="right">
-          <template slot-scope="scope">
-            <!-- <el-button size="mini" icon="el-icon-edit" type="success" @click="materialPrepareHandle(scope.row.taskId)" round>物料齐套</el-button> -->
-    <!-- <el-button size="mini" icon="el-icon-data-analysis" type="success" round @click="processingProgressHandle(scope.row.taskId)">加工进度</el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-    </el-row> -->
-    <!--
-    <el-dialog title="计划导入" size="small" :close-on-click-modal="false" :visible.sync="visible" width="75%">
-      <el-upload ref="upload" class="upload-demo" :file-list="fileList" :on-change="handleChange" :action="uploadUrl"
-        :show-file-list="true" :on-success="onSuccess" :on-error="onError" :auto-upload="false">
-        <el-button slot="trigger" type="primary">选取文件</el-button>
-      </el-upload>
-      <el-button type="primary" style="margin-top: 5px;" @click="handleSubmit">提交</el-button> -->
-    <!-- <span slot="footer" class="dialog-footer">
-        <el-button type="danger" size="small" icon="el-icon-delete" round @click="visible = false">取消</el-button>
-        <el-button type="primary" size="small" icon="el-icon-check" round @click="dataFormSubmit()">确定</el-button>
-      </span> -->
-    <!-- </el-dialog> -->
-
-    <!-- <el-dialog title="工单生成" size="small" :close-on-click-modal="false" :visible.sync="orderVisible" width="75%">
-      <el-form ref="dataForm" size="small" label-width="120px">
+    <el-dialog title="原材料入库" size="small" :close-on-click-modal="false" :visible.sync="orderVisible" width="30%">
+      <el-form ref="dataForm" size="small" label-width="80px">
         <el-row>
-          <el-col :span="8">
-            <el-form-item label="差压设备数">
-              <el-input placeholder="差压设备数" style="width: 260px;" />
+          <el-col :span="12">
+            <el-form-item label="入库类型">
+              <el-select v-model="value" placeholder="请选择入库类型" style="width: 100%;">
+                  <el-option label="铝锭" value="1">
+                  </el-option>
+				  <el-option label="废料" value="2">
+				  </el-option>
+                </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="8">
-            <el-form-item label="加工效率">
-              <el-input placeholder="加工效率" style="width: 260px;" readonly="true" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="加工天数">
-              <el-input vplaceholder="加工天数" style="width: 260px;" />
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="8">
-            <el-form-item label="总产量">
-              <el-input placeholder="总产量" style="width: 260px;" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="毛坯库存">
-              <el-input placeholder="毛坯库存" style="width: 260px;" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="备库时间">
-              <el-input placeholder="备库时间" style="width: 260px;" />
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-divider />
-        <el-row>
-          <el-col :span="8">
-            <el-form-item label="机加设备数">
-              <el-input placeholder="机加设备数" style="width: 260px;" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="加工效率">
-              <el-input placeholder="加工效率" style="width: 260px;" readonly="true" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="加工天数">
-              <el-input vplaceholder="加工天数" style="width: 260px;" />
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="8">
-            <el-form-item label="总产量">
-              <el-input placeholder="总产量" style="width: 260px;" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="成品库存">
-              <el-input placeholder="成品库存" style="width: 260px;" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="备库时间">
-              <el-input placeholder="备库时间" style="width: 260px;" />
+          <el-col :span="12">
+            <el-form-item label="入库重量">
+              <el-input-number placeholder="入库重量" style="width: 100%;" readonly="true" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -174,7 +72,7 @@
         <el-button type="danger" size="small" icon="el-icon-delete" round @click="orderVisible = false">取消</el-button>
         <el-button type="primary" size="small" icon="el-icon-check" round @click="dataFormSubmit()">确定</el-button>
       </span>
-    </el-dialog> -->
+    </el-dialog>
   </div>
 </template>
 

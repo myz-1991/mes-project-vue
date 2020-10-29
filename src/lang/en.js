@@ -89,7 +89,10 @@ export default {
     planDispatch: 'Dispatch Job',
     smelting : 'Smelting Manage',
     smeltingTask : 'Smelting Task',
-    smeltingStock: 'Smelting Stock'
+    smeltingStock: 'Smelting Stock',
+		quality : 'Quality Manage',
+		qualityTask: 'Quality Task',
+		qualityHistory: 'Quality History'
   },
   navbar: {
     dashboard: 'Dashboard',
