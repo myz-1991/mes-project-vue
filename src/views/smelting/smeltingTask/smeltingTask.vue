@@ -64,7 +64,7 @@
       </el-aside>
       <el-main>
         <el-table border>
-          <el-table-column label="存储罐" align="center"></el-table-column>
+          <el-table-column label="坩锅号" align="center"></el-table-column>
           <el-table-column label="检验结果" align="center"></el-table-column>
           <el-table-column label="处理结果" align="center"></el-table-column>
           <el-table-column label="换料地点" align="center"></el-table-column>

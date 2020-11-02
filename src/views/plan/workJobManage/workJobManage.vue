@@ -44,6 +44,14 @@
 						<span style="font-size: 24px">完成数量:</span>
 					  </el-col>
 				  </el-row>
+          <el-row>
+            <el-col :span="12">
+          	<span style="font-size: 24px">模具号:</span>
+            </el-col>
+            <el-col :span="11" :offset="1">
+          	<el-button>选择模具</el-button>
+            </el-col>
+          </el-row>
 				</el-aside>
 				<el-main>
 				  <el-row style="margin-bottom: 10px;">

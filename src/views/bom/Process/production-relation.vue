@@ -126,7 +126,6 @@
       // 表单提交
       submitFormHandle(row) {
         row.show = false;
-        debugger
         if (row.ppreId == null) {
           this.$http({
             url: this.$http.adornBomUrl('/bom/v1/procProdRela/insertProcessProductionRelation'),

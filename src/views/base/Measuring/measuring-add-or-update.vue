@@ -241,7 +241,6 @@
 	  		  })
 	  },
 	  mateSourceChange(val) {
-	  		  debugger
 	  		  let obj = {};
 	  		  obj = this.mateSourceList.find((item)=>{
 	  			return item.dictCode === val;

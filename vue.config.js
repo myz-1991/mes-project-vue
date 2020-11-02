@@ -37,14 +37,14 @@ module.exports = {
 			errors: true
 		},
 		proxy: {
-			[process.env.VUE_APP_BASE_API]: {
+			[process.env.VUE_APP_BASE_API + '/system']: {
 				//本地服务接口地址
 				target: 'http://localhost:8082',
 				//远程演示服务地址,可用于直接启动项目
 				//target: 'https://saber.bladex.vip/api',
 				changeOrigin: true,
 				pathRewrite: {
-					['^' + process.env.VUE_APP_BASE_API]: ''
+					['^' + process.env.VUE_APP_BASE_API + '/system']: '/system'
 				}
 			},
 

@@ -1,4 +1,5 @@
-import { login, logout, getInfo } from '@/api/user'
+import {login, getInfo} from '@/api/system/user'
+import { logout } from '@/api/user'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 import router, { resetRouter } from '@/router'
 
@@ -35,9 +36,8 @@ const actions = {
     return new Promise((resolve, reject) => {
       login({ account: account.trim(), password: password }).then(response => {
         const { data } = response
-		debugger
-        commit('SET_TOKEN', data.token)
-        setToken(data.token)
+        commit('SET_TOKEN', data.id)
+        setToken(data.id)
         resolve()
       }).catch(error => {
         reject(error)
@@ -50,22 +50,20 @@ const actions = {
     return new Promise((resolve, reject) => {
       getInfo(state.token).then(response => {
         const { data } = response
-		debugger
         if (!data) {
           reject('Verification failed, please Login again.')
         }
-
-        const {name} = data
-				debugger
+        debugger
+        const {name, roles, avatar, introduction} = data
         // roles must be a non-empty array
         // if (!roles || roles.length <= 0) {
         //   reject('getInfo: roles must be a non-null array!')
         // }
-		commit('SET_ROLES', ['admin'])
+        commit('SET_ROLES', roles)
         commit('SET_NAME', name)
 		// avatar = 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif'
         commit('SET_AVATAR', 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif')
-        commit('SET_INTRODUCTION', name)
+        commit('SET_INTRODUCTION', introduction)
         resolve(data)
       }).catch(error => {
         reject(error)

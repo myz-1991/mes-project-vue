@@ -23,21 +23,21 @@
 			</el-form>
 		</el-row>
 		<el-row>
-			<el-table ref="orgTable" :data="orgDataList" size="small" style="width: 100%" row-key="orgId" border lazy :load="load" :tree-props="{children: 'children', hasChildren: 'leaf'}">
+			<el-table ref="orgTable" :data="orgDataList" size="small" style="width: 100%" row-key="id" border lazy :load="load" :tree-props="{children: 'children', hasChildren: 'leaf'}">
 				<el-table-column type="selection" width="55">
 				</el-table-column>
-				<el-table-column prop="orgName" label="组织名称" width="180">
+				<el-table-column prop="name" label="组织名称" width="180">
 				</el-table-column>
-				<el-table-column prop="orgCode" align="center" label="组织编码">
+				<el-table-column prop="code" align="center" label="组织编码">
 				</el-table-column>
-				<el-table-column prop="orgTypeName" align="center" label="组织类型">
+				<el-table-column prop="typeName" align="center" label="组织类型">
 				</el-table-column>
-				<el-table-column prop="orgUpdatetime" align="center" label="更新时间">
+				<el-table-column prop="updateTime" align="center" label="更新时间">
 					<template slot-scope="scope">
-						<span>{{dateFormat(scope.row.orgUpdatetime)}}</span>
+						<span>{{dateFormat(scope.row.updateTime)}}</span>
 					</template>
 				</el-table-column>
-				<el-table-column prop="orgNote" align="center" label="备注">
+				<el-table-column prop="note" align="center" label="备注">
 				</el-table-column>
 				<el-table-column label="操作" align="center">
 					<template slot-scope="scope">
@@ -53,6 +53,7 @@
 
 <script>
 	import organizationAddOrUpdate from './organization-add-or-update'
+  import { findOrganizationTree } from '@/api/system/organization'
 	export default {
 		data() {
 			return {
@@ -66,8 +67,8 @@
 		components: {
 			organizationAddOrUpdate
 		},
-		activated() {
-			//this.orgDataInit()
+		mounted() {
+			this.orgDataInit()
 		},
 		methods: {
 			dateFormat(dataValue) {
@@ -85,53 +86,32 @@
 			},
 			orgDataInit() {
 				this.orgDataList = []
-				this.$http({
-					url: this.$http.adornSystemUrl('/sys/v1/organization/selectOrganizationTreeByParam'),
-					method: 'get',
-					params: {
-						pid: '',
-						param: ''
-					}
-				}).then(({
-					data
-				}) => {
-					if (data) {
-						this.orgDataList = data
-						for (let i = 0; i < this.orgDataList.length; i++) {
-							if (this.orgDataList[i].leaf > 0) {
-								this.orgDataList[i].leaf = true
-							} else {
-								this.orgDataList[i].leaf = false
-							}
-						}
-					}
-				})
+        findOrganizationTree('', '').then(response => {
+          this.orgDataList = response.data
+          for (let i = 0; i < this.orgDataList.length; i++) {
+            if (this.orgDataList[i].leaf > 0) {
+              this.orgDataList[i].leaf = true
+            } else {
+              this.orgDataList[i].leaf = false
+            }
+          }
+        })
 			},
 			load(tree, treeNode, resolve) {
 				debugger
-				this.$http({
-					url: this.$http.adornSystemUrl('/sys/v1/organization/selectOrganizationTreeByParam'),
-					method: 'get',
-					params: {
-						pid: tree.orgId,
-						param: ''
-					}
-				}).then(({
-					data
-				}) => {
-					if (data) {
-						for (let i = 0; i < data.length; i++) {
-							if (data[i].leaf > 0) {
-								data[i].leaf = true
-							} else {
-								data[i].leaf = false
-							}
-						}
-						setTimeout(() => {
-							resolve(data)
-						}, 1000)
-					}
-				})
+        findOrganizationTree(tree.id, '').then(response => {
+          let data = response.data
+          for (let i = 0; i < data.length; i++) {
+            if (data[i].leaf > 0) {
+              data[i].leaf = true
+            } else {
+              data[i].leaf = false
+            }
+          }
+          setTimeout(() => {
+          	resolve(data)
+          }, 1000)
+        })
 			},
 			orgTableSearch() {
 				this.$http({

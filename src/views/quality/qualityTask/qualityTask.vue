@@ -125,6 +125,13 @@
 		    </el-form-item>
 		  </el-col>
 		</el-row>
+    <el-row>
+      <el-col :span="12">
+        <el-form-item label="坩锅号">
+          <el-select placeholder="二维码"/>
+        </el-form-item>
+      </el-col>
+    </el-row>
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button type="danger" size="small" icon="el-icon-delete" round @click="orderVisible = false">取消</el-button>

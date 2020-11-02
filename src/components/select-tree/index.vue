@@ -61,7 +61,6 @@ export default {
       this.$emit('check', data, tree);
     },
     clickNode (data, node, treeNode) {
-			debugger
       if (!this.multiple) {
         const value = data[this.valueKey]
         this.selectVal = data[this.treeOpt.displayKey]

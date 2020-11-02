@@ -22,7 +22,7 @@
         <el-row>
           <el-table ref="orgTable" :data="orgDataList" size="small" style="width: 100%" row-key="orgId" @row-click="orgRowClick"
             border lazy :load="load" :tree-props="{children: 'children', hasChildren: 'leaf'}">
-            <el-table-column prop="orgName" label="部门名称" width="250">
+            <el-table-column prop="orgName" label="部门名称" align="center" width="250">
             </el-table-column>
             <!-- <el-table-column prop="orgCode" align="center" label="部门编码">
             </el-table-column> -->

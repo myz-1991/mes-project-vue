@@ -32,15 +32,15 @@
 						</el-table-column>
 						<el-table-column prop="code" align="center" label="工号">
 						</el-table-column>
-						<el-table-column prop="gender" align="center" label="性别">
+						<el-table-column prop="sex" align="center" label="性别">
 							<template slot-scope="scope">
-								<el-tag v-if="scope.row.gender === 2" size="small" type="danger">女</el-tag>
+								<el-tag v-if="scope.row.sex === 2" size="small" type="danger">女</el-tag>
 								<el-tag v-else size="small">男</el-tag>
 							</template>
 						</el-table-column>
 						<el-table-column prop="orgName" align="center" label="所属组织">
 						</el-table-column>
-						<el-table-column prop="userName" align="center" label="用户名">
+						<el-table-column prop="account" align="center" label="用户名">
 						</el-table-column>
 						<el-table-column align="center" label="角色">
 							<template slot-scope="scope">
@@ -53,12 +53,17 @@
 						</el-table-column>
 						<el-table-column prop="telephone" align="center" label="手机号">
 						</el-table-column>
-						<el-table-column prop="stuts" align="center" label="状态">
+						<el-table-column prop="status" align="center" label="状态">
 							<template slot-scope="scope">
-								<el-tag v-if="scope.row.stuts === 2" size="small" type="danger">禁用</el-tag>
+								<el-tag v-if="scope.row.status === 2" size="small" type="danger">禁用</el-tag>
 								<el-tag v-else size="small">正常</el-tag>
 							</template>
 						</el-table-column>
+            <el-table-column prop="createTime" align="center" label="创建时间">
+            	<template slot-scope="scope">
+            		<span>{{dateFormat(scope.row.createTime)}}</span>
+            	</template>
+            </el-table-column>
 						<el-table-column prop="updateTime" align="center" label="更新时间">
 							<template slot-scope="scope">
 								<span>{{dateFormat(scope.row.updateTime)}}</span>
@@ -171,9 +176,7 @@
 </template>
 
 <script>
-	import {
-		saveUser
-	} from '@/api/system/user'
+	import { saveUser, getUserInfoPage } from '@/api/system/user'
 	import ElSelectTree from "@/components/select-tree/index"
 	export default {
 		data() {
@@ -228,7 +231,7 @@
 		components: {
 			ElSelectTree
 		},
-		activated() {
+		mounted() {
 			this.getDataList()
 		},
 		methods: {
@@ -248,43 +251,50 @@
 			// 获取数据列表
 			getDataList() {
 				this.dataListLoading = true
-				this.$http({
-					url: this.$http.adornSystemUrl('/sys/v1/user/selectUserByParam'),
-					method: 'get',
-					params: {
-						'startIndex': (this.pageIndex - 1) * this.pageSize,
-						'pageSize': this.pageSize,
-						'param': this.dataForm.searchTextValue
-					}
-				}).then(({
-					data
-				}) => {
-					if (data) {
-						let userData = []
-						for (let i in data.data) {
-							let roleNameList = []
-							let roleIdList = []
-							if (data.data[i].roleName != null) {
-								if (data.data[i].roleName.indexOf(',') > 0) {
-									roleNameList = data.data[i].roleName.split(',')
-									roleIdList = data.data[i].roleId.split(',')
-								} else {
-									roleNameList.push(data.data[i].roleName)
-									roleIdList.push(data.data[i].roleId)
-								}
-								data.data[i].roleNameList = roleNameList
-								data.data[i].roleIdList = roleIdList
-							}
-							userData.push(data.data[i])
-						}
-						this.dataList = userData
-						this.totalPage = data.totalCount
-					} else {
-						this.dataList = []
-						this.totalPage = 0
-					}
-					this.dataListLoading = false
-				})
+        getUserInfoPage(this.dataForm.searchTextValue, this.pageIndex, this.pageSize).then(response => {
+            this.dataListLoading = false
+            debugger
+            const {data} = response
+            this.dataList = data.records
+            this.totalPage = data.total
+        });
+				// this.$http({
+				// 	url: this.$http.adornSystemUrl('/sys/v1/user/selectUserByParam'),
+				// 	method: 'get',
+				// 	params: {
+				// 		'startIndex': (this.pageIndex - 1) * this.pageSize,
+				// 		'pageSize': this.pageSize,
+				// 		'param': this.dataForm.searchTextValue
+				// 	}
+				// }).then(({
+					// data
+				// }) => {
+				// 	if (data) {
+				// 		let userData = []
+				// 		for (let i in data.data) {
+				// 			let roleNameList = []
+				// 			let roleIdList = []
+				// 			if (data.data[i].roleName != null) {
+				// 				if (data.data[i].roleName.indexOf(',') > 0) {
+				// 					roleNameList = data.data[i].roleName.split(',')
+				// 					roleIdList = data.data[i].roleId.split(',')
+				// 				} else {
+				// 					roleNameList.push(data.data[i].roleName)
+				// 					roleIdList.push(data.data[i].roleId)
+				// 				}
+				// 				data.data[i].roleNameList = roleNameList
+				// 				data.data[i].roleIdList = roleIdList
+				// 			}
+				// 			userData.push(data.data[i])
+				// 		}
+				// 		this.dataList = userData
+				// 		this.totalPage = data.totalCount
+				// 	} else {
+				// 		this.dataList = []
+				// 		this.totalPage = 0
+				// 	}
+				// 	this.dataListLoading = false
+				// })
 			},
 			// 每页数
 			sizeChangeHandle(val) {

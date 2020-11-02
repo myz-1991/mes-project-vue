@@ -155,7 +155,6 @@
       // 表单提交
       submitFormHandle(row) {
         row.show = false;
-        debugger
         if (row.detaId == null) {
           this.$http({
             url: this.$http.adornBomUrl('/bom/v1/detailed/insertMaterialsDetailed'),
