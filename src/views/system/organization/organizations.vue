@@ -12,7 +12,7 @@
           <el-col :offset="8" :span="8">
             <el-form-item label="">
               <el-col :span="18">
-                <el-input v-model="searchFormData.searchTextValue" type="text" @keyup.enter.native="orgTableSearch()" />
+                <el-input v-model="searchFormData.searchTextValue" placeholder="组织编码或名称查询" type="text" @keyup.enter.native="orgTableSearch()" />
               </el-col>
               <el-col :offset="1" :span="3">
                 <el-button type="primary" icon="el-icon-search" size="small" round @click="orgTableSearch()">查询</el-button>
@@ -28,6 +28,17 @@
         <el-table-column prop="name" label="组织名称" width="180" />
         <el-table-column prop="code" align="center" label="组织编码" />
         <el-table-column prop="typeName" align="center" label="组织类型" />
+        <el-table-column prop="status" align="center" label="状态">
+        	<template slot-scope="scope">
+        		<el-tag v-if="scope.row.status === 2" size="small" type="danger">禁用</el-tag>
+        		<el-tag v-else size="small">正常</el-tag>
+        	</template>
+        </el-table-column>
+        <el-table-column prop="createTime" align="center" label="创建时间">
+          <template slot-scope="scope">
+            <span>{{ dateFormat(scope.row.createTime) }}</span>
+          </template>
+        </el-table-column>
         <el-table-column prop="updateTime" align="center" label="更新时间">
           <template slot-scope="scope">
             <span>{{ dateFormat(scope.row.updateTime) }}</span>
@@ -36,8 +47,8 @@
         <el-table-column prop="note" align="center" label="备注" />
         <el-table-column label="操作" align="center">
           <template slot-scope="scope">
-            <el-button size="mini" icon="el-icon-edit" type="primary" round @click="addOrUpdateHandle(2, scope.row.orgId)">修改</el-button>
-            <el-button size="mini" icon="el-icon-delete" type="danger" round @click="deleteHandle(scope.row)">删除</el-button>
+            <el-button size="mini" icon="el-icon-edit" type="primary" round @click="addOrUpdateHandle(2, scope.row.id)"></el-button>
+            <el-button size="mini" icon="el-icon-delete" type="danger" round @click="deleteHandle(scope.row)"></el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -48,7 +59,7 @@
 
 <script>
 import organizationAddOrUpdate from './organization-add-or-update'
-import { findOrganizationTree } from '@/api/system/organization'
+import { findOrganizationTree, deleteOrganization } from '@/api/system/organization'
 export default {
   components: {
     organizationAddOrUpdate
@@ -109,24 +120,14 @@ export default {
       })
     },
     orgTableSearch() {
-      this.$http({
-        url: this.$http.adornSystemUrl('/sys/v1/organization/selectOrganizationTreeByParam'),
-        method: 'get',
-        params: {
-          pid: '',
-          param: this.searchFormData.searchTextValue
-        }
-      }).then(({
-        data
-      }) => {
-        if (data) {
-          this.orgDataList = data
-          for (let i = 0; i < this.orgDataList.length; i++) {
-            if (this.orgDataList[i].leaf > 0) {
-              this.orgDataList[i].leaf = true
-            } else {
-              this.orgDataList[i].leaf = false
-            }
+      this.orgDataList = []
+      findOrganizationTree('', this.searchFormData.searchTextValue).then(response => {
+        this.orgDataList = response.data
+        for (let i = 0; i < this.orgDataList.length; i++) {
+          if (this.orgDataList[i].leaf > 0) {
+            this.orgDataList[i].leaf = true
+          } else {
+            this.orgDataList[i].leaf = false
           }
         }
       })
@@ -140,7 +141,7 @@ export default {
           this.$message('请选择一个部门下添加！！！')
           return false
         } else if (_selectData.length == 1) {
-          id = _selectData[0].orgId
+          id = _selectData[0].id
         }
       }
       this.$nextTick(() => {
@@ -155,22 +156,12 @@ export default {
         })
         return false
       } else {
-        this.$http({
-          url: this.$http.adornSystemUrl('/sys/v1/organization/deleteOrganizationById'),
-          method: 'delete',
-          params: {
-            orgId: rowData.orgId
-          }
-        }).then(({
-          data
-        }) => {
-          if (data) {
-            this.$message({
-              message: '删除成功',
-              type: 'success'
-            })
-            this.refreshorgTable()
-          }
+        deleteOrganization(rowData).then(response => {
+          this.$message({
+            message: '删除成功',
+            type: 'success'
+          })
+          this.refreshorgTable()
         })
       }
     }

@@ -1,6 +1,6 @@
 <template>
   <el-dialog :title="titleText" :close-on-click-modal="false" :visible.sync="visible">
-    <el-form ref="dataForm" :model="dataForm" :rules="dataRule" size="small" label-width="100px" @keyup.enter.native="dataFormSubmit()">
+    <el-form ref="dataForm" :model="dataForm" :rules="dataRule" size="small" label-width="100px">
       <el-row>
         <el-col :span="12">
           <el-form-item label="组织名称：" prop="name">
@@ -46,7 +46,8 @@
 </template>
 
 <script>
-import { saveOrganization } from '@/api/system/organization'
+import { saveOrganization, findOrganizationById, updateOrganization } from '@/api/system/organization'
+import { findDictionaryByCode } from '@/api/system/dict'
 export default {
   data() {
     return {
@@ -90,33 +91,29 @@ export default {
       this.dataForm.pid = '0'
 
       this.workType = workType
+      this.visible = true
       if (workType == 1) {
-        this.visible = true
+        this.titleText = '组织添加'
         this.dataForm.pid = id
-      } else {}
-      // this.initOrgTypeList()
+      } else {
+        this.titleText = '组织修改'
+        findOrganizationById(id).then(response => {
+          this.dataForm = response.data
+        })
+      }
+      this.initOrgTypeList()
     },
     initOrgTypeList() {
-					  this.$http({
-					  	url: this.$http.adornSystemUrl('/sys/v1/dictionary/selectDictionaryByParentCode'),
-					  	method: 'get',
-					  	params: {
-					  		dictCode: 'organization.type'
-					  	}
-					  }).then(({
-					  	data
-					  }) => {
-					  	if (data) {
-					  		this.orgTypeList = data
-					  	}
-					  })
+      findDictionaryByCode('SYSTEM_ORG_TYPE.').then(response => {
+        this.orgTypeList = response.data
+      })
     },
     orgTypeChange(val) {
       let obj = {}
       obj = this.orgTypeList.find((item) => {
         return item.dictCode === val
       })
-      this.dataForm.orgTypeName = obj.dictName
+      this.dataForm.typeName = obj.dictName
     },
     // 表单提交
     dataFormSubmit() {
@@ -125,7 +122,6 @@ export default {
           debugger
           if (this.workType == 1) {
             saveOrganization(this.dataForm).then(response => {
-              debugger
               this.$message({
                 		message: '操作成功',
                 		type: 'success',
@@ -135,48 +131,8 @@ export default {
                 		}
                 	})
             })
-            // this.$http({
-            // 	url: this.$http.adornSystemUrl('/sys/v1/organization/saveOrganization'),
-            // 	method: 'post',
-            // 	data: this.$http.adornData({
-            // 		orgId: this.dataForm.orgId,
-            // 		orgName: this.dataForm.orgName,
-            // 		orgCode: this.dataForm.orgCode,
-            // 		orgType: this.dataForm.orgType,
-            // 		orgTypeName: this.dataForm.orgTypeName,
-            // 		orgNote: this.dataForm.orgNote,
-            // 		orgStuts: this.dataForm.orgStuts,
-            // 		orgPid: this.dataForm.orgPid
-            // 	})
-            // }).then(({
-            // data
-            // }) => {
-            // 	this.$message({
-            // 		message: '操作成功',
-            // 		type: 'success',
-            // 		onClose: () => {
-            // 			this.visible = false
-            // 			this.$emit('refreshDataList')
-            // 		}
-            // 	})
-            // })
           } else {
-            this.$http({
-              url: this.$http.adornSystemUrl('/sys/v1/organization/updateOrganizationById'),
-              method: 'put',
-              data: this.$http.adornData({
-                orgId: this.dataForm.orgId,
-                orgName: this.dataForm.orgName,
-                orgCode: this.dataForm.orgCode,
-                orgType: this.dataForm.orgType,
-                orgTypeName: this.dataForm.orgTypeName,
-                orgNote: this.dataForm.orgNote,
-                orgStuts: this.dataForm.orgStuts,
-                orgPid: this.dataForm.orgPid
-              })
-            }).then(({
-              data
-            }) => {
+            updateOrganization(this.dataForm).then(response => {
               this.$message({
                 message: '操作成功',
                 type: 'success',
