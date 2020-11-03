@@ -1,4 +1,4 @@
-import {login, getInfo} from '@/api/system/user'
+import { login, getInfo } from '@/api/system/user'
 import { logout } from '@/api/user'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 import router, { resetRouter } from '@/router'
@@ -54,14 +54,14 @@ const actions = {
           reject('Verification failed, please Login again.')
         }
         debugger
-        const {name, roles, avatar, introduction} = data
+        const { name, roles, avatar, introduction } = data
         // roles must be a non-empty array
         // if (!roles || roles.length <= 0) {
         //   reject('getInfo: roles must be a non-null array!')
         // }
         commit('SET_ROLES', roles)
         commit('SET_NAME', name)
-		// avatar = 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif'
+        // avatar = 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif'
         commit('SET_AVATAR', 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif')
         commit('SET_INTRODUCTION', introduction)
         resolve(data)

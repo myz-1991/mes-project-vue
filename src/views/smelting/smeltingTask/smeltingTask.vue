@@ -23,40 +23,46 @@
             </el-col>
             <el-col :span="14">
               <el-form-item label="炉批号:">
-                <el-select></el-select>
+                <el-select />
               </el-form-item>
             </el-col>
           </el-form-item>
           <el-form-item label="炉批号:" label-width="120">
             <el-col :span="20">
-              <el-input type="text" readonly="true" style="width: 100%;"></el-input>
+              <el-input type="text" readonly="true" style="width: 100%;" />
             </el-col>
           </el-form-item>
           <el-form-item label="铝锭重量:" label-width="120">
             <el-col :span="20">
-              <el-input-number style="width: 90%;"></el-input-number><span> KG</span>
+              <el-input-number style="width: 90%;" /><span> KG</span>
             </el-col>
           </el-form-item>
           <el-form-item label="废料重量:" label-width="120">
             <el-col :span="20">
-              <el-input-number style="width: 90%;"></el-input-number><span> KG</span>
+              <el-input-number style="width: 90%;" /><span> KG</span>
             </el-col>
           </el-form-item>
           <el-form-item label="废品号:" label-width="120">
             <el-row>
               <el-col :span="20">
-                <el-input style="width: 100%;"></el-input>
+                <el-input style="width: 100%;" />
               </el-col>
             </el-row>
             <el-row style="margin-top: 3px;">
               <el-col :span="24" style="border-radius: 4px;">
                 <el-table border style="height: 280px;">
-                  <el-table-column label="二维码" align="center"></el-table-column>
-                  <el-table-column label="产品名称" align="center"></el-table-column>
+                  <el-table-column label="二维码" align="center" />
+                  <el-table-column label="产品名称" align="center" />
                 </el-table>
-                <el-pagination @size-change="sizeChangeHandle" @current-change="currentChangeHandle" :current-page="pageIndex"
-                  :page-sizes="[10, 20, 50, 100]" :page-size="pageSize" :total="totalPage" layout="total, sizes, prev, pager, next, jumper">
-                </el-pagination>
+                <el-pagination
+                  :current-page="pageIndex"
+                  :page-sizes="[10, 20, 50, 100]"
+                  :page-size="pageSize"
+                  :total="totalPage"
+                  layout="total, sizes, prev, pager, next, jumper"
+                  @size-change="sizeChangeHandle"
+                  @current-change="currentChangeHandle"
+                />
               </el-col>
             </el-row>
           </el-form-item>
@@ -64,14 +70,20 @@
       </el-aside>
       <el-main>
         <el-table border>
-          <el-table-column label="坩锅号" align="center"></el-table-column>
-          <el-table-column label="检验结果" align="center"></el-table-column>
-          <el-table-column label="处理结果" align="center"></el-table-column>
-          <el-table-column label="换料地点" align="center"></el-table-column>
+          <el-table-column label="坩锅号" align="center" />
+          <el-table-column label="检验结果" align="center" />
+          <el-table-column label="处理结果" align="center" />
+          <el-table-column label="换料地点" align="center" />
         </el-table>
-        <el-pagination @size-change="sizeChangeHandle" @current-change="currentChangeHandle" :current-page="pageIndex"
-          :page-sizes="[10, 20, 50, 100]" :page-size="pageSize" :total="totalPage" layout="total, sizes, prev, pager, next, jumper">
-        </el-pagination>
+        <el-pagination
+          :current-page="pageIndex"
+          :page-sizes="[10, 20, 50, 100]"
+          :page-size="pageSize"
+          :total="totalPage"
+          layout="total, sizes, prev, pager, next, jumper"
+          @size-change="sizeChangeHandle"
+          @current-change="currentChangeHandle"
+        />
       </el-main>
     </el-container>
 
@@ -205,208 +217,208 @@
 </template>
 
 <script>
-  export default {
-    data() {
-      return {
-        taskDataList: [],
-        addOrUpdateVisible: false,
-        materialPrepareVisible: false,
-        visible: false,
-        orderVisible: false,
-        processingProgressVisible: false,
-        searchFormData: {
-          searchTextValue: ''
-        },
-        fileList: [],
-        uploadUrl: []
-      }
+export default {
+  data() {
+    return {
+      taskDataList: [],
+      addOrUpdateVisible: false,
+      materialPrepareVisible: false,
+      visible: false,
+      orderVisible: false,
+      processingProgressVisible: false,
+      searchFormData: {
+        searchTextValue: ''
+      },
+      fileList: [],
+      uploadUrl: []
+    }
+  },
+  activated() {
+    this.taskDataInit()
+  },
+  methods: {
+    dateFormat(dataValue) {
+      var date = new Date(dataValue) // 时间戳为10位需*1000，时间戳为13位的话不需乘1000
+      var Y = date.getFullYear() + '-'
+      var M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '-'
+      var D = (date.getDate() < 10 ? '0' + date.getDate() : date.getDate()) + ' '
+      var h = (date.getHours() < 10 ? '0' + date.getHours() : date.getHours()) + ':'
+      var m = (date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes()) + ':'
+      var s = (date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds())
+      return Y + M + D
     },
-    activated() {
+    refreshorgTable() {
       this.taskDataInit()
     },
-    methods: {
-      dateFormat(dataValue) {
-        var date = new Date(dataValue) // 时间戳为10位需*1000，时间戳为13位的话不需乘1000
-        var Y = date.getFullYear() + '-'
-        var M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '-'
-        var D = (date.getDate() < 10 ? '0' + date.getDate() : date.getDate()) + ' '
-        var h = (date.getHours() < 10 ? '0' + date.getHours() : date.getHours()) + ':'
-        var m = (date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes()) + ':'
-        var s = (date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds())
-        return Y + M + D
-      },
-      refreshorgTable() {
-        this.taskDataInit()
-      },
-      taskDataInit() {
-        this.taskDataList = []
-        this.$http({
-          url: this.$http.adornPlanUrl('/plan/v1/task/selectTaskTreeByParam'),
-          method: 'get',
-          params: {
-            param: ''
-          }
-        }).then(({
-          data
-        }) => {
-          if (data) {
-            this.taskDataList = data
-            for (let i = 0; i < this.taskDataList.length; i++) {
-              if (this.taskDataList[i].leaf > 0) {
-                this.taskDataList[i].leaf = true
-              } else {
-                this.taskDataList[i].leaf = false
-              }
-            }
-          }
-        })
-      },
-      load(tree, treeNode, resolve) {
-        debugger
-        this.$http({
-          url: this.$http.adornPlanUrl('/plan/v1/task/selectTaskTreeByParam'),
-          method: 'get',
-          params: {
-            superId: tree.taskId,
-            param: ''
-          }
-        }).then(({
-          data
-        }) => {
-          if (data) {
-            for (let i = 0; i < data.length; i++) {
-              if (data[i].leaf > 0) {
-                data[i].leaf = true
-              } else {
-                data[i].leaf = false
-              }
-            }
-            setTimeout(() => {
-              resolve(data)
-            }, 1000)
-          }
-        })
-      },
-      taskTableSearch() {
-        this.$http({
-          url: this.$http.adornPlanUrl('/plan/v1/task/selectTaskTreeByParam'),
-          method: 'get',
-          params: {
-            superId: '',
-            param: this.searchFormData.searchTextValue
-          }
-        }).then(({
-          data
-        }) => {
-          if (data) {
-            this.taskDataList = data
-            for (let i = 0; i < this.taskDataList.length; i++) {
-              if (this.taskDataList[i].leaf > 0) {
-                this.taskDataList[i].leaf = true
-              } else {
-                this.taskDataList[i].leaf = false
-              }
-            }
-          }
-        })
-      },
-      // 新增 / 修改
-      addOrUpdateHandle() {
-        this.addOrUpdateVisible = true
-        this.$nextTick(() => {
-          this.$refs.planAdd.init()
-        })
-      },
-      updateTaskStatusHandle(statusCode, statusName) {
-        const rowData = this.$refs.taskTable.selection
-        if (rowData.length != 1) {
-          this.$message({
-            message: '请选择一条任务进行操作！',
-            type: 'warning'
-          })
-          return
+    taskDataInit() {
+      this.taskDataList = []
+      this.$http({
+        url: this.$http.adornPlanUrl('/plan/v1/task/selectTaskTreeByParam'),
+        method: 'get',
+        params: {
+          param: ''
         }
+      }).then(({
+        data
+      }) => {
+        if (data) {
+          this.taskDataList = data
+          for (let i = 0; i < this.taskDataList.length; i++) {
+            if (this.taskDataList[i].leaf > 0) {
+              this.taskDataList[i].leaf = true
+            } else {
+              this.taskDataList[i].leaf = false
+            }
+          }
+        }
+      })
+    },
+    load(tree, treeNode, resolve) {
+      debugger
+      this.$http({
+        url: this.$http.adornPlanUrl('/plan/v1/task/selectTaskTreeByParam'),
+        method: 'get',
+        params: {
+          superId: tree.taskId,
+          param: ''
+        }
+      }).then(({
+        data
+      }) => {
+        if (data) {
+          for (let i = 0; i < data.length; i++) {
+            if (data[i].leaf > 0) {
+              data[i].leaf = true
+            } else {
+              data[i].leaf = false
+            }
+          }
+          setTimeout(() => {
+            resolve(data)
+          }, 1000)
+        }
+      })
+    },
+    taskTableSearch() {
+      this.$http({
+        url: this.$http.adornPlanUrl('/plan/v1/task/selectTaskTreeByParam'),
+        method: 'get',
+        params: {
+          superId: '',
+          param: this.searchFormData.searchTextValue
+        }
+      }).then(({
+        data
+      }) => {
+        if (data) {
+          this.taskDataList = data
+          for (let i = 0; i < this.taskDataList.length; i++) {
+            if (this.taskDataList[i].leaf > 0) {
+              this.taskDataList[i].leaf = true
+            } else {
+              this.taskDataList[i].leaf = false
+            }
+          }
+        }
+      })
+    },
+    // 新增 / 修改
+    addOrUpdateHandle() {
+      this.addOrUpdateVisible = true
+      this.$nextTick(() => {
+        this.$refs.planAdd.init()
+      })
+    },
+    updateTaskStatusHandle(statusCode, statusName) {
+      const rowData = this.$refs.taskTable.selection
+      if (rowData.length != 1) {
+        this.$message({
+          message: '请选择一条任务进行操作！',
+          type: 'warning'
+        })
+        return
+      }
+      this.$http({
+        url: this.$http.adornPlanUrl('/plan/v1/task/updateTaskStatusById'),
+        method: 'put',
+        params: {
+          taskStatusCode: statusCode,
+          taskStatusName: statusName,
+          taskId: rowData[0].taskId
+        }
+      }).then(({
+        data
+      }) => {
+        if (data) {
+          this.$message({
+            message: '任务' + statusName + '！',
+            type: 'success',
+            onClose: () => {
+              this.refreshorgTable()
+            }
+          })
+        }
+      })
+    },
+    deleteHandle(rowData) {
+      if (rowData.leaf) {
+        this.$message({
+          message: '该物料下存在其他物料信息，不能删除！',
+          type: 'warning'
+        })
+        return false
+      } else {
         this.$http({
-          url: this.$http.adornPlanUrl('/plan/v1/task/updateTaskStatusById'),
-          method: 'put',
+          url: this.$http.adornBomUrl('/bom/v1/relaton/deleteBomtaskById'),
+          method: 'delete',
           params: {
-            taskStatusCode: statusCode,
-            taskStatusName: statusName,
-            taskId: rowData[0].taskId
+            relaId: rowData.relaId
           }
         }).then(({
           data
         }) => {
           if (data) {
             this.$message({
-              message: '任务' + statusName + '！',
-              type: 'success',
-              onClose: () => {
-                this.refreshorgTable()
-              }
+              message: '删除成功',
+              type: 'success'
             })
+            this.refreshorgTable()
           }
-        })
-      },
-      deleteHandle(rowData) {
-        if (rowData.leaf) {
-          this.$message({
-            message: '该物料下存在其他物料信息，不能删除！',
-            type: 'warning'
-          })
-          return false
-        } else {
-          this.$http({
-            url: this.$http.adornBomUrl('/bom/v1/relaton/deleteBomtaskById'),
-            method: 'delete',
-            params: {
-              relaId: rowData.relaId
-            }
-          }).then(({
-            data
-          }) => {
-            if (data) {
-              this.$message({
-                message: '删除成功',
-                type: 'success'
-              })
-              this.refreshorgTable()
-            }
-          })
-        }
-      },
-      openD() {
-        this.visible = true
-      },
-      onSuccess(res) {
-        this.$alert(res.data, '提示', {
-          confirmButtonText: '确定',
-          callback: action => {
-            console.log('上传成功')
-          }
-        })
-      },
-      onError(res) {
-        this.$alert('创建失败', '提示', {
-          confirmButtonText: '确定',
-          callback: action => {
-            console.log('上传失败')
-          }
-        })
-      },
-      handleChange(file, fileList) {
-        if (fileList.length > 0) {
-          this.form.fileList = [fileList[fileList.length - 1]] // 这一步，是 展示最后一次选择的csv文件
-        }
-      },
-      submit() {
-        this.uploadUrl = '/upload' // 这里，读者换成实际项目中的上传接口
-        this.$nextTick(() => {
-          this.$refs.upload.submit()
         })
       }
+    },
+    openD() {
+      this.visible = true
+    },
+    onSuccess(res) {
+      this.$alert(res.data, '提示', {
+        confirmButtonText: '确定',
+        callback: action => {
+          console.log('上传成功')
+        }
+      })
+    },
+    onError(res) {
+      this.$alert('创建失败', '提示', {
+        confirmButtonText: '确定',
+        callback: action => {
+          console.log('上传失败')
+        }
+      })
+    },
+    handleChange(file, fileList) {
+      if (fileList.length > 0) {
+        this.form.fileList = [fileList[fileList.length - 1]] // 这一步，是 展示最后一次选择的csv文件
+      }
+    },
+    submit() {
+      this.uploadUrl = '/upload' // 这里，读者换成实际项目中的上传接口
+      this.$nextTick(() => {
+        this.$refs.upload.submit()
+      })
     }
   }
+}
 </script>
 
 <style lang="scss" scoped>

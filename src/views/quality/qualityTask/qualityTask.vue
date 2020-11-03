@@ -64,74 +64,68 @@
 
     <el-dialog title="新建检验任务" size="small" :close-on-click-modal="false" :visible.sync="orderVisible" width="60%">
       <el-form ref="dataForm" size="small" label-width="80px">
-		<el-row>
-			<el-col :span="12">
-				<el-form-item label="检验类型">
-				  <el-select v-model="value" placeholder="请选择检验类型" style="width: 100%;">
-				      <el-option label="广普分析" value="1">
-				      </el-option>
-					  <el-option label="拉棒" value="2">
-					  </el-option>
-					  <el-option label="三座标" value="3">
-					  </el-option>
-				    </el-select>
-				</el-form-item>
-			</el-col>
-			<el-col :span="12">
-			  <el-form-item label="批次号">
-			    <el-select v-model="value" placeholder="请选择批次号" style="width: 100%;">
-			        <el-option label="20201028-1" value="1">
-			        </el-option>
-					<el-option label="20201028-2" value="2">
-					</el-option>
-			      </el-select>
-			  </el-form-item>
-			</el-col>
-		</el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="检验类型">
+              <el-select v-model="value" placeholder="请选择检验类型" style="width: 100%;">
+                <el-option label="广普分析" value="1" />
+                <el-option label="拉棒" value="2" />
+                <el-option label="三座标" value="3" />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="批次号">
+              <el-select v-model="value" placeholder="请选择批次号" style="width: 100%;">
+                <el-option label="20201028-1" value="1" />
+                <el-option label="20201028-2" value="2" />
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
         <el-row>
           <el-col :span="12">
             <el-form-item label="产品编码">
-              <el-input placeholder="产品编码" readOnly/>
+              <el-input placeholder="产品编码" read-only />
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="产品名称">
-              <el-input placeholder="产品名称" readOnly/>
+              <el-input placeholder="产品名称" read-only />
             </el-form-item>
           </el-col>
         </el-row>
-		<el-row>
-		  <el-col :span="12">
-		    <el-form-item label="规格型号">
-		      <el-input placeholder="规格型号" readOnly/>
-		    </el-form-item>
-		  </el-col>
-		  <el-col :span="12">
-		    <el-form-item label="送检时间">
-		      <el-date-picker type="date" placeholder="送检时间" style="width: 100%;">
-		      </el-date-picker>
-		    </el-form-item>
-		  </el-col>
-		</el-row>
-		<el-row>
-		  <el-col :span="12">
-		    <el-form-item label="二维码">
-		      <el-input placeholder="二维码"/>
-		    </el-form-item>
-		  </el-col>
-		  <el-col :span="12">
-		    <el-form-item label="检验数量">
-		      <el-input-number placeholder="检验数量" style="width: 100%;"/>
-		    </el-form-item>
-		  </el-col>
-		</el-row>
-    <el-row>
-      <el-col :span="12">
-        <el-form-item label="坩锅号">
-          <el-select placeholder="二维码"/>
-        </el-form-item>
-      </el-col>
-    </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="规格型号">
+              <el-input placeholder="规格型号" read-only />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="送检时间">
+              <el-date-picker type="date" placeholder="送检时间" style="width: 100%;" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="二维码">
+              <el-input placeholder="二维码" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="检验数量">
+              <el-input-number placeholder="检验数量" style="width: 100%;" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="坩锅号">
+              <el-select placeholder="二维码" />
+            </el-form-item>
+          </el-col>
+        </el-row>
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button type="danger" size="small" icon="el-icon-delete" round @click="orderVisible = false">取消</el-button>

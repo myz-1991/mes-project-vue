@@ -28,76 +28,76 @@ export default {
       required: true
     }
   },
-  data () {
+  data() {
     return {
       selectVal: ''
     }
   },
   computed: {
-    multiple () {
-      return this.treeOpt.showCheckbox;
+    multiple() {
+      return this.treeOpt.showCheckbox
     },
-    valueKey () {
-      const { valueKey } = this.treeOpt;
+    valueKey() {
+      const { valueKey } = this.treeOpt
       if (!valueKey) {
-        throw new Error('need "valueKey" in treeOpt');
+        throw new Error('need "valueKey" in treeOpt')
       }
       return valueKey
     }
   },
   methods: {
-    setValue (nodes) {
-      const value = [];
+    setValue(nodes) {
+      const value = []
       for (let i = 0; i < nodes.length; i++) {
-        const { children } = nodes[i];
-        if (children) continue;
-        value.push(nodes[i][this.valueKey]);
+        const { children } = nodes[i]
+        if (children) continue
+        value.push(nodes[i][this.valueKey])
       }
       this.$emit('change', value)
     },
-    handleTreeCheckChange (data, tree) {
-      const { checkedNodes } = tree;
-      this.setValue(checkedNodes);
-      this.$emit('check', data, tree);
+    handleTreeCheckChange(data, tree) {
+      const { checkedNodes } = tree
+      this.setValue(checkedNodes)
+      this.$emit('check', data, tree)
     },
-    clickNode (data, node, treeNode) {
+    clickNode(data, node, treeNode) {
       if (!this.multiple) {
         const value = data[this.valueKey]
         this.selectVal = data[this.treeOpt.displayKey]
-        this.$refs.select.blur();
+        this.$refs.select.blur()
         this.$emit('change', value)
       }
-      this.$emit('node-click', data, node, treeNode);
+      this.$emit('node-click', data, node, treeNode)
     },
-    clear () {
+    clear() {
       if (this.selectOpt.clearable) {
         if (this.multiple) {
-          const checkedNodes = this.$refs.tree.getCheckedNodes();
+          const checkedNodes = this.$refs.tree.getCheckedNodes()
           for (let i = 0; i < checkedNodes.length; i++) {
-            const node = checkedNodes[i];
+            const node = checkedNodes[i]
             if (this.value.indexOf(node[this.valueKey]) > -1) {
-              this.$refs.tree.setChecked(node, false);
+              this.$refs.tree.setChecked(node, false)
             }
           }
           this.selectVal = []
-          this.$emit('change', []);
+          this.$emit('change', [])
         } else {
           this.selectVal = ''
-          this.$emit('change', '');
+          this.$emit('change', '')
         }
         this.$emit('clear')
       }
     },
-    removeTag (label) {
-      const checkedNodes = this.$refs.tree.getCheckedNodes();
+    removeTag(label) {
+      const checkedNodes = this.$refs.tree.getCheckedNodes()
       for (let i = 0; i < checkedNodes.length; i++) {
-        const node = checkedNodes[i];
+        const node = checkedNodes[i]
         if (node[this.valueKey] === label) {
-          this.$refs.tree.setChecked(node, false);
+          this.$refs.tree.setChecked(node, false)
         }
       }
-      this.setValue(this.$refs.tree.getCheckedNodes());
-      this.$emit('remove-tag', label);
+      this.setValue(this.$refs.tree.getCheckedNodes())
+      this.$emit('remove-tag', label)
     }
   }
 }

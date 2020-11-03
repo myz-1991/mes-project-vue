@@ -1,178 +1,176 @@
 <template>
   <el-dialog :title="titleText" :close-on-click-modal="false" :visible.sync="visible">
-	<el-form :model="dataForm" size="small" ref="dataForm" label-width="80px">
-    <el-row>
-      <el-col :span="12">
-        <el-form-item label="设备编码" prop="mateCode">
-          <el-input v-model="dataForm.mateCode" placeholder="设备编码"></el-input>
-        </el-form-item>
-      </el-col>
-      <el-col :span="12">
-        <el-form-item label="设备名称" prop="mateName">
-          <el-input v-model="dataForm.mateName" placeholder="设备名称"></el-input>
-        </el-form-item>
-      </el-col>
-    </el-row>
-    <el-row>
-      <el-col :span="12">
-        <el-form-item label="资产编码" prop="mateDesignNumber">
-          <el-input v-model="dataForm.mateDesignNumber" placeholder="固定资产编码"></el-input>
-        </el-form-item>
-      </el-col>
-      <el-col :span="12">
-        <el-form-item label="规格型号" prop="mateSpecifications">
-          <el-input v-model="dataForm.mateSpecifications" placeholder="规格型号"></el-input>
-        </el-form-item>
-      </el-col>
-    </el-row>
-		<el-row>
-		  <el-col :span="12">
-		    <el-form-item label="设备类型" prop="mateType">
-		      <el-select v-model="dataForm.mateType" placeholder="请选择" style="width: 100%;" @change="((val)=>{mateTypeChange(val, index)})">
-		          <el-option v-for="item in mateTypeList" :key="item.dictCode" :label="item.dictName" :value="item.dictCode">
-		          </el-option>
-		      </el-select>
-		    </el-form-item>
-		  </el-col>
-		  <el-col :span="12">
-		    <el-form-item label="状态" prop="mateUnit">
-		      <el-select v-model="dataForm.mateUnit" placeholder="请选择" style="width: 100%;" @change="((val)=>{mateUnitChange(val, index)})">
-		          <el-option v-for="item in mateUnitList" :key="item.dictCode" :label="item.dictName" :value="item.dictCode">
-		          </el-option>
-		      </el-select>
-		    </el-form-item>
-		  </el-col>
-		</el-row>
-    <el-row>
-      <el-col :span="24">
-        <el-form-item label="设备描述" size="mini" prop="mateNote">
-          <el-input type="textarea" rows="3" v-model="dataForm.mateNote"></el-input>
-        </el-form-item>
-      </el-col>
-    </el-row>
+    <el-form ref="dataForm" :model="dataForm" size="small" label-width="80px">
+      <el-row>
+        <el-col :span="12">
+          <el-form-item label="设备编码" prop="mateCode">
+            <el-input v-model="dataForm.mateCode" placeholder="设备编码" />
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="设备名称" prop="mateName">
+            <el-input v-model="dataForm.mateName" placeholder="设备名称" />
+          </el-form-item>
+        </el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="12">
+          <el-form-item label="资产编码" prop="mateDesignNumber">
+            <el-input v-model="dataForm.mateDesignNumber" placeholder="固定资产编码" />
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="规格型号" prop="mateSpecifications">
+            <el-input v-model="dataForm.mateSpecifications" placeholder="规格型号" />
+          </el-form-item>
+        </el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="12">
+          <el-form-item label="设备类型" prop="mateType">
+            <el-select v-model="dataForm.mateType" placeholder="请选择" style="width: 100%;" @change="((val)=>{mateTypeChange(val, index)})">
+              <el-option v-for="item in mateTypeList" :key="item.dictCode" :label="item.dictName" :value="item.dictCode" />
+            </el-select>
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="状态" prop="mateUnit">
+            <el-select v-model="dataForm.mateUnit" placeholder="请选择" style="width: 100%;" @change="((val)=>{mateUnitChange(val, index)})">
+              <el-option v-for="item in mateUnitList" :key="item.dictCode" :label="item.dictName" :value="item.dictCode" />
+            </el-select>
+          </el-form-item>
+        </el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="24">
+          <el-form-item label="设备描述" size="mini" prop="mateNote">
+            <el-input v-model="dataForm.mateNote" type="textarea" rows="3" />
+          </el-form-item>
+        </el-col>
+      </el-row>
     </el-form>
     <span slot="footer" class="dialog-footer">
-      <el-button type="danger" size="small" icon="el-icon-delete" @click="visible = false" round>取消</el-button>
-      <el-button type="primary" size="small" icon="el-icon-check" @click="dataFormSubmit()" round>确定</el-button>
+      <el-button type="danger" size="small" icon="el-icon-delete" round @click="visible = false">取消</el-button>
+      <el-button type="primary" size="small" icon="el-icon-check" round @click="dataFormSubmit()">确定</el-button>
     </span>
   </el-dialog>
 </template>
 
 <script>
-  export default {
-    data () {
-      return {
-        visible: false,
-        mateTypeList: [],
-        mateUnitList: [],
-        mateSourceList : [],
-        mateWeightUnitList : [],
-        titleText: '设备添加',
-        workType : 1,
-        dataForm: {
-          mateId : 0,
-          mateName : null,
-          mateCode : null,
-          mateSpecifications : null,
-          mateDesignNumber : null,
-          mateType : null,
-          mateTypeName : null,
-          mateUnit : null,
-          mateUnitName : null,
-          mateSource : null,
-          mateSourceName : null,
-          mateNote : null,
-          mateSize : null,
-          mateBrand : null,
-          mateFurnaceNumber : null,
-          mateNetWeight : null,
-          mateGrossWeight : null,
-          mateWeightUnit : null,
-          mateWeightUnitName : null,
-          mateTexture : null,
-          mateAuxiliaryUnit : null,
-          mateAuxiliaryUnitName : null
-        }
+export default {
+  data() {
+    return {
+      visible: false,
+      mateTypeList: [],
+      mateUnitList: [],
+      mateSourceList: [],
+      mateWeightUnitList: [],
+      titleText: '设备添加',
+      workType: 1,
+      dataForm: {
+        mateId: 0,
+        mateName: null,
+        mateCode: null,
+        mateSpecifications: null,
+        mateDesignNumber: null,
+        mateType: null,
+        mateTypeName: null,
+        mateUnit: null,
+        mateUnitName: null,
+        mateSource: null,
+        mateSourceName: null,
+        mateNote: null,
+        mateSize: null,
+        mateBrand: null,
+        mateFurnaceNumber: null,
+        mateNetWeight: null,
+        mateGrossWeight: null,
+        mateWeightUnit: null,
+        mateWeightUnitName: null,
+        mateTexture: null,
+        mateAuxiliaryUnit: null,
+        mateAuxiliaryUnitName: null
       }
-    },
-    methods: {
-      init (workType, id) {
-        //this.dataForm.userId = id || 0
-		this.workType = workType
+    }
+  },
+  methods: {
+    init(workType, id) {
+      // this.dataForm.userId = id || 0
+      this.workType = workType
 
-		if (workType == 1) {
-			this.visible = true
-			this.dataForm.mateId = 0
-			this.dataForm.mateName = ''
-			this.dataForm.mateCode = ''
-			this.dataForm.mateSpecifications = ''
-			this.dataForm.mateDesignNumber = ''
-			this.dataForm.mateType = ''
-			this.dataForm.mateTypeName = ''
-			this.dataForm.mateUnit = ''
-			this.dataForm.mateUnitName = ''
-			this.dataForm.mateSource = ''
-			this.dataForm.mateSourceName = ''
-			this.dataForm.mateNote = ''
-      this.dataForm.mateSize = ''
-      this.dataForm.mateBrand  = ''
-      this.dataForm.mateFurnaceNumber  = ''
-      this.dataForm.mateNetWeight  = ''
-      this.dataForm.mateGrossWeight  = ''
-      this.dataForm.mateWeightUnit  = ''
-      this.dataForm.mateWeightUnitName  = ''
-      this.dataForm.mateTexture  = ''
-      this.dataForm.mateAuxiliaryUnit  = ''
-      this.dataForm.mateAuxiliaryUnitName = ''
-		} else {
-			this.titleText = '设备修改'
-			this.$http({
-				url: this.$http.adornBomUrl('/bom/v1/material/selectMaterialById'),
-				method: 'get',
-				params: {
-					mateId: id
-				}
-			}).then(({
-				data
-			}) => {
-				this.visible = true
-				if (data) {
-					this.dataForm.mateId = data.mateId
-					this.dataForm.mateName = data.mateName
-					this.dataForm.mateCode = data.mateCode
-					this.dataForm.mateSpecifications = data.mateSpecifications
-					this.dataForm.mateDesignNumber = data.mateDesignNumber
-					this.dataForm.mateType = data.mateType
-					this.dataForm.mateTypeName = data.mateTypeName
-					this.dataForm.mateUnit = data.mateUnit
-					this.dataForm.mateUnitName = data.mateUnitName
-					this.dataForm.mateSource = data.mateSource
-					this.dataForm.mateSourceName = data.mateSourceName
-					this.dataForm.mateNote = data.mateNote
-          this.dataForm.mateSize = data.mateSize
-          this.dataForm.mateBrand  = data.mateBrand
-          this.dataForm.mateFurnaceNumber  = data.mateFurnaceNumber
-          this.dataForm.mateNetWeight  = data.mateNetWeight
-          this.dataForm.mateGrossWeight  = data.mateGrossWeight
-          this.dataForm.mateWeightUnit  = data.mateWeightUnit
-          this.dataForm.mateWeightUnitName  = data.mateWeightUnitName
-          this.dataForm.mateTexture  = data.mateTexture
-          this.dataForm.mateAuxiliaryUnit  = data.mateAuxiliaryUnit
-          this.dataForm.mateAuxiliaryUnitName = data.mateAuxiliaryUnitName
-				}
-			})
-		}
-		this.initMateTypeList()
-		this.initMateUnitList()
-		this.initMateSourceList()
-    this.initMateWeightUnitList()
+      if (workType == 1) {
+        this.visible = true
+        this.dataForm.mateId = 0
+        this.dataForm.mateName = ''
+        this.dataForm.mateCode = ''
+        this.dataForm.mateSpecifications = ''
+        this.dataForm.mateDesignNumber = ''
+        this.dataForm.mateType = ''
+        this.dataForm.mateTypeName = ''
+        this.dataForm.mateUnit = ''
+        this.dataForm.mateUnitName = ''
+        this.dataForm.mateSource = ''
+        this.dataForm.mateSourceName = ''
+        this.dataForm.mateNote = ''
+        this.dataForm.mateSize = ''
+        this.dataForm.mateBrand = ''
+        this.dataForm.mateFurnaceNumber = ''
+        this.dataForm.mateNetWeight = ''
+        this.dataForm.mateGrossWeight = ''
+        this.dataForm.mateWeightUnit = ''
+        this.dataForm.mateWeightUnitName = ''
+        this.dataForm.mateTexture = ''
+        this.dataForm.mateAuxiliaryUnit = ''
+        this.dataForm.mateAuxiliaryUnitName = ''
+      } else {
+        this.titleText = '设备修改'
+        this.$http({
+          url: this.$http.adornBomUrl('/bom/v1/material/selectMaterialById'),
+          method: 'get',
+          params: {
+            mateId: id
+          }
+        }).then(({
+          data
+        }) => {
+          this.visible = true
+          if (data) {
+            this.dataForm.mateId = data.mateId
+            this.dataForm.mateName = data.mateName
+            this.dataForm.mateCode = data.mateCode
+            this.dataForm.mateSpecifications = data.mateSpecifications
+            this.dataForm.mateDesignNumber = data.mateDesignNumber
+            this.dataForm.mateType = data.mateType
+            this.dataForm.mateTypeName = data.mateTypeName
+            this.dataForm.mateUnit = data.mateUnit
+            this.dataForm.mateUnitName = data.mateUnitName
+            this.dataForm.mateSource = data.mateSource
+            this.dataForm.mateSourceName = data.mateSourceName
+            this.dataForm.mateNote = data.mateNote
+            this.dataForm.mateSize = data.mateSize
+            this.dataForm.mateBrand = data.mateBrand
+            this.dataForm.mateFurnaceNumber = data.mateFurnaceNumber
+            this.dataForm.mateNetWeight = data.mateNetWeight
+            this.dataForm.mateGrossWeight = data.mateGrossWeight
+            this.dataForm.mateWeightUnit = data.mateWeightUnit
+            this.dataForm.mateWeightUnitName = data.mateWeightUnitName
+            this.dataForm.mateTexture = data.mateTexture
+            this.dataForm.mateAuxiliaryUnit = data.mateAuxiliaryUnit
+            this.dataForm.mateAuxiliaryUnitName = data.mateAuxiliaryUnitName
+          }
+        })
+      }
+      this.initMateTypeList()
+      this.initMateUnitList()
+      this.initMateSourceList()
+      this.initMateWeightUnitList()
     },
     initMateWeightUnitList() {
       this.$http({
       	url: this.$http.adornSystemUrl('/sys/v1/dictionary/selectDictionaryByParentCode'),
       	method: 'get',
       	params: {
-      		dictCode : 'BASE.WeightUnit'
+      		dictCode: 'BASE.WeightUnit'
       	}
       }).then(({
       	data
@@ -183,10 +181,10 @@
       })
     },
     mateWeightUnitChange(val) {
-      let obj = {};
-      obj = this.mateWeightUnitList.find((item)=>{
-      return item.dictCode === val;
-      });
+      let obj = {}
+      obj = this.mateWeightUnitList.find((item) => {
+        return item.dictCode === val
+      })
       this.dataForm.mateWeightUnitName = obj.dictName
     },
 	  // 初始化物料类型可选项
@@ -195,7 +193,7 @@
 		  	url: this.$http.adornSystemUrl('/sys/v1/dictionary/selectDictionaryByParentCode'),
 		  	method: 'get',
 		  	params: {
-		  		dictCode : 'materiel_type'
+		  		dictCode: 'materiel_type'
 		  	}
 		  }).then(({
 		  	data
@@ -206,10 +204,10 @@
 		  })
 	  },
 	  mateTypeChange(val) {
-		  let obj = {};
-		  obj = this.mateTypeList.find((item)=>{
-			return item.dictCode === val;
-		  });
+		  let obj = {}
+		  obj = this.mateTypeList.find((item) => {
+        return item.dictCode === val
+		  })
 		  this.dataForm.mateTypeName = obj.dictName
 	  },
 	  // 初始化物料类型可选项
@@ -218,7 +216,7 @@
 	  		  	url: this.$http.adornSystemUrl('/sys/v1/dictionary/selectDictionaryByParentCode'),
 	  		  	method: 'get',
 	  		  	params: {
-	  		  		dictCode : 'unit'
+	  		  		dictCode: 'unit'
 	  		  	}
 	  		  }).then(({
 	  		  	data
@@ -229,17 +227,17 @@
 	  		  })
 	  },
 	  mateUnitChange(val) {
-	  		  let obj = {};
-	  		  obj = this.mateUnitList.find((item)=>{
-	  			return item.dictCode === val;
-	  		  });
+	  		  let obj = {}
+	  		  obj = this.mateUnitList.find((item) => {
+	  			return item.dictCode === val
+	  		  })
 	  		  this.dataForm.mateUnitName = obj.dictName
 	  },
     mateAuxiliaryUnitChange(val) {
-      let obj = {};
-      obj = this.mateUnitList.find((item)=>{
-      return item.dictCode === val;
-      });
+      let obj = {}
+      obj = this.mateUnitList.find((item) => {
+        return item.dictCode === val
+      })
       this.dataForm.mateAuxiliaryUnitName = obj.dictName
     },
 	  // 初始化物料类型可选项
@@ -248,7 +246,7 @@
 	  		  	url: this.$http.adornSystemUrl('/sys/v1/dictionary/selectDictionaryByParentCode'),
 	  		  	method: 'get',
 	  		  	params: {
-	  		  		dictCode : 'mateSource'
+	  		  		dictCode: 'mateSource'
 	  		  	}
 	  		  }).then(({
 	  		  	data
@@ -259,42 +257,42 @@
 	  		  })
 	  },
 	  mateSourceChange(val) {
-	  		  let obj = {};
-	  		  obj = this.mateSourceList.find((item)=>{
-	  			return item.dictCode === val;
-	  		  });
+	  		  let obj = {}
+	  		  obj = this.mateSourceList.find((item) => {
+	  			return item.dictCode === val
+	  		  })
 	  		  this.dataForm.mateSourceName = obj.dictName
 	  },
-      // 表单提交
-      dataFormSubmit () {
-        this.$refs['dataForm'].validate((valid) => {
-          if (valid) {
+    // 表单提交
+    dataFormSubmit() {
+      this.$refs['dataForm'].validate((valid) => {
+        if (valid) {
 			  	if (this.workType == 1) {
 			  		this.$http({
 			  			url: this.$http.adornBomUrl('/bom/v1/material/insertMaterial'),
 			  			method: 'post',
 			  			data: this.$http.adornData({
-							mateName : this.dataForm.mateName,
-							mateCode : this.dataForm.mateCode,
-							mateSpecifications : this.dataForm.mateSpecifications,
-							mateDesignNumber : this.dataForm.mateDesignNumber,
-							mateType : this.dataForm.mateType,
-							mateTypeName : this.dataForm.mateTypeName,
-							mateUnit : this.dataForm.mateUnit,
-							mateUnitName : this.dataForm.mateUnitName,
-							mateSource : this.dataForm.mateSource,
-							mateSourceName : this.dataForm.mateSourceName,
-							mateNote : this.dataForm.mateNote,
-              mateSize : this.dataForm.mateSize,
-              mateBrand : this.dataForm.mateBrand,
-              mateFurnaceNumber : this.dataForm.mateFurnaceNumber,
-              mateNetWeight : this.dataForm.mateNetWeight,
-              mateGrossWeight : this.dataForm.mateGrossWeight,
-              mateWeightUnit : this.dataForm.mateWeightUnit,
-              mateWeightUnitName : this.dataForm.mateWeightUnitName,
-              mateTexture : this.dataForm.mateTexture,
-              mateAuxiliaryUnit : this.dataForm.mateAuxiliaryUnit,
-              mateAuxiliaryUnitName : this.dataForm.mateAuxiliaryUnitName
+                mateName: this.dataForm.mateName,
+                mateCode: this.dataForm.mateCode,
+                mateSpecifications: this.dataForm.mateSpecifications,
+                mateDesignNumber: this.dataForm.mateDesignNumber,
+                mateType: this.dataForm.mateType,
+                mateTypeName: this.dataForm.mateTypeName,
+                mateUnit: this.dataForm.mateUnit,
+                mateUnitName: this.dataForm.mateUnitName,
+                mateSource: this.dataForm.mateSource,
+                mateSourceName: this.dataForm.mateSourceName,
+                mateNote: this.dataForm.mateNote,
+                mateSize: this.dataForm.mateSize,
+                mateBrand: this.dataForm.mateBrand,
+                mateFurnaceNumber: this.dataForm.mateFurnaceNumber,
+                mateNetWeight: this.dataForm.mateNetWeight,
+                mateGrossWeight: this.dataForm.mateGrossWeight,
+                mateWeightUnit: this.dataForm.mateWeightUnit,
+                mateWeightUnitName: this.dataForm.mateWeightUnitName,
+                mateTexture: this.dataForm.mateTexture,
+                mateAuxiliaryUnit: this.dataForm.mateAuxiliaryUnit,
+                mateAuxiliaryUnitName: this.dataForm.mateAuxiliaryUnitName
 			  			})
 			  		}).then(({
 			  			data
@@ -313,28 +311,28 @@
 			  			url: this.$http.adornBomUrl('/bom/v1/material/updateMaterialById'),
 			  			method: 'put',
 			  			data: this.$http.adornData({
-			  				mateId : this.dataForm.mateId,
-			  				mateName : this.dataForm.mateName,
-			  				mateCode : this.dataForm.mateCode,
-			  				mateSpecifications : this.dataForm.mateSpecifications,
-			  				mateDesignNumber : this.dataForm.mateDesignNumber,
-			  				mateType : this.dataForm.mateType,
-			  				mateTypeName : this.dataForm.mateTypeName,
-			  				mateUnit : this.dataForm.mateUnit,
-			  				mateUnitName : this.dataForm.mateUnitName,
-			  				mateSource : this.dataForm.mateSource,
-			  				mateSourceName : this.dataForm.mateSourceName,
-			  				mateNote : this.dataForm.mateNote,
-                mateSize : this.dataForm.mateSize,
-                mateBrand : this.dataForm.mateBrand,
-                mateFurnaceNumber : this.dataForm.mateFurnaceNumber,
-                mateNetWeight : this.dataForm.mateNetWeight,
-                mateGrossWeight : this.dataForm.mateGrossWeight,
-                mateWeightUnit : this.dataForm.mateWeightUnit,
-                mateWeightUnitName : this.dataForm.mateWeightUnitName,
-                mateTexture : this.dataForm.mateTexture,
-                mateAuxiliaryUnit : this.dataForm.mateAuxiliaryUnit,
-                mateAuxiliaryUnitName : this.dataForm.mateAuxiliaryUnitName
+			  				mateId: this.dataForm.mateId,
+			  				mateName: this.dataForm.mateName,
+			  				mateCode: this.dataForm.mateCode,
+			  				mateSpecifications: this.dataForm.mateSpecifications,
+			  				mateDesignNumber: this.dataForm.mateDesignNumber,
+			  				mateType: this.dataForm.mateType,
+			  				mateTypeName: this.dataForm.mateTypeName,
+			  				mateUnit: this.dataForm.mateUnit,
+			  				mateUnitName: this.dataForm.mateUnitName,
+			  				mateSource: this.dataForm.mateSource,
+			  				mateSourceName: this.dataForm.mateSourceName,
+			  				mateNote: this.dataForm.mateNote,
+                mateSize: this.dataForm.mateSize,
+                mateBrand: this.dataForm.mateBrand,
+                mateFurnaceNumber: this.dataForm.mateFurnaceNumber,
+                mateNetWeight: this.dataForm.mateNetWeight,
+                mateGrossWeight: this.dataForm.mateGrossWeight,
+                mateWeightUnit: this.dataForm.mateWeightUnit,
+                mateWeightUnitName: this.dataForm.mateWeightUnitName,
+                mateTexture: this.dataForm.mateTexture,
+                mateAuxiliaryUnit: this.dataForm.mateAuxiliaryUnit,
+                mateAuxiliaryUnitName: this.dataForm.mateAuxiliaryUnitName
 			  			})
 			  		}).then(({
 			  			data
@@ -349,10 +347,9 @@
 			  			})
 			  		})
 			  	}
-
 		  }
-        })
-      }
+      })
     }
   }
+}
 </script>

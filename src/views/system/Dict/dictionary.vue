@@ -12,7 +12,7 @@
 					<el-col :offset="8" :span="8">
 						<el-form-item label="">
 							<el-col :span="18">
-								<el-input type="text" v-model="searchFormData.searchTextValue" @keyup.enter.native="dictTableSearch()"></el-input>
+								<el-input type="text" placeholder="字典编码或名称查询" v-model="searchFormData.searchTextValue" @keyup.enter.native="dictTableSearch()"></el-input>
 							</el-col>
 							<el-col :offset="1" :span="3">
 								<el-button type="primary" icon="el-icon-search" @click="dictTableSearch()" round>查询</el-button>
@@ -32,8 +32,8 @@
 				</el-table-column>
 				<el-table-column prop="dictType" align="center" label="字典类型">
 					<template slot-scope="scope">
-						<el-tag v-if="scope.row.dictType === 2" size="small" type="success">词条</el-tag>
-						<el-tag v-else size="small">条目</el-tag>
+						<el-tag v-if="scope.row.dictType === 2" size="small" type="success">业务</el-tag>
+						<el-tag v-else size="small">通用</el-tag>
 					</template>
 				</el-table-column>
 				<el-table-column prop="dictStatus" align="center" label="状态">
@@ -42,19 +42,20 @@
 						<el-tag v-else size="small">正常</el-tag>
 					</template>
 				</el-table-column>
-				<el-table-column prop="dictSequence" align="center" label="顺序">
-				</el-table-column>
-				<el-table-column prop="dictUpdateTime" align="center" label="更新时间">
+        <el-table-column prop="createTime" align="center" label="创建时间">
+        	<template slot-scope="scope">
+        		<span>{{dateFormat(scope.row.createTime)}}</span>
+        	</template>
+        </el-table-column>
+				<el-table-column prop="updateTime" align="center" label="更新时间">
 					<template slot-scope="scope">
-						<span>{{dateFormat(scope.row.dictUpdateTime)}}</span>
+						<span>{{dateFormat(scope.row.updateTime)}}</span>
 					</template>
-				</el-table-column>
-				<el-table-column prop="dictNote" align="center" label="备注">
 				</el-table-column>
 				<el-table-column label="操作" align="center" width="200">
 					<template slot-scope="scope">
-						<el-button size="mini" icon="el-icon-edit" type="primary" @click="addOrUpdateHandle(2, scope.row.dictId)" round>修改</el-button>
-						<el-button size="mini" icon="el-icon-delete" type="danger" @click="deleteHandle(scope.row)" round>删除</el-button>
+						<el-button size="mini" icon="el-icon-edit" type="primary" @click="addOrUpdateHandle(2, scope.row.dictId)" round></el-button>
+						<el-button size="mini" icon="el-icon-delete" type="danger" @click="deleteHandle(scope.row)" round></el-button>
 					</template>
 				</el-table-column>
 			</el-table>
@@ -64,6 +65,7 @@
 </template>
 
 <script>
+  import { findDictionaryTree, deleteDictionary } from '@/api/system/dict'
 	import dictionaryAddOrUpdate from './dictionary-add-or-update'
 	export default {
 		data() {
@@ -78,7 +80,7 @@
 		components: {
 			dictionaryAddOrUpdate
 		},
-		activated() {
+		mounted() {
 			this.dictDataInit()
 		},
 		methods: {
@@ -97,76 +99,44 @@
 			},
 			dictDataInit() {
 				this.dictDataList = []
-				this.$http({
-					url: this.$http.adornSystemUrl('/sys/v1/dictionary/selectDictionaryTreeByParam'),
-					method: 'get',
-					params: {
-						pid: '',
-						param: ''
-					}
-				}).then(({
-					data
-				}) => {
-					if (data) {
-						this.dictDataList = data
-						for (let i = 0; i < this.dictDataList.length; i++) {
-							if (this.dictDataList[i].leaf > 0) {
-								this.dictDataList[i].leaf = true
-							} else {
-								this.dictDataList[i].leaf = false
-							}
-						}
-					}
-				})
+        findDictionaryTree('', '').then(response => {
+          this.dictDataList = response.data
+          for (let i = 0; i < this.dictDataList.length; i++) {
+          	if (this.dictDataList[i].leaf > 0) {
+          		this.dictDataList[i].leaf = true
+          	} else {
+          		this.dictDataList[i].leaf = false
+          	}
+          }
+        })
 			},
 			load(tree, treeNode, resolve) {
-				debugger
-				this.$http({
-					url: this.$http.adornSystemUrl('/sys/v1/dictionary/selectDictionaryTreeByParam'),
-					method: 'get',
-					params: {
-						pid: tree.dictId,
-						param: ''
-					}
-				}).then(({
-					data
-				}) => {
-					if (data) {
-						for (let i = 0; i < data.length; i++) {
-							if (data[i].leaf > 0) {
-								data[i].leaf = true
-							} else {
-								data[i].leaf = false
-							}
-						}
-						setTimeout(() => {
-							resolve(data)
-						}, 1000)
-					}
-				})
+        findDictionaryTree(tree.dictId, '').then(response => {
+          const data = response.data
+          for (let i = 0; i < data.length; i++) {
+          	if (data.leaf > 0) {
+          		data.leaf = true
+          	} else {
+          		data.leaf = false
+          	}
+          }
+          setTimeout(() => {
+          	resolve(data)
+          }, 1000)
+        })
 			},
 			dictTableSearch() {
-				this.$http({
-					url: this.$http.adornSystemUrl('/sys/v1/dictionary/selectDictionaryTreeByParam'),
-					method: 'get',
-					params: {
-						pid: '',
-						param: this.searchFormData.searchTextValue
-					}
-				}).then(({
-					data
-				}) => {
-					if (data) {
-						this.dictDataList = data
-						for (let i = 0; i < this.dictDataList.length; i++) {
-							if (this.dictDataList[i].leaf > 0) {
-								this.dictDataList[i].leaf = true
-							} else {
-								this.dictDataList[i].leaf = false
-							}
-						}
-					}
-				})
+        this.dictDataList = []
+        findDictionaryTree('', this.searchFormData.searchTextValue).then(response => {
+          this.dictDataList = response.data
+          for (let i = 0; i < this.dictDataList.length; i++) {
+          	if (this.dictDataList[i].leaf > 0) {
+          		this.dictDataList[i].leaf = true
+          	} else {
+          		this.dictDataList[i].leaf = false
+          	}
+          }
+        })
 			},
 			// 新增 / 修改
 			addOrUpdateHandle(workType, id) {
@@ -174,7 +144,7 @@
 				if (workType == 1) {
 					const _selectData = this.$refs.dictTable.selection
 					if (_selectData.length > 1) {
-						this.$message('请选择一个部门下添加！！！')
+						this.$message('请选择一条数据！！！')
 						return false
 					} else if (_selectData.length == 1) {
 						id = _selectData[0].dictId
@@ -192,23 +162,13 @@
 					});
 					return false
 				} else {
-					this.$http({
-						url: this.$http.adornSystemUrl('/sys/v1/dictionary/deleteDictionaryById'),
-						method: 'delete',
-						params: {
-							dictId: rowData.dictId
-						}
-					}).then(({
-						data
-					}) => {
-						if (data) {
-							this.$message({
-								message: '删除成功',
-								type: 'success'
-							})
-							this.refreshdictTable()
-						}
-					})
+          deleteDictionary(rowData).then(response => {
+            this.$message({
+            	message: '删除成功',
+            	type: 'success'
+            })
+            this.refreshdictTable()
+          })
 				}
 			}
 		},
