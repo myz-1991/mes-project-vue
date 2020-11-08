@@ -7,7 +7,6 @@
 						<el-form-item label="">
 							<el-button type="primary" icon="el-icon-refresh" @click="refreshRoleTable()" round>刷新</el-button>
 							<el-button type="primary" icon="el-icon-plus" @click="addOrUpdateHandle()" round>增加</el-button>
-							<el-button type="danger" icon="el-icon-delete" @click="deleteHandle()" round>删除</el-button>
 						</el-form-item>
 					</el-col>
 					<el-col :offset="8" :span="8">
@@ -27,18 +26,26 @@
 			<el-table :data="dataList" size="small" ref="roleTable" border v-loading="dataListLoading" style="width: 100%;">
 				<el-table-column type="selection" header-align="center" align="center" width="50">
 				</el-table-column>
-				<el-table-column prop="roleName" header-align="center" align="center" label="角色名称">
+        <el-table-column prop="code" header-align="center" align="center" label="角色编码">
+        </el-table-column>
+				<el-table-column prop="name" header-align="center" align="center" label="角色名称">
 				</el-table-column>
-				<el-table-column prop="roleNote" header-align="center" align="center" label="备注">
+				<el-table-column prop="note" header-align="center" align="center" label="备注">
 				</el-table-column>
-				<el-table-column prop="roleUpdateTime" header-align="center" align="center" label="更新时间">
+        <el-table-column prop="createTime" header-align="center" align="center" label="创建时间">
+        	<template slot-scope="scope">
+        		<span>{{dateFormat(scope.row.createTime)}}</span>
+        	</template>
+        </el-table-column>
+				<el-table-column prop="updateTime" header-align="center" align="center" label="更新时间">
 					<template slot-scope="scope">
-						<span>{{dateFormat(scope.row.roleUpdateTime)}}</span>
+						<span>{{dateFormat(scope.row.updateTime)}}</span>
 					</template>
 				</el-table-column>
 				<el-table-column align="center" label="操作" width="200">
 					<template slot-scope="scope">
-						<el-button size="mini" icon="el-icon-s-check" type="success" @click="roleRelationHandle(scope.row.roleId)" round>授权</el-button>
+            <el-button size="mini" type="danger" icon="el-icon-delete" @click="deleteHandle(scope.row.id)" round>删除</el-button>
+						<el-button size="mini" icon="el-icon-s-check" type="success" @click="roleRelationHandle(scope.row.id)" round>授权</el-button>
 					</template>
 				</el-table-column>
 			</el-table>
@@ -54,6 +61,10 @@
 </template>
 
 <script>
+  import {
+    deleteRoleById,
+    findRolePageByParam
+  } from '@/api/system/role'
   import AddOrUpdate from './role-add-or-update'
   import roleRelation from './relation-add-or-update'
   export default {
@@ -64,19 +75,19 @@
         },
         dataList: [],
         pageIndex: 1,
-        pageSize: 10,
+        pageSize: 20,
         totalPage: 0,
         dataListLoading: false,
         dataListSelections: [],
         addOrUpdateVisible: false,
-		roleRelationVisible : false
+        roleRelationVisible : false
       }
     },
     components: {
       AddOrUpdate,
-	  roleRelation
+      roleRelation
     },
-    activated () {
+    mounted () {
       this.getDataList()
     },
     methods: {
@@ -98,24 +109,16 @@
 		// 获取数据列表
 		getDataList () {
 			this.dataListLoading = true
-			this.$http({
-				url: this.$http.adornSystemUrl('/sys/v1/role/pagedQueryRoleByParam'),
-				method: 'get',
-				params: {
-					'startIndex': (this.pageIndex - 1) * this.pageSize,
-					'pageSize': this.pageSize,
-					'param': this.dataForm.roleName
-				}
-			}).then(({data}) => {
-				if (data) {
-					this.dataList = data.data
-					this.totalPage = data.totalCount
-				} else {
-					this.dataList = []
-					this.totalPage = 0
-				}
-				this.dataListLoading = false
-			})
+      findRolePageByParam(this.dataForm.roleName, this.pageSize, this.pageIndex).then(response => {
+        if (response) {
+        	this.dataList = response.data.records
+        	this.totalPage = response.data.total
+        } else {
+        	this.dataList = []
+        	this.totalPage = 0
+        }
+        this.dataListLoading = false
+      })
 		},
 		// 每页数
 		sizeChangeHandle (val) {
@@ -143,44 +146,21 @@
 			})
 		},
 		// 删除
-		deleteHandle () {
-			debugger
-			const _selectData = this.$refs.roleTable.selection
-			let roleId = []
-			if (_selectData.length > 0) {
-				for (let i = 0; i < _selectData.length; i++) {
-					roleId.push(_selectData[i].roleId)
-				}
-			} else {
-				this.$message('请至少选择一条数据进行删除！！！')
-				return false
-			}
+		deleteHandle (id) {
 			this.$confirm('是否删除?', '提示', {
 				confirmButtonText: '确定',
 				cancelButtonText: '取消',
 				type: 'warning'
 			}).then(() => {
-				this.$http({
-					url: this.$http.adornSystemUrl('/sys/v1/role/deleteRoleById'),
-					method: 'DELETE',
-					params: {
-						roleId : roleId.join(",")
-					}
-				}).then(({
-					data
-				}) => {
-					if (data) {
-						this.$message({
-							message: '删除成功',
-							type: 'success',
-							onClose: () => {
-								this.refreshRoleTable()
-							}
-						})
-					} else {
-						this.$message.error(data.msg)
-					}
-				})
+        deleteRoleById(id).then(response => {
+          this.$message({
+          	message: '删除成功',
+          	type: 'success',
+          	onClose: () => {
+          		this.refreshRoleTable()
+          	}
+          })
+        })
 			}).catch(() => {})
 		}
     }

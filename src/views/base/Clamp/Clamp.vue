@@ -23,31 +23,35 @@
     <el-table :data="dataList" border v-loading="dataListLoading" size="small" style="width: 100%">
       <el-table-column type="selection" align="center" width="50">
       </el-table-column>
-      <el-table-column prop="mateCode" header-align="center" align="center" label="夹具编码">
+      <el-table-column prop="code" header-align="center" align="center" label="夹具编码">
       </el-table-column>
-      <el-table-column prop="mateName" header-align="center" align="center" label="夹具名称">
+      <el-table-column prop="name" header-align="center" align="center" label="夹具名称">
       </el-table-column>
-      <el-table-column prop="mateSpecifications" header-align="center" align="center" label="规格型号">
+      <el-table-column prop="model" header-align="center" align="center" label="规格型号">
       </el-table-column>
-      <el-table-column prop="mateNote" header-align="center" align="center" label="精度">
+      <el-table-column prop="accuacy" header-align="center" align="center" label="精度">
+      </el-table-column>
+      <el-table-column prop="note" header-align="center" align="center" label="备注">
       </el-table-column>
       <el-table-column align="center" label="操作" width="100" fixed="right">
         <template slot-scope="scope">
-          <el-button size="small" icon="el-icon-edit" type="primary" @click="addOrUpdateHandle('2', scope.row.mateId)"
+          <el-button size="small" icon="el-icon-edit" type="primary" @click="addOrUpdateHandle('2', scope.row.id)"
             circle></el-button>
-          <el-button size="small" icon="el-icon-delete" type="danger" @click="deleteHandle(scope.row.mateId)" circle></el-button>
+          <el-button size="small" icon="el-icon-delete" type="danger" @click="deleteHandle(scope.row)" circle></el-button>
         </template>
       </el-table-column>
     </el-table>
     <el-pagination @size-change="sizeChangeHandle" @current-change="currentChangeHandle" :current-page="pageIndex"
       :page-sizes="[10, 20, 50, 100]" :page-size="pageSize" :total="totalPage" layout="total, sizes, prev, pager, next, jumper">
     </el-pagination>
-    <fixtureAddOrUpdate v-if="addOrUpdateVisible" ref="fixtureAddOrUpdate" @refreshDataList="getDataList"></fixtureAddOrUpdate>
+    <ClampAddOrUpdate v-if="addOrUpdateVisible" ref="ClampAddOrUpdate" @refreshDataList="getDataList"></ClampAddOrUpdate>
   </div>
 </template>
 
 <script>
-  import fixtureAddOrUpdate from './fixture-add-or-update'
+  import { findClampPage, updateClamp } from '@/api/base/clamp'
+  import ClampAddOrUpdate from './Clamp-add-or-update'
+
   export default {
     data() {
       return {
@@ -64,10 +68,10 @@
       }
     },
     components: {
-      fixtureAddOrUpdate
+      ClampAddOrUpdate
     },
-    created() {
-      // this.getDataList()
+    mounted() {
+      this.getDataList()
     },
     methods: {
       dateFormat(dataValue) {
@@ -83,20 +87,11 @@
       // 获取数据列表
       getDataList() {
         this.dataListLoading = true
-        this.$http({
-          url: this.$http.adornBomUrl('/bom/v1/material/pagedQueryMaterialByParam'),
-          method: 'get',
-          params: {
-            'startIndex': (this.pageIndex - 1) * this.pageSize,
-            'pageSize': this.pageSize,
-            'param': this.dataForm.key
-          }
-        }).then(({
-          data
-        }) => {
-          if (data) {
-            this.dataList = data.data
-            this.totalPage = data.totalCount
+        findClampPage(this.dataForm.key, this.pageSize, this.pageIndex).then(response => {
+          debugger
+          if (response) {
+            this.dataList = response.data.records
+            this.totalPage = response.data.total
           } else {
             this.dataList = []
             this.totalPage = 0
@@ -119,36 +114,25 @@
       addOrUpdateHandle(workType, id) {
         this.addOrUpdateVisible = true
         this.$nextTick(() => {
-          this.$refs.fixtureAddOrUpdate.init(workType, id)
+          this.$refs.ClampAddOrUpdate.init(workType, id)
         })
       },
       // 删除
-      deleteHandle(id) {
+      deleteHandle(row) {
         this.$confirm('是否删除?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          this.$http({
-            url: this.$http.adornBomUrl('/bom/v1/material/deleteMaterialById'),
-            method: 'DELETE',
-            params: {
-              mateId: id
-            }
-          }).then(({
-            data
-          }) => {
-            if (data) {
-              this.$message({
-                message: '删除成功',
-                type: 'success',
-                onClose: () => {
-                  this.getDataList()
-                }
-              })
-            } else {
-              this.$message.error(data.msg)
-            }
+          row.readIdentifying = 2
+          updateClamp(row).then(response => {
+            this.$message({
+              message: '删除成功',
+              type: 'success',
+              onClose: () => {
+                this.getDataList()
+              }
+            })
           })
         }).catch(() => {})
       }

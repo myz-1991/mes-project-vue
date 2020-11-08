@@ -35,9 +35,9 @@ const baseRouter = {
 	  meta: { title: 'measuring', icon: 'measuring' }
 	},
 	{
-	  path: 'base-fixture',
-	  component: () => import('@/views/base/Fixture/Fixture'),
-	  name: 'Fixture',
+	  path: 'base-clamp',
+	  component: () => import('@/views/base/Clamp/Clamp'),
+	  name: 'Clamp',
 	  meta: { title: 'fixture', icon: 'fixture' }
 	},
 	// {

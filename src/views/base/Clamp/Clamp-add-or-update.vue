@@ -3,13 +3,13 @@
     <el-form ref="dataForm" :model="dataForm" size="small" label-width="80px">
       <el-row>
         <el-col :span="12">
-          <el-form-item label="量具编码" prop="code">
-            <el-input v-model="dataForm.code" placeholder="量具编码" />
+          <el-form-item label="夹具编码" prop="code">
+            <el-input v-model="dataForm.code" placeholder="夹具编码" />
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item label="量具名称" prop="name">
-            <el-input v-model="dataForm.name" placeholder="量具名称" />
+          <el-form-item label="夹具名称" prop="name">
+            <el-input v-model="dataForm.name" placeholder="夹具名称" />
           </el-form-item>
         </el-col>
       </el-row>
@@ -20,22 +20,15 @@
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item label="精度" prop="accuracy">
-            <el-input v-model="dataForm.accuracy" placeholder="精度" />
-          </el-form-item>
-        </el-col>
-      </el-row>
-      <el-row>
-        <el-col :span="12">
-          <el-form-item label="量程" prop="range">
-            <el-input v-model="dataForm.range" placeholder="量程" />
+          <el-form-item label="精度" prop="accuacy">
+            <el-input v-model="dataForm.accuacy" placeholder="精度" />
           </el-form-item>
         </el-col>
       </el-row>
       <el-row>
         <el-col :span="24">
           <el-form-item label="备注" prop="note">
-            <el-input type="textarea" rows="2" v-model="dataForm.note" placeholder="备注"></el-input>
+            <el-input type="textarea" rows="2" v-model="dataForm.note" placeholder="备注" />
           </el-form-item>
         </el-col>
       </el-row>
@@ -49,41 +42,35 @@
 
 <script>
   import {
-    saveMeasuringTool,
-    updateMeasuringTool,
-    findMeasuringToolById
-  } from '@/api/base/measuringTool'
+    saveClamp,
+    updateClamp,
+    findClampById
+  } from '@/api/base/clamp'
+
   export default {
     data() {
       return {
         visible: false,
-        mateTypeList: [],
-        mateUnitList: [],
-        mateSourceList: [],
-        mateWeightUnitList: [],
-        titleText: '量具添加',
+        titleText: '夹具添加',
         workType: 1,
         dataForm: {
-          id : '',
-          name : '',
-          code : '',
-          model : '',
-          type : '',
-          typeName : '',
-          accuracy : '',
-          range : '',
-          note : '',
+          id: '',
+          name: '',
+          code: '',
+          model: '',
+          type: '',
+          typeName: '',
+          accuacy: '',
+          note: '',
           readIdentifying : 1
         }
       }
     },
     methods: {
       init(workType, id) {
-        // this.dataForm.userId = id || 0
         this.workType = workType
         this.visible = true
         if (workType == 1) {
-          this.visible = true
           this.dataForm.id = ''
           this.dataForm.name = ''
           this.dataForm.code = ''
@@ -91,12 +78,10 @@
           this.dataForm.type = ''
           this.dataForm.typeName = ''
           this.dataForm.accuacy = ''
-          this.dataForm.range = ''
           this.dataForm.note = ''
-          this.readIdentifying = 1
         } else {
-          this.titleText = '量具修改'
-          findMeasuringToolById(id).then(response => {
+          this.titleText = '夹具修改'
+          findClampById(id).then(response => {
             this.dataForm = response.data
           })
         }
@@ -106,7 +91,7 @@
         this.$refs['dataForm'].validate((valid) => {
           if (valid) {
             if (this.workType == 1) {
-              saveMeasuringTool(this.dataForm).then(response => {
+              saveClamp(this.dataForm).then(respone => {
                 this.$message({
                   message: '操作成功',
                   type: 'success',
@@ -117,7 +102,7 @@
                 })
               })
             } else {
-              updateMeasuringTool(this.dataForm).then(response => {
+              updateClamp(this.dataForm).then(response => {
                 this.$message({
                   message: '操作成功',
                   type: 'success',

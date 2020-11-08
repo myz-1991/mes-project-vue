@@ -23,21 +23,21 @@
     <el-table :data="dataList" border v-loading="dataListLoading" size="small" style="width: 100%">
       <el-table-column type="selection" align="center" width="50">
       </el-table-column>
-      <el-table-column prop="mateCode" header-align="center" align="center" label="量具编码">
+      <el-table-column prop="code" header-align="center" align="center" label="量具编码">
       </el-table-column>
-      <el-table-column prop="mateName" header-align="center" align="center" label="量具名称">
+      <el-table-column prop="name" header-align="center" align="center" label="量具名称">
       </el-table-column>
-      <el-table-column prop="mateSpecifications" header-align="center" align="center" label="规格型号">
+      <el-table-column prop="model" header-align="center" align="center" label="规格型号">
       </el-table-column>
-      <el-table-column prop="mateSpecifications" header-align="center" align="center" label="精度">
+      <el-table-column prop="accuracy" header-align="center" align="center" label="精度">
       </el-table-column>
-      <el-table-column prop="mateSpecifications" header-align="center" align="center" label="量程">
+      <el-table-column prop="range" header-align="center" align="center" label="量程">
       </el-table-column>
       <el-table-column align="center" label="操作" width="100" fixed="right">
         <template slot-scope="scope">
-          <el-button size="small" icon="el-icon-edit" type="primary" @click="addOrUpdateHandle('2', scope.row.mateId)"
+          <el-button size="small" icon="el-icon-edit" type="primary" @click="addOrUpdateHandle('2', scope.row.id)"
             circle></el-button>
-          <el-button size="small" icon="el-icon-delete" type="danger" @click="deleteHandle(scope.row.mateId)" circle></el-button>
+          <el-button size="small" icon="el-icon-delete" type="danger" @click="deleteHandle(scope.row)" circle></el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -49,6 +49,7 @@
 </template>
 
 <script>
+  import { findMeasuringToolPage, updateMeasuringTool } from '@/api/base/measuringTool'
   import measuringAddOrUpdate from './measuring-add-or-update'
   export default {
     data() {
@@ -68,8 +69,8 @@
     components: {
       measuringAddOrUpdate
     },
-    created() {
-      //this.getDataList()
+    mounted() {
+      this.getDataList()
     },
     methods: {
       dateFormat(dataValue) {
@@ -85,20 +86,10 @@
       // 获取数据列表
       getDataList() {
         this.dataListLoading = true
-        this.$http({
-          url: this.$http.adornBomUrl('/bom/v1/material/pagedQueryMaterialByParam'),
-          method: 'get',
-          params: {
-            'startIndex': (this.pageIndex - 1) * this.pageSize,
-            'pageSize': this.pageSize,
-            'param': this.dataForm.key
-          }
-        }).then(({
-          data
-        }) => {
-          if (data) {
-            this.dataList = data.data
-            this.totalPage = data.totalCount
+        findMeasuringToolPage(this.dataForm.key, this.pageSize, this.pageIndex).then(response => {
+          if (response) {
+            this.dataList = response.data.records
+            this.totalPage = response.data.totalCount
           } else {
             this.dataList = []
             this.totalPage = 0
@@ -125,32 +116,21 @@
         })
       },
       // 删除
-      deleteHandle(id) {
+      deleteHandle(row) {
         this.$confirm('是否删除?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          this.$http({
-            url: this.$http.adornBomUrl('/bom/v1/material/deleteMaterialById'),
-            method: 'DELETE',
-            params: {
-              mateId: id
-            }
-          }).then(({
-            data
-          }) => {
-            if (data) {
-              this.$message({
-                message: '删除成功',
-                type: 'success',
-                onClose: () => {
-                  this.getDataList()
-                }
-              })
-            } else {
-              this.$message.error(data.msg)
-            }
+          row.readIdentifying = 2
+          updateMeasuringTool().then(response => {
+            this.$message({
+              message: '删除成功',
+              type: 'success',
+              onClose: () => {
+                this.getDataList()
+              }
+            })
           })
         }).catch(() => {})
       }

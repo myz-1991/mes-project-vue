@@ -47,7 +47,16 @@ module.exports = {
 					['^' + process.env.VUE_APP_BASE_API + '/system']: '/system'
 				}
 			},
-
+      [process.env.VUE_APP_BASE_API + '/base']: {
+      	//本地服务接口地址
+      	target: 'http://localhost:8083',
+      	//远程演示服务地址,可用于直接启动项目
+      	//target: 'https://saber.bladex.vip/api',
+      	changeOrigin: true,
+      	pathRewrite: {
+      		['^' + process.env.VUE_APP_BASE_API + '/base']: '/base'
+      	}
+      },
 		},
 		before: require('./mock/mock-server.js')
 	},

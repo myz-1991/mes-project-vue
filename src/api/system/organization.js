@@ -35,6 +35,13 @@ export function deleteOrganization(data) {
   })
 }
 
+export function getOrganizationTreeExpend() {
+  return request({
+    url : '/system/v1/organization/findOrganizationTreeExpend',
+    method : 'get'
+  })
+}
+
 export function findOrganizationTree(pid, param) {
   return request({
     url: '/system/v1/organization/findOrganizationTreeByParam',

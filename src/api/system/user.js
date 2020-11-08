@@ -21,6 +21,16 @@ export function getInfo(id) {
   })
 }
 
+export function getUserDetail(id) {
+  return request({
+    url : '/system/v1/user/findUserById',
+    method : 'get',
+    params : {
+      id : id
+    }
+  })
+}
+
 export function getUserInfoPage(params, current, size) {
   return request({
   	url: '/system/v1/user/findUserByParamsForPage',
@@ -37,6 +47,32 @@ export function saveUser(data) {
   return request({
     url: '/system/v1/user/insertUser',
     method: 'post',
-    data
+    data : JSON.stringify(data)
+  })
+}
+
+export function updateUser(data) {
+  return request({
+    url : '/system/v1/user/updateUser',
+    method : 'put',
+    data : JSON.stringify(data)
+  })
+}
+
+export function saveUserRoleRelation(data) {
+  return request({
+    url : '/system/v1/relation/saveUserRoleRelation',
+    method : 'post',
+    data : JSON.stringify(data)
+  })
+}
+
+export function findUserRoleRelation(userId) {
+  return request({
+    url : '/system/v1/relation/findUserRoleRelationByUserId',
+    method : 'get',
+    params : {
+      userId : userId
+    }
   })
 }

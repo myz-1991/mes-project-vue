@@ -7,8 +7,9 @@
             <el-row>
               <el-col :span="8">
                 <el-form-item label="">
-                  <el-button type="primary" icon="el-icon-refresh" round @click="refreshUserTable()">刷新</el-button>
-                  <el-button type="primary" icon="el-icon-plus" round @click="addOrUpdateHandle(1, 0)">增加</el-button>
+                  <el-button type="primary" size="small" icon="el-icon-refresh" round @click="refreshUserTable()">刷新</el-button>
+                  <el-button type="primary" size="small" icon="el-icon-plus" round @click="addOrUpdateHandle(1, 0)">增加</el-button>
+                  <el-button type="success" size="small" icon="el-icon-s-custom" round @click="allocationRole()">角色分配</el-button>
                 </el-form-item>
               </el-col>
               <el-col :offset="8" :span="8">
@@ -25,7 +26,7 @@
           </el-form>
         </el-row>
         <el-row>
-          <el-table v-loading="dataListLoading" :data="dataList" size="small" border style="width: 100%;">
+          <el-table ref="userList" v-loading="dataListLoading" :data="dataList" size="small" border style="width: 100%;">
             <el-table-column type="selection" align="center" width="50" />
             <el-table-column prop="name" align="center" label="姓名" />
             <el-table-column prop="code" align="center" label="工号" />
@@ -37,13 +38,6 @@
             </el-table-column>
             <el-table-column prop="orgName" align="center" label="所属组织" />
             <el-table-column prop="account" align="center" label="用户名" />
-            <el-table-column align="center" label="角色">
-              <template slot-scope="scope">
-                <template v-for="item in scope.row.roleNameList">
-                  <el-tag size="small" style="margin-top: 3px;">{{ item }}</el-tag>
-                </template>
-              </template>
-            </el-table-column>
             <el-table-column prop="email" align="center" label="邮箱" />
             <el-table-column prop="telephone" align="center" label="手机号" />
             <el-table-column prop="status" align="center" label="状态">
@@ -64,22 +58,16 @@
             </el-table-column>
             <el-table-column align="center" label="操作" width="200">
               <template slot-scope="scope">
-                <el-button size="mini" icon="el-icon-edit" type="primary" round @click="addOrUpdateHandle(2, scope.row)">修改</el-button>
-                <el-button size="mini" icon="el-icon-delete" type="danger" round @click="deleteHandle(scope.row.userId)">删除</el-button>
+                <el-button size="mini" icon="el-icon-edit" type="primary" round @click="addOrUpdateHandle(2, scope.row)"></el-button>
+                <el-button size="mini" icon="el-icon-video-play" type="success" round @click="updateUserStatus(scope.row, 1)"></el-button>
+                <el-button size="mini" icon="el-icon-video-pause" type="danger" round @click="updateUserStatus(scope.row, 2)"></el-button>
               </template>
             </el-table-column>
           </el-table>
         </el-row>
         <div class="pagination-container">
-          <el-pagination
-            :current-page="pageIndex"
-            :page-sizes="[10, 20, 50, 100]"
-            :page-size="pageSize"
-            :total="totalPage"
-            layout="total, sizes, prev, pager, next, jumper"
-            @size-change="sizeChangeHandle"
-            @current-change="currentChangeHandle"
-          />
+          <el-pagination :current-page="pageIndex" :page-sizes="[10, 20, 50, 100]" :page-size="pageSize" :total="totalPage"
+            layout="total, sizes, prev, pager, next, jumper" @size-change="sizeChangeHandle" @current-change="currentChangeHandle" />
         </div>
       </el-col>
     </el-row>
@@ -101,13 +89,13 @@
 
         <el-row>
           <el-col :span="12">
-            <el-form-item label="用户名:" prop="userName">
-              <el-input v-model="userDataForm.userName" placeholder="登录帐号" size="small" />
+            <el-form-item label="用户名:" prop="account">
+              <el-input v-model="userDataForm.account" placeholder="登录帐号" size="small" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="密码:" prop="passWord">
-              <el-input v-model="userDataForm.passWord" type="password" placeholder="密码" size="small" />
+            <el-form-item label="密码:" prop="password">
+              <el-input v-model="userDataForm.password" type="password" placeholder="密码" size="small" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -128,22 +116,23 @@
         <el-row>
           <el-col :span="12">
             <el-form-item label="所属组织:" prop="orgName">
-              <!-- v-model="userDataForm.orgId" -->
-              <el-select-tree
-                :value="userDataForm.orgName"
-                size="small"
-                style="width: 100%;"
-                :select-opt="option.select"
-                :tree-opt="option.tree"
-                @node-click="clickNode"
-              >
+              <el-select-tree :value="userDataForm.orgName" size="small" style="width: 100%;" :select-opt="option.select"
+                :tree-opt="option.tree" @node-click="clickNode">
                 <template v-slot:tree="{node}">
-                  <span :title="node.data.orgName">{{ node.data.orgName }}</span>
+                  <span :title="node.data.name">{{ node.data.name }}</span>
                 </template>
               </el-select-tree>
             </el-form-item>
           </el-col>
           <el-col :span="12">
+            <el-form-item label="性别:" size="small" prop="sex">
+              <el-radio-group v-model="userDataForm.sex" size="small">
+                <el-radio :label="1">男</el-radio>
+                <el-radio :label="2">女</el-radio>
+              </el-radio-group>
+            </el-form-item>
+          </el-col>
+          <!-- <el-col :span="12">
             <el-form-item label="角色分配:" prop="roleSelect">
               <el-select
                 v-model="userDataForm.roleNameSelect"
@@ -153,23 +142,15 @@
                 multiple
                 @change="((val)=>{roleChange(val, index)})"
               >
-                <el-option v-for="item in roleList" :key="item.roleId" :label="item.roleName" :value="item.roleId" />
+                <el-option v-for="item in roleList" :key="item.id" :label="item.name" :value="item.id" />
               </el-select>
             </el-form-item>
-          </el-col>
+          </el-col> -->
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item label="性别:" size="small" prop="gender">
-              <el-radio-group v-model="userDataForm.gender" size="small">
-                <el-radio :label="1">男</el-radio>
-                <el-radio :label="2">女</el-radio>
-              </el-radio-group>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="状态:" size="small" prop="stuts">
-              <el-radio-group v-model="userDataForm.stuts" size="small">
+            <el-form-item label="状态:" size="small" prop="status">
+              <el-radio-group v-model="userDataForm.status" size="small">
                 <el-radio :label="2">禁用</el-radio>
                 <el-radio :label="1">正常</el-radio>
               </el-radio-group>
@@ -182,192 +163,251 @@
         <el-button type="primary" size="small" icon="el-icon-check" round @click="dataFormSubmit()">确定</el-button>
       </span>
     </el-dialog>
+
+    <el-dialog :visible.sync="dialogRoleVisible" title="角色分配" width="30%">
+      <el-table ref="roleTable" :data="roleList" size="small" tooltip-effect="dark" style="width: 100%">
+        <el-table-column type="selection" width="55">
+        </el-table-column>
+        <el-table-column prop="name" label="角色名称">
+        </el-table-column>
+        <el-table-column prop="code" label="角色编码">
+        </el-table-column>
+      </el-table>
+      <span slot="footer" class="dialog-footer" style="text-align:right;">
+        <el-button type="danger" size="small" icon="el-icon-delete" round @click="dialogRoleVisible = false">取消</el-button>
+        <el-button type="primary" size="small" icon="el-icon-check" round @click="roleSave()">确定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { saveUser, getUserInfoPage } from '@/api/system/user'
-import ElSelectTree from '@/components/select-tree/index'
-export default {
-  components: {
-    ElSelectTree
-  },
-  data() {
-    return {
-      dataForm: {
-        searchTextValue: ''
-      },
-      dialogVisible: false,
-      dialogType: 'add',
-      dataList: [],
-      pageIndex: 1,
-      pageSize: 20,
-      totalPage: 0,
-      dataListLoading: false,
-      dataListSelections: [],
-      addOrUpdateVisible: false,
-      roleList: [],
-      option: {
-        select: {
-          filterable: true,
-          clearable: true
+  import {
+    saveUser,
+    getUserInfoPage,
+    getUserDetail,
+    updateUser,
+    saveUserRoleRelation,
+    findUserRoleRelation
+  } from '@/api/system/user'
+  import {
+    getOrganizationTreeExpend
+  } from '@/api/system/organization'
+  import {
+    getRoleList
+  } from '@/api/system/role'
+  import ElSelectTree from '@/components/select-tree/index'
+  export default {
+    components: {
+      ElSelectTree
+    },
+    data() {
+      return {
+        dataForm: {
+          searchTextValue: ''
         },
-        tree: {
-          highlightCurrent: true,
-          data: [],
-          expandOnClickNode: true,
-          nodeKey: 'orgId',
-          props: {},
-          indent: 10,
-          valueKey: 'orgId',
-          displayKey: 'orgName',
-          showCheckbox: false
+        dialogRoleVisible : false,
+        dialogVisible: false,
+        dialogType: 'add',
+        dataList: [],
+        pageIndex: 1,
+        pageSize: 20,
+        totalPage: 0,
+        dataListLoading: false,
+        dataListSelections: [],
+        addOrUpdateVisible: false,
+        roleList: [],
+        selectUserId : '',
+        option: {
+          select: {
+            filterable: true,
+            clearable: true
+          },
+          tree: {
+            highlightCurrent: true,
+            data: [],
+            expandOnClickNode: true,
+            nodeKey: 'id',
+            props: {},
+            indent: 10,
+            valueKey: 'id',
+            displayKey: 'name',
+            showCheckbox: false
+          }
+        },
+        userDataForm: {
+          id: 0,
+          name: '',
+          code: '',
+          account: '',
+          password: '',
+          email: '',
+          telephone: '',
+          sex: 1,
+          status: 1,
+          orgId: '',
+          orgName: '',
+          roleSelect: [],
+          roleNameSelect: []
+        }
+      }
+    },
+    mounted() {
+      this.getDataList()
+    },
+    methods: {
+      dateFormat(dataValue) {
+        var date = new Date(dataValue) // 时间戳为10位需*1000，时间戳为13位的话不需乘1000
+        var Y = date.getFullYear() + '-'
+        var M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '-'
+        var D = (date.getDate() < 10 ? '0' + date.getDate() : date.getDate()) + ' '
+        var h = (date.getHours() < 10 ? '0' + date.getHours() : date.getHours()) + ':'
+        var m = (date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes()) + ':'
+        var s = (date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds())
+        return Y + M + D + h + m + s
+      },
+      refreshUserTable() {
+        this.getDataList()
+      },
+      // 获取数据列表
+      getDataList() {
+        this.dataListLoading = true
+        getUserInfoPage(this.dataForm.searchTextValue, this.pageIndex, this.pageSize).then(response => {
+          this.dataListLoading = false
+          debugger
+          const {
+            data
+          } = response
+          this.dataList = data.records
+          this.totalPage = data.total
+        })
+      },
+      // 每页数
+      sizeChangeHandle(val) {
+        this.pageSize = val
+        this.pageIndex = 1
+        this.getDataList()
+      },
+      // 当前页
+      currentChangeHandle(val) {
+        this.pageIndex = val
+        this.getDataList()
+      },
+      clickNode(data, node, treeNode) {
+        this.userDataForm.orgId = data.id
+        this.userDataForm.orgName = data.name
+      },
+      updateUserStatus(row, type) {
+        row.status = type
+        updateUser(row).then(res => {
+          this.dialogVisible = false
+          this.$message({
+            message: '操作成功',
+            type: 'success',
+            duration: 1000,
+            onClose: () => {
+              this.refreshUserTable()
+            }
+          })
+        })
+      },
+      allocationRole() {
+        this.roleList = []
+        	const _selectData = this.$refs.userList.selection
+        	if (_selectData.length != 1) {
+        		this.$message('请选择一个用户！！！')
+        		return false
+        	} else if (_selectData.length == 1) {
+        		this.selectUserId = _selectData[0].id
+        	}
+          this.dialogRoleVisible = true
+          getRoleList('').then(response => {
+            this.roleList = response.data
+            findUserRoleRelation(this.selectUserId).then(respond => {
+              let checkRole = respond.data
+              for (let i = 0; i < this.roleList.length; i++) {
+                for (let j = 0; j < checkRole.length; j++) {
+                  if (this.roleList[i].id == checkRole[j].roleId) {
+                    this.$refs.roleTable.toggleRowSelection(this.roleList[i]);
+                  }
+                }
+              }
+            })
+          })
+      },
+      // 新增 / 修改
+      addOrUpdateHandle(workType, row) {
+        this.dialogType = 'add'
+        this.dialogVisible = true
+        getOrganizationTreeExpend().then(resp => {
+          this.option.tree.data = resp.data
+        })
+        if (workType == 2) {
+          this.dialogType = 'edit'
+          getUserDetail(row.id).then(response => {
+            this.userDataForm = response.data
+
+          })
         }
       },
-      userDataForm: {
-        userId: 0,
-        name: '',
-        code: '',
-        userName: '',
-        passWord: '',
-        email: '',
-        telephone: '',
-        gender: 1,
-        stuts: 1,
-        orgId: '',
-        orgName: '',
-        roleSelect: [],
-        roleNameSelect: []
-      }
-    }
-  },
-  mounted() {
-    this.getDataList()
-  },
-  methods: {
-    dateFormat(dataValue) {
-      var date = new Date(dataValue) // 时间戳为10位需*1000，时间戳为13位的话不需乘1000
-      var Y = date.getFullYear() + '-'
-      var M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '-'
-      var D = (date.getDate() < 10 ? '0' + date.getDate() : date.getDate()) + ' '
-      var h = (date.getHours() < 10 ? '0' + date.getHours() : date.getHours()) + ':'
-      var m = (date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes()) + ':'
-      var s = (date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds())
-      return Y + M + D + h + m + s
-    },
-    refreshUserTable() {
-      this.getDataList()
-    },
-    // 获取数据列表
-    getDataList() {
-      this.dataListLoading = true
-      getUserInfoPage(this.dataForm.searchTextValue, this.pageIndex, this.pageSize).then(response => {
-        this.dataListLoading = false
-        debugger
-        const { data } = response
-        this.dataList = data.records
-        this.totalPage = data.total
-      })
-      // this.$http({
-      // 	url: this.$http.adornSystemUrl('/sys/v1/user/selectUserByParam'),
-      // 	method: 'get',
-      // 	params: {
-      // 		'startIndex': (this.pageIndex - 1) * this.pageSize,
-      // 		'pageSize': this.pageSize,
-      // 		'param': this.dataForm.searchTextValue
-      // 	}
-      // }).then(({
-      // data
-      // }) => {
-      // 	if (data) {
-      // 		let userData = []
-      // 		for (let i in data.data) {
-      // 			let roleNameList = []
-      // 			let roleIdList = []
-      // 			if (data.data[i].roleName != null) {
-      // 				if (data.data[i].roleName.indexOf(',') > 0) {
-      // 					roleNameList = data.data[i].roleName.split(',')
-      // 					roleIdList = data.data[i].roleId.split(',')
-      // 				} else {
-      // 					roleNameList.push(data.data[i].roleName)
-      // 					roleIdList.push(data.data[i].roleId)
-      // 				}
-      // 				data.data[i].roleNameList = roleNameList
-      // 				data.data[i].roleIdList = roleIdList
-      // 			}
-      // 			userData.push(data.data[i])
-      // 		}
-      // 		this.dataList = userData
-      // 		this.totalPage = data.totalCount
-      // 	} else {
-      // 		this.dataList = []
-      // 		this.totalPage = 0
-      // 	}
-      // 	this.dataListLoading = false
-      // })
-    },
-    // 每页数
-    sizeChangeHandle(val) {
-      this.pageSize = val
-      this.pageIndex = 1
-      this.getDataList()
-    },
-    // 当前页
-    currentChangeHandle(val) {
-      this.pageIndex = val
-      this.getDataList()
-    },
-    // 新增 / 修改
-    addOrUpdateHandle(workType, row) {
-      this.dialogType = 'add'
-      this.dialogVisible = true
-      // this.$nextTick(() => {
-      // 	this.$refs.userAddOrUpdate.init(workType, row)
-      // })
-    },
-    // 删除
-    deleteHandle(id) {
-      this.$confirm('是否删除?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        this.$http({
-          url: this.$http.adornSystemUrl('/sys/v1/user/deleteUserById'),
-          method: 'DELETE',
-          params: {
-            userId: id
+      roleSave(){
+        const _selectData = this.$refs.roleTable.selection
+        const relations = new Array();
+        if (_selectData.length < 1) {
+        	this.$message('请选择一个用户！！！')
+        	return false
+        } else {
+          for (let i = 0; i < _selectData.length; i++) {
+            let id = _selectData[i].id
+            let relation = {
+              userId : this.selectUserId,
+              roleId : id
+            }
+            relations.push(relation);
           }
-        }).then(({
-          data
-        }) => {
-          if (data) {
+          saveUserRoleRelation(relations).then(response => {
+            this.dialogRoleVisible = false
             this.$message({
-              message: '删除成功',
+              message: '操作成功',
+              type: 'success',
+              duration: 1000,
+              onClose: () => {
+                this.refreshUserTable()
+              }
+            })
+          })
+        }
+      },
+      // 删除
+      dataFormSubmit() {
+        const isEdit = this.dialogType === 'edit'
+        if (isEdit) {
+          updateUser(this.userDataForm).then(res => {
+            this.dialogVisible = false
+            this.$message({
+              message: '操作成功',
+              type: 'success',
+              duration: 1000,
+              onClose: () => {
+                this.refreshUserTable()
+              }
+            })
+          })
+        } else {
+          saveUser(this.userDataForm).then(res => {
+            this.dialogVisible = false
+            this.$message({
+              message: '操作成功',
               type: 'success',
               onClose: () => {
                 this.refreshUserTable()
               }
             })
-          } else {
-            this.$message.error(data.msg)
-          }
-        })
-      }).catch(() => {})
-    },
-    dataFormSubmit() {
-      const isEdit = this.dialogType === 'edit'
-      if (isEdit) {
-        alert(123123)
-      } else {
-        saveUser(this.userDataForm).then(res => {
-          debugger
-          this.dialogVisible = false
-        })
+          })
+        }
       }
     }
   }
-}
 </script>
 
 <style>

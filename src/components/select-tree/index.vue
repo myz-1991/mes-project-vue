@@ -1,7 +1,7 @@
 <template>
-  <el-select ref="select" :value="selectVal" class="el-select-tree" size="small" popper-class="el-select-tree-dropdown" v-bind="selectOpt" :multiple="multiple" value-key="label" @clear="clear" @remove-tag="removeTag">
+  <el-select ref="select" :value="selectVal" class="el-select-tree" size="mini" popper-class="el-select-tree-dropdown" v-bind="selectOpt" :multiple="multiple" value-key="label" @clear="clear" @remove-tag="removeTag">
     <el-option style="display:none" value="0" />
-    <el-tree ref="tree" size="small" v-bind="treeOpt" @check="handleTreeCheckChange" @node-click="clickNode">
+    <el-tree ref="tree" size="mini" v-bind="treeOpt" @check="handleTreeCheckChange" @node-click="clickNode">
       <span slot-scope="{ node, data }">
         <slot name="tree" v-bind="{node,data}">
           <span :title="node.label">{{ node.label }}</span>
