@@ -236,7 +236,7 @@
           }
         },
         userDataForm: {
-          id: 0,
+          id: '',
           name: '',
           code: '',
           account: '',
@@ -246,9 +246,7 @@
           sex: 1,
           status: 1,
           orgId: '',
-          orgName: '',
-          roleSelect: [],
-          roleNameSelect: []
+          orgName: ''
         }
       }
     },
@@ -342,6 +340,18 @@
         getOrganizationTreeExpend().then(resp => {
           this.option.tree.data = resp.data
         })
+        
+        this.userDataForm.id = ''
+        this.userDataForm.name = ''
+        this.userDataForm.code = ''
+        this.userDataForm.account = ''
+        this.userDataForm.password = ''
+        this.userDataForm.email = ''
+        this.userDataForm.telephone = ''
+        this.userDataForm.sex = 1
+        this.userDataForm.status = 1
+        this.userDataForm.orgId = ''
+        this.userDataForm.orgName = ''
         if (workType == 2) {
           this.dialogType = 'edit'
           getUserDetail(row.id).then(response => {

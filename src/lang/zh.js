@@ -78,7 +78,7 @@ export default {
     equipment: '设备主数据',
     bom: 'BOM管理',
     relation: 'BOM结构',
-    processRoute: '工艺路线',
+    processRoute: '工艺版本',
     process: '工序管理',
     factoryModeling: '工厂建模',
     production: '生产单元',

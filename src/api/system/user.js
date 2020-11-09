@@ -76,3 +76,13 @@ export function findUserRoleRelation(userId) {
     }
   })
 }
+
+export function findUserList(param) {
+	return request({
+		url : '/system/v1/user/findUserList',
+		method : 'get',
+		params : {
+			param : param
+		}
+	})
+}

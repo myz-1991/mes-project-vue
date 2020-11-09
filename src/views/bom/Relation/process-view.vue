@@ -49,21 +49,21 @@
     methods: {
       init(id) {
         this.visible = true
-          this.dataListLoading = true
-          this.$http({
-            url: this.$http.adornBomUrl('/bom/v1/version/selectProcessVersionParam'),
-            method: 'get',
-            params: {
-              mateId : id
-            }
-          }).then(({
-            data
-          }) => {
-            if (data) {
-              this.processRouteList = data
-            }
-            this.dataListLoading = false
-          })
+          // this.dataListLoading = true
+          // this.$http({
+          //   url: this.$http.adornBomUrl('/bom/v1/version/selectProcessVersionParam'),
+          //   method: 'get',
+          //   params: {
+          //     mateId : id
+          //   }
+          // }).then(({
+          //   data
+          // }) => {
+          //   if (data) {
+          //     this.processRouteList = data
+          //   }
+          //   this.dataListLoading = false
+          // })
       },
       dataTimeFormat(dataValue) {
         var date = new Date(dataValue);//时间戳为10位需*1000，时间戳为13位的话不需乘1000

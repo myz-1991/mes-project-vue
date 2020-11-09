@@ -12,10 +12,10 @@
 					<el-col :offset="8" :span="8">
 						<el-form-item label="">
 							<el-col :span="18">
-								<el-input type="text" size="small" v-model="searchFormData.searchTextValue" placeholder="物料编码或名称查询" @keyup.enter.native="orgTableSearch()"></el-input>
+								<el-input type="text" size="small" v-model="searchFormData.searchTextValue" placeholder="物料编码或名称查询"></el-input>
 							</el-col>
 							<el-col :offset="1" :span="3">
-								<el-button type="primary" size="small" icon="el-icon-search" @click="orgTableSearch()" round>查询</el-button>
+								<el-button type="primary" size="small" icon="el-icon-search" @click="refreshMateTable()" round>查询</el-button>
 							</el-col>
 						</el-form-item>
 					</el-col>
@@ -23,92 +23,82 @@
 			</el-form>
 		</el-row>
 		<el-row>
-			<el-table ref="relationTable" :data="relationDataList" size="small" style="width: 100%" row-key="mateId" border lazy :load="load" :tree-props="{children: 'children', hasChildren: 'leaf'}">
+			<el-table ref="relationTable" :data="relationDataList" size="small" style="width: 100%" row-key="mateId" border lazy
+			 :load="load" :tree-props="{children: 'children', hasChildren: 'leaf'}">
 				<el-table-column type="selection" width="55">
 				</el-table-column>
 				<el-table-column prop="mateName" label="物料名称" width="180">
 				</el-table-column>
 				<el-table-column prop="mateCode" align="center" label="物料编码">
 				</el-table-column>
-				<el-table-column prop="mateTypeName" align="center" label="物料类型">
+				<el-table-column prop="mateSpecifications" align="center" label="规格型号">
 				</el-table-column>
-				<el-table-column prop="relaSingleNum" align="center" label="单套数量">
+				<el-table-column prop="singleNum" align="center" label="单套数量">
 				</el-table-column>
-				<el-table-column prop="relaUnitName" align="center" label="单位">
+				<el-table-column prop="unitName" align="center" label="单位">
 				</el-table-column>
-				<el-table-column prop="relaUpdateTime" align="center" label="更新时间">
+				<el-table-column prop="updateTime" align="center" label="更新时间">
 					<template slot-scope="scope">
-						<span>{{dateFormat(scope.row.relaUpdateTime)}}</span>
+						<span>{{dateFormat(scope.row.updateTime)}}</span>
 					</template>
 				</el-table-column>
 
 				<el-table-column label="操作" align="center" fixed="right">
 					<template slot-scope="scope">
 						<el-button size="mini" icon="el-icon-edit" type="primary" @click="addOrUpdateHandle(2, scope.row)" circle></el-button>
-            <el-button size="mini" icon="el-icon-view" type="success" @click="processViewHandle(scope.row.mateId)" circle></el-button>
+						<el-button size="mini" icon="el-icon-view" type="success" @click="processViewHandle(scope.row.mateId)" circle></el-button>
 						<el-button size="mini" icon="el-icon-delete" type="danger" @click="deleteHandle(scope.row)" circle></el-button>
 					</template>
 				</el-table-column>
 			</el-table>
 		</el-row>
 		<relationAddOrUpdate v-if="addOrUpdateVisible" ref="relationAddOrUpdate" @refreshDataList="refreshMateTable"></relationAddOrUpdate>
-    <processView v-if="processViewVisible" ref="processView" @refreshDataList="refreshMateTable"></processView>
-  </div>
+		<processView v-if="processViewVisible" ref="processView" @refreshDataList="refreshMateTable"></processView>
+	</div>
 </template>
 
 <script>
 	import relationAddOrUpdate from './relation-add-or-update'
-  import processView from './process-view'
+	import processView from './process-view'
+	import { findRelationTree } from '@/api/bom/relation'
 
 	export default {
 		data() {
 			return {
 				relationDataList: [],
 				addOrUpdateVisible: false,
-        processViewVisible : false,
-				searchFormData : {
-					searchTextValue : ''
+				processViewVisible: false,
+				searchFormData: {
+					searchTextValue: ''
 				}
 			}
 		},
 		components: {
 			relationAddOrUpdate,
-      processView
+			processView
 		},
-		activated() {
+		mounted() {
 			this.relationDataInit()
 		},
 		methods: {
-      mouseOver() {
-        alert(1234)
-      },
 			dateFormat(dataValue) {
-				var date = new Date(dataValue);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
+				var date = new Date(dataValue); //时间戳为10位需*1000，时间戳为13位的话不需乘1000
 				var Y = date.getFullYear() + '-';
-				var M = (date.getMonth()+1 < 10 ? '0'+(date.getMonth()+1) : date.getMonth()+1) + '-';
-				var D = (date.getDate() < 10 ? '0'+date.getDate() : date.getDate()) + ' ';
-				var h = (date.getHours() < 10 ? '0'+date.getHours() : date.getHours()) + ':';
-				var m = (date.getMinutes() < 10 ? '0'+date.getMinutes() : date.getMinutes()) + ':';
-				var s = (date.getSeconds() < 10 ? '0'+date.getSeconds() : date.getSeconds());
-				return Y+M+D+h+m+s;
+				var M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '-';
+				var D = (date.getDate() < 10 ? '0' + date.getDate() : date.getDate()) + ' ';
+				var h = (date.getHours() < 10 ? '0' + date.getHours() : date.getHours()) + ':';
+				var m = (date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes()) + ':';
+				var s = (date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds());
+				return Y + M + D + h + m + s;
 			},
 			refreshMateTable() {
 				this.relationDataInit()
 			},
 			relationDataInit() {
 				this.relationDataList = []
-				this.$http({
-					url: this.$http.adornBomUrl('/bom/v1/relaton/selectBomTreeByParam'),
-					method: 'get',
-					params: {
-						pid: '',
-						param: ''
-					}
-				}).then(({
-					data
-				}) => {
-					if (data) {
-						this.relationDataList = data
+				findRelationTree('', this.searchFormData.searchTextValue).then(response => {
+					if (response) {
+						this.relationDataList = response.data
 						for (let i = 0; i < this.relationDataList.length; i++) {
 							if (this.relationDataList[i].leaf > 0) {
 								this.relationDataList[i].leaf = true
@@ -120,18 +110,9 @@
 				})
 			},
 			load(tree, treeNode, resolve) {
-				debugger
-				this.$http({
-					url: this.$http.adornBomUrl('/bom/v1/relaton/selectBomTreeByParam'),
-					method: 'get',
-					params: {
-						pid: tree.mateId,
-						param: ''
-					}
-				}).then(({
-					data
-				}) => {
-					if (data) {
+				findRelationTree(tree.mateId, this.searchFormData.searchTextValue).then(response => {
+					if (response) {
+						let data = response.data
 						for (let i = 0; i < data.length; i++) {
 							if (data[i].leaf > 0) {
 								data[i].leaf = true
@@ -173,18 +154,25 @@
 				this.addOrUpdateVisible = true
 				if (workType == 1) {
 					const _selectData = this.$refs.relationTable.selection
+					if (_selectData.length > 1) {
+						this.$message({
+							message: '请选择一条数据！',
+							type: 'warning'
+						})
+						return false;
+					}
 					row = _selectData[0]
 				}
 				this.$nextTick(() => {
 					this.$refs.relationAddOrUpdate.init(workType, row)
 				})
 			},
-      processViewHandle(id) {
-        this.processViewVisible = true
-        this.$nextTick(() => {
-        	this.$refs.processView.init(id)
-        })
-      },
+			processViewHandle(id) {
+				this.processViewVisible = true
+				this.$nextTick(() => {
+					this.$refs.processView.init(id)
+				})
+			},
 			deleteHandle(rowData) {
 				if (rowData.leaf) {
 					this.$message({

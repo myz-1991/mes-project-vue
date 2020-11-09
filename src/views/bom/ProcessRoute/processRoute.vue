@@ -11,7 +11,7 @@
 			  	<el-col :offset="8" :span="8">
 			  		<el-form-item label="">
 			  			<el-col :span="18">
-			  				<el-input type="text" v-model="dataForm.key" placeholder="物料编码或名称查询" @keyup.enter.native="getDataList()"></el-input>
+			  				<el-input type="text" v-model="dataForm.key" placeholder="工艺版本编码或名称查询" @keyup.enter.native="getDataList()"></el-input>
 			  			</el-col>
 			  			<el-col :offset="1" :span="3">
 			  				<el-button type="primary" icon="el-icon-search" @click="getDataList()" round>查询</el-button>
@@ -23,44 +23,40 @@
 		  <el-table ref="processsTable" size="small" :data="dataList" border v-loading="dataListLoading" style="width: 100%">
 			  <el-table-column type="selection" align="center" width="50">
 			  </el-table-column>
-		    <el-table-column prop="mateCode" header-align="center" align="center" label="物料编码">
-		    </el-table-column>
-			<el-table-column prop="mateName" header-align="center" align="center" label="物料名称">
+			<el-table-column prop="name" header-align="center" align="center" label="工艺版本名称">
 			</el-table-column>
-			<el-table-column prop="provName" header-align="center" align="center" label="工艺路线名称">
+			<el-table-column prop="code" header-align="center" align="center" label="工艺版本编码">
 			</el-table-column>
-			<el-table-column prop="provCode" header-align="center" align="center" label="工艺路线编码">
+			<el-table-column prop="designerName" header-align="center" align="center" label="设计者">
 			</el-table-column>
-			<el-table-column prop="provDesigner" header-align="center" align="center" label="设计者">
-			</el-table-column>
-			<el-table-column prop="provDesignDate" header-align="center" align="center" label="定版时间">
+			<el-table-column prop="designDate" header-align="center" align="center" label="定版时间">
 				<template slot-scope="scope">
-					<span>{{dateFormat(scope.row.provDesignDate)}}</span>
+					<span>{{dateFormat(scope.row.designDate)}}</span>
 				</template>
 			</el-table-column>
-			<el-table-column prop="provRevieweder" header-align="center" align="center" label="审核者">
+			<el-table-column prop="reviewerName" header-align="center" align="center" label="审核者">
 			</el-table-column>
-			<el-table-column prop="provReviewedDate" header-align="center" align="center" label="审核时间">
+			<el-table-column prop="reviewDate" header-align="center" align="center" label="审核时间">
 				<template slot-scope="scope">
-					<span>{{dateFormat(scope.row.provReviewedDate)}}</span>
+					<span>{{dateFormat(scope.row.reviewDate)}}</span>
 				</template>
 			</el-table-column>
-			<el-table-column prop="provStutas" header-align="center" align="center" label="状态">
+			<el-table-column prop="status" header-align="center" align="center" label="状态">
 				<template slot-scope="scope">
-					<el-tag v-if="scope.row.provStutas === 2" size="small" type="danger">禁用</el-tag>
+					<el-tag v-if="scope.row.status === 2" size="small" type="danger">禁用</el-tag>
 					<el-tag v-else size="small">正常</el-tag>
 				</template>
 			</el-table-column>
-			<el-table-column prop="provUpdateTime" header-align="center" align="center" label="更新时间">
+			<el-table-column prop="updateTime" header-align="center" align="center" label="更新时间">
 				<template slot-scope="scope">
-					<span>{{dataTimeFormat(scope.row.provUpdateTime)}}</span>
+					<span>{{dataTimeFormat(scope.row.updateTime)}}</span>
 				</template>
 			</el-table-column>
 			<el-table-column align="center" label="操作" width="150">
 				<template slot-scope="scope">
-					<el-button size="small" icon="el-icon-edit" type="primary" @click="addOrUpdateHandle('2', scope.row.mateId)" circle></el-button>
-          <el-button size="mini" icon="el-icon-view" type="success" @click="processViewOpen(1, scope.row.provId)" circle></el-button>
-					<el-button size="small" icon="el-icon-delete" type="danger" @click="deleteHandle(scope.row.mateId)" circle></el-button>
+					<el-button size="small" icon="el-icon-edit" type="primary" @click="addOrUpdateHandle('2', scope.row.id)" circle></el-button>
+          <el-button size="mini" icon="el-icon-view" type="success" @click="processViewOpen(1, scope.row)" circle></el-button>
+					<el-button size="small" icon="el-icon-delete" type="danger" @click="deleteHandle(scope.row)" circle></el-button>
 				</template>
 			</el-table-column>
 		</el-table>
@@ -75,6 +71,7 @@
 <script>
 	import processAddOrUpdate from './processRoute-add-or-update'
 	import processView from './process-view'
+	import { findProcessVersionPage, updateProcessVersion } from '@/api/bom/version'
 	export default {
 	  data () {
 	    return {
@@ -95,8 +92,8 @@
 		processAddOrUpdate,
 		processView
 	  },
-	  created () {
-	    //this.getDataList()
+	  mounted () {
+	    this.getDataList()
 	  },
 	  methods: {
 		dateFormat(dataValue) {
@@ -119,24 +116,16 @@
 	    // 获取数据列表
 	    getDataList () {
 	      this.dataListLoading = true
-	      this.$http({
-	        url: this.$http.adornBomUrl('/bom/v1/version/pagedQueryProcessVersionByParam'),
-	        method: 'get',
-	        params: {
-			  'startIndex': (this.pageIndex - 1) * this.pageSize,
-			  'pageSize': this.pageSize,
-			  'param' : this.dataForm.key
-	        }
-	      }).then(({data}) => {
-	        if (data) {
-	          this.dataList = data.data
-	          this.totalPage = data.totalCount
-	        } else {
-	          this.dataList = []
-	          this.totalPage = 0
-	        }
-	        this.dataListLoading = false
-	      })
+		  findProcessVersionPage(this.dataForm.key, this.pageSize, this.pageIndex).then(response => {
+			  if (response) {
+			    this.dataList = response.data.records
+			    this.totalPage = response.data.totalCount
+			  } else {
+			    this.dataList = []
+			    this.totalPage = 0
+			  }
+			  this.dataListLoading = false
+		  })
 	    },
 	    // 每页数
 	    sizeChangeHandle (val) {
@@ -163,33 +152,22 @@
 			})
 		},
 		// 删除
-		deleteHandle(id) {
-			this.$confirm('是否删除?', '提示', {
+		deleteHandle(row) {
+			this.$confirm('是否禁用?', '提示', {
 				confirmButtonText: '确定',
 				cancelButtonText: '取消',
 				type: 'warning'
 			}).then(() => {
-				this.$http({
-					url: this.$http.adornBomUrl('/bom/v1/material/deleteMaterialById'),
-					method: 'DELETE',
-					params: {
-						mateId : id
-					}
-				}).then(({
-					data
-				}) => {
-					if (data) {
-						this.$message({
-							message: '删除成功',
-							type: 'success',
-							onClose: () => {
-								this.getDataList()
-							}
-						})
-					} else {
-						this.$message.error(data.msg)
-					}
-				})
+        row.status = 2
+        updateProcessVersion(row).then(response => {
+          this.$message({
+          	message: '操作成功',
+          	type: 'success',
+          	onClose: () => {
+          		this.getDataList()
+          	}
+          })
+        })
 			}).catch(() => {})
 		}
 	  }
