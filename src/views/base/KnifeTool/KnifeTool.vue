@@ -142,6 +142,3 @@
 		}
 	}
 </script>
-
-<style>
-</style>
