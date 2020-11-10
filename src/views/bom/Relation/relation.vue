@@ -45,27 +45,34 @@
 
 				<el-table-column label="操作" align="center" fixed="right">
 					<template slot-scope="scope">
-						<el-button size="mini" icon="el-icon-edit" type="primary" @click="addOrUpdateHandle(2, scope.row)" circle></el-button>
-						<el-button size="mini" icon="el-icon-view" type="success" @click="processViewHandle(scope.row.mateId)" circle></el-button>
-						<el-button size="mini" icon="el-icon-delete" type="danger" @click="deleteHandle(scope.row)" circle></el-button>
+						<el-tooltip class="item" effect="dark" content="修改" placement="top-start">
+						      <el-button size="mini" icon="el-icon-edit" type="primary" @click="addOrUpdateHandle(2, scope.row)" circle></el-button>
+						</el-tooltip>
+						<el-tooltip class="item" effect="dark" content="分配工艺" placement="top-start">
+							<el-button size="mini" icon="el-icon-share" type="success" @click="processViewHandle(scope.row.mateId)" circle></el-button>
+						</el-tooltip>
+						<el-tooltip class="item" effect="dark" content="删除" placement="top-start">
+							<el-button size="mini" icon="el-icon-delete" type="danger" @click="deleteHandle(scope.row)" circle></el-button>
+						</el-tooltip>
 					</template>
 				</el-table-column>
 			</el-table>
 		</el-row>
 		<relationAddOrUpdate v-if="addOrUpdateVisible" ref="relationAddOrUpdate" @refreshDataList="refreshMateTable"></relationAddOrUpdate>
-		<processView v-if="processViewVisible" ref="processView" @refreshDataList="refreshMateTable"></processView>
+		<addProcessRoute v-if="addVisible" ref="addProcessRoute" @refreshDataList="refreshMateTable"></addProcessRoute>
 	</div>
 </template>
 
 <script>
 	import relationAddOrUpdate from './relation-add-or-update'
-	import processView from './process-view'
-	import { findRelationTree } from '@/api/bom/relation'
+	import addProcessRoute from './add-processRoute'
+	import { findRelationTree, deleteRelation } from '@/api/bom/relation'
 
 	export default {
 		data() {
 			return {
 				relationDataList: [],
+				addVisible : false,
 				addOrUpdateVisible: false,
 				processViewVisible: false,
 				searchFormData: {
@@ -75,7 +82,7 @@
 		},
 		components: {
 			relationAddOrUpdate,
-			processView
+			addProcessRoute
 		},
 		mounted() {
 			this.relationDataInit()
@@ -168,9 +175,9 @@
 				})
 			},
 			processViewHandle(id) {
-				this.processViewVisible = true
+				this.addVisible = true
 				this.$nextTick(() => {
-					this.$refs.processView.init(id)
+					this.$refs.addProcessRoute.init(id)
 				})
 			},
 			deleteHandle(rowData) {
@@ -181,22 +188,12 @@
 					});
 					return false
 				} else {
-					this.$http({
-						url: this.$http.adornBomUrl('/bom/v1/relaton/deleteBomRelationById'),
-						method: 'delete',
-						params: {
-							relaId: rowData.relaId
-						}
-					}).then(({
-						data
-					}) => {
-						if (data) {
-							this.$message({
-								message: '删除成功',
-								type: 'success'
-							})
-							this.refreshMateTable()
-						}
+					deleteRelation(rowData.id).then(response => {
+						this.$message({
+							message: '删除成功',
+							type: 'success'
+						})
+						this.refreshMateTable()
 					})
 				}
 			}

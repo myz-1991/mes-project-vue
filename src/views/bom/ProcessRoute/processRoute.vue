@@ -54,9 +54,15 @@
 			</el-table-column>
 			<el-table-column align="center" label="操作" width="150">
 				<template slot-scope="scope">
-					<el-button size="small" icon="el-icon-edit" type="primary" @click="addOrUpdateHandle('2', scope.row.id)" circle></el-button>
-          <el-button size="mini" icon="el-icon-view" type="success" @click="processViewOpen(1, scope.row)" circle></el-button>
-					<el-button size="small" icon="el-icon-delete" type="danger" @click="deleteHandle(scope.row)" circle></el-button>
+					<el-tooltip class="item" effect="dark" content="修改" placement="top-start">
+					    <el-button size="small" icon="el-icon-edit" type="primary" @click="addOrUpdateHandle('2', scope.row.id)" circle></el-button>
+					</el-tooltip>
+					<el-tooltip class="item" effect="dark" content="设置工序" placement="top-start">
+						<el-button size="mini" icon="el-icon-setting" type="success" @click="processViewOpen(1, scope.row)" circle></el-button>
+					</el-tooltip>
+					<el-tooltip class="item" effect="dark" content="禁用" placement="top-start">
+						<el-button size="small" icon="el-icon-delete" type="danger" @click="deleteHandle(scope.row)" circle></el-button>
+					</el-tooltip>
 				</template>
 			</el-table-column>
 		</el-table>
@@ -76,14 +82,15 @@
 	  data () {
 	    return {
 	      dataForm: {
-	        key: ''
+	        key: '',
+			id : ''
 	      },
 		  processViewVisible : false,
 		  addOrUpdateVisible : false,
 	      dataList: [],
 	      pageIndex: 1,
 	      pageSize: 10,
-	      totalPage: 0,
+	      totalPage: 1,
 	      dataListLoading: false,
 	      selectionDataList: []
 	    }
@@ -93,6 +100,7 @@
 		processView
 	  },
 	  mounted () {
+		this.dataForm.id = this.$route.params.id
 	    this.getDataList()
 	  },
 	  methods: {
@@ -116,7 +124,8 @@
 	    // 获取数据列表
 	    getDataList () {
 	      this.dataListLoading = true
-		  findProcessVersionPage(this.dataForm.key, this.pageSize, this.pageIndex).then(response => {
+		  findProcessVersionPage(this.dataForm.id, this.dataForm.key, this.pageSize, this.pageIndex).then(response => {
+			  debugger
 			  if (response) {
 			    this.dataList = response.data.records
 			    this.totalPage = response.data.totalCount
