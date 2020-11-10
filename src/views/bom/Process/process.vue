@@ -10,7 +10,7 @@
         <el-col :offset="8" :span="8">
           <el-form-item label="">
             <el-col :span="18">
-              <el-input type="text" v-model="dataForm.key" placeholder="工艺路线编码或名称查询" @keyup.enter.native="getDataList()"></el-input>
+              <el-input type="text" v-model="dataForm.key" placeholder="工序编码或名称查询" @keyup.enter.native="getDataList()"></el-input>
             </el-col>
             <el-col :offset="1" :span="3">
               <el-button type="primary" icon="el-icon-search" @click="getDataList()" round>查询</el-button>
@@ -22,41 +22,37 @@
     <el-table ref="processsTable" size="small" :data="dataList" border v-loading="dataListLoading" style="width: 100%">
       <el-table-column type="selection" align="center" width="50">
       </el-table-column>
-      <el-table-column prop="provName" header-align="center" align="center" label="工艺路线名称" width="100">
+      <el-table-column prop="code" header-align="center" align="center" label="工序号">
       </el-table-column>
-      <el-table-column prop="provCode" header-align="center" align="center" label="工艺路线编码" width="100">
+      <el-table-column prop="name" header-align="center" align="center" label="工序名称">
       </el-table-column>
-      <el-table-column prop="procCode" header-align="center" align="center" label="工序号">
+      <el-table-column prop="sequence" header-align="center" align="center" label="顺序号">
       </el-table-column>
-      <el-table-column prop="procName" header-align="center" align="center" label="工序名称">
+      <el-table-column prop="actualPrepareTime" header-align="center" align="center" label="实际准备时间" width="100">
       </el-table-column>
-      <el-table-column prop="procSequence" header-align="center" align="center" label="顺序号">
+      <el-table-column prop="actualMakeTime" header-align="center" align="center" label="实际加工时间" width="100">
       </el-table-column>
-      <el-table-column prop="procActualPreparetime" header-align="center" align="center" label="实际准备时间" width="100">
+      <el-table-column prop="actualEndTime" header-align="center" align="center" label="实际结束时间" width="100">
       </el-table-column>
-      <el-table-column prop="procActualmakeTime" header-align="center" align="center" label="实际加工时间" width="100">
+      <el-table-column prop="normPrepareTime" header-align="center" align="center" label="定额准备时间" width="100">
       </el-table-column>
-      <el-table-column prop="procActualEndTime" header-align="center" align="center" label="实际结束时间" width="100">
+      <el-table-column prop="normMakeTime" header-align="center" align="center" label="定额加工时间" width="100">
       </el-table-column>
-      <el-table-column prop="procQuotaPreparetime" header-align="center" align="center" label="定额准备时间" width="100">
+      <el-table-column prop="normEndTime" header-align="center" align="center" label="定额结束时间" width="100">
       </el-table-column>
-      <el-table-column prop="procQuotamaketime" header-align="center" align="center" label="定额加工时间" width="100">
-      </el-table-column>
-      <el-table-column prop="procQuotaendtime" header-align="center" align="center" label="定额结束时间" width="100">
-      </el-table-column>
-      <el-table-column prop="procImportantStutas" header-align="center" align="center" label="是否重要工序" width="100">
+      <el-table-column prop="key" header-align="center" align="center" label="是否重要工序" width="100">
         <template slot-scope="scope">
-          <el-tag v-if="scope.row.procImportantStutas === 2" size="small" type="danger">否</el-tag>
+          <el-tag v-if="scope.row.key === 2" size="small" type="danger">否</el-tag>
           <el-tag v-else size="small">是</el-tag>
         </template>
       </el-table-column>
-      <el-table-column prop="procTimeUnitName" header-align="center" align="center" label="时间单位">
+      <el-table-column prop="timeUnitName" header-align="center" align="center" label="时间单位">
       </el-table-column>
-      <el-table-column prop="procProductionTypeName" header-align="center" align="center" label="工序类型">
+      <el-table-column prop="productTypeName" header-align="center" align="center" label="工序类型">
       </el-table-column>
-      <el-table-column prop="procWorkcontent" header-align="center" align="center" label="加工内容">
+      <el-table-column prop="note" header-align="center" align="center" label="加工内容">
       </el-table-column>
-      <el-table-column align="center" label="操作" width="150" fixed="right">
+      <!-- <el-table-column align="center" label="操作" width="150" fixed="right">
         <template slot-scope="scope">
           <el-dropdown size="small">
             <el-button type="primary" size="small">操作
@@ -71,7 +67,7 @@
             </el-dropdown-menu>
           </el-dropdown>
         </template>
-      </el-table-column>
+      </el-table-column> -->
     </el-table>
     <el-pagination @size-change="sizeChangeHandle" @current-change="currentChangeHandle" :current-page="pageIndex"
       :page-sizes="[10, 20, 50, 100]" :page-size="pageSize" :total="totalPage" layout="total, sizes, prev, pager, next, jumper">
@@ -84,6 +80,7 @@
 </template>
 
 <script>
+  import { findProcessPage } from '@/api/bom/process'
   import processAddOrUpdate from './process-add-or-update'
   import materielsDetailedList from './materiels-detailed-list'
   import productionRelation from './production-relation'
@@ -94,6 +91,7 @@
         dataForm: {
           key: ''
         },
+        procId : null,
         materielsDetailedListVisible: false,
         addOrUpdateVisible: false,
         isShow: false,
@@ -113,8 +111,9 @@
       productionRelation,
       checkRequirementAdd
     },
-    created() {
-      //this.getDataList()
+    mounted() {
+      this.procId = this.$route.params.id
+      this.getDataList()
     },
     methods: {
       dateFormat(dataValue) {
@@ -137,20 +136,10 @@
       // 获取数据列表
       getDataList() {
         this.dataListLoading = true
-        this.$http({
-          url: this.$http.adornBomUrl('/bom/v1/process/selectProcessForPage'),
-          method: 'get',
-          params: {
-            'startIndex': (this.pageIndex - 1) * this.pageSize,
-            'pageSize': this.pageSize,
-            'param': this.dataForm.key
-          }
-        }).then(({
-          data
-        }) => {
-          if (data) {
-            this.dataList = data.data
-            this.totalPage = data.totalCount
+        findProcessPage(this.procId, '', this.dataForm.key, this.pageSize, this.pageIndex).then(response => {
+          if (response) {
+            this.dataList = response.data.records
+            this.totalPage = response.data.total
           } else {
             this.dataList = []
             this.totalPage = 0
