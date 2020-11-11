@@ -29,14 +29,14 @@
             :data="orgDataList"
             size="small"
             style="width: 100%"
-            row-key="orgId"
+            row-key="id"
             border
             lazy
             :load="load"
             :tree-props="{children: 'children', hasChildren: 'leaf'}"
             @row-click="orgRowClick"
           >
-            <el-table-column prop="orgName" label="部门名称" align="center" width="250" />
+            <el-table-column prop="name" label="部门名称" width="250" />
             <!-- <el-table-column prop="orgCode" align="center" label="部门编码">
             </el-table-column> -->
           </el-table>
@@ -72,13 +72,19 @@
           </el-form>
           <el-table v-loading="dataListLoading" :data="dataList" border size="small" style="width: 100%">
             <el-table-column type="selection" align="center" width="50" />
-            <el-table-column prop="mateCode" header-align="center" align="center" label="设备编码" />
-            <el-table-column prop="mateName" header-align="center" align="center" label="设备名称" />
-            <el-table-column prop="" header-align="center" align="center" label="固定资产编码" />
-            <el-table-column prop="mateSpecifications" header-align="center" align="center" label="规格型号" />
-            <el-table-column prop="mateNote" header-align="center" align="center" label="设备类型" />
-            <el-table-column prop="mateNote" header-align="center" align="center" label="设备描述" />
-            <el-table-column prop="mateNote" header-align="center" align="center" label="状态" />
+            <el-table-column prop="code" header-align="center" align="center" label="设备编码" />
+            <el-table-column prop="name" header-align="center" align="center" label="设备名称" />
+            <el-table-column prop="fixedCode" header-align="center" align="center" label="固定资产编码" />
+            <el-table-column prop="model" header-align="center" align="center" label="规格型号" />
+            <el-table-column prop="typeName" header-align="center" align="center" label="设备类型" />
+            <el-table-column prop="note" header-align="center" align="center" label="设备描述" />
+            <el-table-column prop="status" header-align="center" align="center" label="状态">
+              <template slot-scope="scope">
+                <el-tag v-if="scope.row.status === 3" size="small" type="warning">维修</el-tag>
+              	<el-tag v-if="scope.row.status === 2" size="small" type="danger">停机</el-tag>
+              	<el-tag v-else size="small">运行</el-tag>
+              </template>
+            </el-table-column>
             <el-table-column align="center" label="操作" width="100" fixed="right">
               <template slot-scope="scope">
                 <el-button
@@ -116,6 +122,8 @@
 </template>
 
 <script>
+  import { findOrganizationTree } from '@/api/system/organization'
+  import { deleteEquipment, pageEquipmentByParam} from '@/api/base/equipment'
 import equipmentAddOrUpdate from './equipment-add-or-update'
 export default {
   components: {
@@ -139,8 +147,8 @@ export default {
       selectionDataList: []
     }
   },
-  created() {
-    // this.getDataList()
+  mounted() {
+    this.getDataList()
   },
   methods: {
     dateFormat(dataValue) {
@@ -156,25 +164,49 @@ export default {
     // 获取数据列表
     getDataList() {
       this.dataListLoading = true
-      this.$http({
-        url: this.$http.adornBomUrl('/bom/v1/material/pagedQueryMaterialByParam'),
-        method: 'get',
-        params: {
-          'startIndex': (this.pageIndex - 1) * this.pageSize,
-          'pageSize': this.pageSize,
-          'param': this.dataForm.key
+      this.initOrgTree()
+      this.initEquipment('')
+    },
+    initOrgTree() {
+      findOrganizationTree().then(response => {
+        this.orgDataList = response.data
+        for (let i = 0; i < this.orgDataList.length; i++) {
+          if (this.orgDataList[i].leaf > 0) {
+            this.orgDataList[i].leaf = true
+          } else {
+            this.orgDataList[i].leaf = false
+          }
         }
-      }).then(({
-        data
-      }) => {
-        if (data) {
-          this.dataList = data.data
-          this.totalPage = data.totalCount
+      })
+    },
+    initEquipment(id) {
+      pageEquipmentByParam(this.dataForm.key, id, this.pageSize, this.pageIndex).then(response => {
+        if (response) {
+          this.dataList = response.data.records
+          this.totalPage = response.data.total / this.pageSize
         } else {
           this.dataList = []
           this.totalPage = 0
         }
         this.dataListLoading = false
+      })
+    },
+    orgRowClick(row) {
+      this.initEquipment(row.id)
+    },
+    load(tree, treeNode, resolve) {
+      findOrganizationTree(tree.id, '').then(response => {
+        const data = response.data
+        for (let i = 0; i < data.length; i++) {
+          if (data[i].leaf > 0) {
+            data[i].leaf = true
+          } else {
+            data[i].leaf = false
+          }
+        }
+        setTimeout(() => {
+          	resolve(data)
+        }, 1000)
       })
     },
     // 每页数
