@@ -28,16 +28,16 @@
       <el-row>
         <el-col :span="12">
           <el-form-item label="设备类型" prop="type">
-            <el-select v-model="dataForm.type" placeholder="请选择" style="width: 100%;" @change="((val)=>{mateTypeChange(val, index)})">
-              <el-option v-for="item in mateTypeList" :key="item.dictCode" :label="item.dictName" :value="item.dictCode">
+            <el-select v-model="dataForm.type" placeholder="请选择" style="width: 100%;" @change="((val)=>{typeChange(val, index)})">
+              <el-option v-for="item in typeList" :key="item.dictCode" :label="item.dictName" :value="item.dictCode">
               </el-option>
             </el-select>
           </el-form-item>
         </el-col>
         <el-col :span="12">
           <el-form-item label="状态" prop="status">
-            <el-select v-model="dataForm.status" placeholder="请选择" style="width: 100%;" @change="((val)=>{mateUnitChange(val, index)})">
-              <el-option v-for="item in mateUnitList" :key="item.dictCode" :label="item.dictName" :value="item.dictCode">
+            <el-select v-model="dataForm.status" placeholder="请选择" style="width: 100%;">
+              <el-option v-for="item in statusList" :key="item.dictCode" :label="item.dictName" :value="item.dictCode">
               </el-option>
             </el-select>
           </el-form-item>
@@ -60,14 +60,25 @@
 
 <script>
   import { findEquipmentById, updateEquipment, saveEquipment } from '@/api/base/equipment'
+  import { findDictionaryByCode } from '@/api/system/dict'
   export default {
     data() {
       return {
         visible: false,
-        mateTypeList: [],
-        mateUnitList: [],
-        mateSourceList: [],
-        mateWeightUnitList: [],
+        typeList: [],
+        statusList: [{
+            dictCode: 1,
+            dictName: '运行'
+          },
+          {
+            dictCode: 2,
+            dictName: '停机'
+          },
+          {
+            dictCode : 3,
+            dictName : '维修'
+          }
+        ],
         titleText: '设备添加',
         workType: 1,
         dataForm: {
@@ -86,10 +97,10 @@
       }
     },
     methods: {
-      init(workType, id) {
+      init(workType, id, row) {
         //this.dataForm.userId = id || 0
         this.workType = workType
-
+        this.initTypeList()
         if (workType == 1) {
           this.visible = true
           this.dataForm.id = ''
@@ -101,8 +112,8 @@
           this.dataForm.typeName = ''
           this.dataForm.status = 1
           this.dataForm.note = ''
-          this.dataForm.orgId = ''
-          this.dataForm.orgName = ''
+          this.dataForm.orgId = row.id
+          this.dataForm.orgName = row.name
         } else {
           this.titleText = '设备修改'
           findEquipmentById(id).then(response => {
@@ -111,139 +122,24 @@
           })
         }
       },
-      initMateWeightUnitList() {
-        this.$http({
-          url: this.$http.adornSystemUrl('/sys/v1/dictionary/selectDictionaryByParentCode'),
-          method: 'get',
-          params: {
-            dictCode: 'BASE.WeightUnit'
-          }
-        }).then(({
-          data
-        }) => {
-          if (data) {
-            this.mateWeightUnitList = data
-          }
+      initTypeList() {
+        findDictionaryByCode('BASE.EQUIPMENT.TYPE.').then(response => {
+          this.typeList = response.data
         })
       },
-      mateWeightUnitChange(val) {
+      typeChange(val) {
         let obj = {};
-        obj = this.mateWeightUnitList.find((item) => {
+        obj = this.typeList.find((item) => {
           return item.dictCode === val;
         });
-        this.dataForm.mateWeightUnitName = obj.dictName
-      },
-      // 初始化物料类型可选项
-      initMateTypeList() {
-        this.$http({
-          url: this.$http.adornSystemUrl('/sys/v1/dictionary/selectDictionaryByParentCode'),
-          method: 'get',
-          params: {
-            dictCode: 'materiel_type'
-          }
-        }).then(({
-          data
-        }) => {
-          if (data) {
-            this.mateTypeList = data
-          }
-        })
-      },
-      mateTypeChange(val) {
-        let obj = {};
-        obj = this.mateTypeList.find((item) => {
-          return item.dictCode === val;
-        });
-        this.dataForm.mateTypeName = obj.dictName
-      },
-      // 初始化物料类型可选项
-      initMateUnitList() {
-        this.$http({
-          url: this.$http.adornSystemUrl('/sys/v1/dictionary/selectDictionaryByParentCode'),
-          method: 'get',
-          params: {
-            dictCode: 'unit'
-          }
-        }).then(({
-          data
-        }) => {
-          if (data) {
-            this.mateUnitList = data
-          }
-        })
-      },
-      mateUnitChange(val) {
-        let obj = {};
-        obj = this.mateUnitList.find((item) => {
-          return item.dictCode === val;
-        });
-        this.dataForm.mateUnitName = obj.dictName
-      },
-      mateAuxiliaryUnitChange(val) {
-        let obj = {};
-        obj = this.mateUnitList.find((item) => {
-          return item.dictCode === val;
-        });
-        this.dataForm.mateAuxiliaryUnitName = obj.dictName
-      },
-      // 初始化物料类型可选项
-      initMateSourceList() {
-        this.$http({
-          url: this.$http.adornSystemUrl('/sys/v1/dictionary/selectDictionaryByParentCode'),
-          method: 'get',
-          params: {
-            dictCode: 'mateSource'
-          }
-        }).then(({
-          data
-        }) => {
-          if (data) {
-            this.mateSourceList = data
-          }
-        })
-      },
-      mateSourceChange(val) {
-        debugger
-        let obj = {};
-        obj = this.mateSourceList.find((item) => {
-          return item.dictCode === val;
-        });
-        this.dataForm.mateSourceName = obj.dictName
+        this.dataForm.typeName = obj.dictName
       },
       // 表单提交
       dataFormSubmit() {
         this.$refs['dataForm'].validate((valid) => {
           if (valid) {
             if (this.workType == 1) {
-              this.$http({
-                url: this.$http.adornBomUrl('/bom/v1/material/insertMaterial'),
-                method: 'post',
-                data: this.$http.adornData({
-                  mateName: this.dataForm.mateName,
-                  mateCode: this.dataForm.mateCode,
-                  mateSpecifications: this.dataForm.mateSpecifications,
-                  mateDesignNumber: this.dataForm.mateDesignNumber,
-                  mateType: this.dataForm.mateType,
-                  mateTypeName: this.dataForm.mateTypeName,
-                  mateUnit: this.dataForm.mateUnit,
-                  mateUnitName: this.dataForm.mateUnitName,
-                  mateSource: this.dataForm.mateSource,
-                  mateSourceName: this.dataForm.mateSourceName,
-                  mateNote: this.dataForm.mateNote,
-                  mateSize: this.dataForm.mateSize,
-                  mateBrand: this.dataForm.mateBrand,
-                  mateFurnaceNumber: this.dataForm.mateFurnaceNumber,
-                  mateNetWeight: this.dataForm.mateNetWeight,
-                  mateGrossWeight: this.dataForm.mateGrossWeight,
-                  mateWeightUnit: this.dataForm.mateWeightUnit,
-                  mateWeightUnitName: this.dataForm.mateWeightUnitName,
-                  mateTexture: this.dataForm.mateTexture,
-                  mateAuxiliaryUnit: this.dataForm.mateAuxiliaryUnit,
-                  mateAuxiliaryUnitName: this.dataForm.mateAuxiliaryUnitName
-                })
-              }).then(({
-                data
-              }) => {
+              saveEquipment(this.dataForm).then(response => {
                 this.$message({
                   message: '操作成功',
                   type: 'success',
@@ -254,36 +150,8 @@
                 })
               })
             } else {
-              this.$http({
-                url: this.$http.adornBomUrl('/bom/v1/material/updateMaterialById'),
-                method: 'put',
-                data: this.$http.adornData({
-                  mateId: this.dataForm.mateId,
-                  mateName: this.dataForm.mateName,
-                  mateCode: this.dataForm.mateCode,
-                  mateSpecifications: this.dataForm.mateSpecifications,
-                  mateDesignNumber: this.dataForm.mateDesignNumber,
-                  mateType: this.dataForm.mateType,
-                  mateTypeName: this.dataForm.mateTypeName,
-                  mateUnit: this.dataForm.mateUnit,
-                  mateUnitName: this.dataForm.mateUnitName,
-                  mateSource: this.dataForm.mateSource,
-                  mateSourceName: this.dataForm.mateSourceName,
-                  mateNote: this.dataForm.mateNote,
-                  mateSize: this.dataForm.mateSize,
-                  mateBrand: this.dataForm.mateBrand,
-                  mateFurnaceNumber: this.dataForm.mateFurnaceNumber,
-                  mateNetWeight: this.dataForm.mateNetWeight,
-                  mateGrossWeight: this.dataForm.mateGrossWeight,
-                  mateWeightUnit: this.dataForm.mateWeightUnit,
-                  mateWeightUnitName: this.dataForm.mateWeightUnitName,
-                  mateTexture: this.dataForm.mateTexture,
-                  mateAuxiliaryUnit: this.dataForm.mateAuxiliaryUnit,
-                  mateAuxiliaryUnitName: this.dataForm.mateAuxiliaryUnitName
-                })
-              }).then(({
-                data
-              }) => {
+              debugger
+              updateEquipment(this.dataForm).then(response => {
                 this.$message({
                   message: '操作成功',
                   type: 'success',
@@ -294,7 +162,6 @@
                 })
               })
             }
-
           }
         })
       }

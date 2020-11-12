@@ -81,7 +81,7 @@
             <el-table-column prop="status" header-align="center" align="center" label="状态">
               <template slot-scope="scope">
                 <el-tag v-if="scope.row.status === 3" size="small" type="warning">维修</el-tag>
-              	<el-tag v-if="scope.row.status === 2" size="small" type="danger">停机</el-tag>
+              	<el-tag v-else-if="scope.row.status === 2" size="small" type="danger">停机</el-tag>
               	<el-tag v-else size="small">运行</el-tag>
               </template>
             </el-table-column>
@@ -92,14 +92,14 @@
                   icon="el-icon-edit"
                   type="primary"
                   circle
-                  @click="addOrUpdateHandle('2', scope.row.mateId)"
+                  @click="addOrUpdateHandle('2', scope.row.id)"
                 />
                 <el-button
                   size="small"
                   icon="el-icon-delete"
                   type="danger"
                   circle
-                  @click="deleteHandle(scope.row.mateId)"
+                  @click="deleteHandle(scope.row)"
                 />
               </template>
             </el-table-column>
@@ -138,6 +138,7 @@ export default {
       dataForm: {
         key: ''
       },
+      orgData : null,
       addOrUpdateVisible: false,
       dataList: [],
       pageIndex: 1,
@@ -192,6 +193,7 @@ export default {
       })
     },
     orgRowClick(row) {
+      this.orgData = row
       this.initEquipment(row.id)
     },
     load(tree, treeNode, resolve) {
@@ -224,36 +226,24 @@ export default {
     addOrUpdateHandle(workType, id) {
       this.addOrUpdateVisible = true
       this.$nextTick(() => {
-        this.$refs.equipmentAddOrUpdate.init(workType, id)
+        this.$refs.equipmentAddOrUpdate.init(workType, id, this.orgData)
       })
     },
     // 删除
-    deleteHandle(id) {
+    deleteHandle(row) {
       this.$confirm('是否删除?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        this.$http({
-          url: this.$http.adornBomUrl('/bom/v1/material/deleteMaterialById'),
-          method: 'DELETE',
-          params: {
-            mateId: id
-          }
-        }).then(({
-          data
-        }) => {
-          if (data) {
-            this.$message({
-              message: '删除成功',
-              type: 'success',
-              onClose: () => {
-                this.getDataList()
-              }
-            })
-          } else {
-            this.$message.error(data.msg)
-          }
+        deleteEquipment(row.id).then(response => {
+          this.$message({
+            message: '删除成功',
+            type: 'success',
+            onClose: () => {
+              this.getDataList()
+            }
+          })
         })
       }).catch(() => {})
     }
