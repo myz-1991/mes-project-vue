@@ -6,7 +6,7 @@
           <el-form-item label="">
             <el-button type="primary" size="small" icon="el-icon-refresh" @click="getDataList()" round>刷新</el-button>
             <el-button type="primary" size="small" icon="el-icon-plus" @click="addOrUpdateHandle(1, 0)" round>增加</el-button>
-			<el-button type="primary" size="small" icon="el-icon-setting" @click="calendarSettingOpen" round>日历设置</el-button>
+            <el-button type="primary" size="small" icon="el-icon-setting" @click="calendarSettingOpen" round>日历设置</el-button>
           </el-form-item>
         </el-col>
       </el-row>
@@ -14,45 +14,71 @@
     <el-table :data="dataList" border v-loading="dataListLoading" size="small" style="width: 100%">
       <el-table-column type="selection" align="center" width="50">
       </el-table-column>
-      <el-table-column prop="mateCode" header-align="center" align="center" label="编码">
+      <el-table-column prop="name" header-align="center" align="center" label="名称">
       </el-table-column>
-      <el-table-column prop="mateName" header-align="center" align="center" label="名称">
+      <el-table-column prop="workStartPeriod" header-align="center" align="center" label="开始周期">
+        <template slot-scope="scope">
+          <el-tag v-if="scope.row.workStartPeriod === 1" size="small">星期一</el-tag>
+          <el-tag v-else-if="scope.row.workStartPeriod === 2" size="small">星期二</el-tag>
+          <el-tag v-else-if="scope.row.workStartPeriod === 3" size="small">星期三</el-tag>
+          <el-tag v-else-if="scope.row.workStartPeriod === 4" size="small">星期四</el-tag>
+          <el-tag v-else-if="scope.row.workStartPeriod === 5" size="small">星期五</el-tag>
+          <el-tag v-else-if="scope.row.workStartPeriod === 6" size="small">星期六</el-tag>
+          <el-tag v-else size="small">星期日</el-tag>
+        </template>
       </el-table-column>
-      <el-table-column prop="" header-align="center" align="center" label="开始日期">
+      <el-table-column prop="workEndPeriod" header-align="center" align="center" label="结束周期">
+        <template slot-scope="scope">
+          <el-tag v-if="scope.row.workEndPeriod === 1" size="small">星期一</el-tag>
+          <el-tag v-else-if="scope.row.workEndPeriod === 2" size="small">星期二</el-tag>
+          <el-tag v-else-if="scope.row.workEndPeriod === 3" size="small">星期三</el-tag>
+          <el-tag v-else-if="scope.row.workEndPeriod === 4" size="small">星期四</el-tag>
+          <el-tag v-else-if="scope.row.workEndPeriod === 5" size="small">星期五</el-tag>
+          <el-tag v-else-if="scope.row.workEndPeriod === 6" size="small">星期六</el-tag>
+          <el-tag v-else size="small">星期日</el-tag>
+        </template>
       </el-table-column>
-      <el-table-column prop="mateSpecifications" header-align="center" align="center" label="结束日期">
+      <el-table-column prop="frequency" header-align="center" align="center" label="班次">
+        <template slot-scope="scope">
+          <el-tag v-if="scope.row.frequency === 1" size="small">一班</el-tag>
+          <el-tag v-else-if="scope.row.frequency === 2" size="small">两班</el-tag>
+          <el-tag v-else-if="scope.row.frequency === 3" size="small">三班</el-tag>
+          <el-tag v-else size="small" type="danger">休息</el-tag>
+        </template>
       </el-table-column>
-      <el-table-column prop="mateNote" header-align="center" align="center" label="班次数量">
+      <el-table-column header-align="center" align="center" label="第一班上班时间">
+        <template slot-scope="scope">
+          <span v-if="scope.row.frequency >= 1">{{scope.row.firstStartTime}} - {{scope.row.firstEndTime}}</span>
+        </template>
       </el-table-column>
-      <el-table-column prop="mateNote" header-align="center" align="center" label="开始时间">
+      <el-table-column header-align="center" align="center" label="第二班上班时间">
+        <template slot-scope="scope">
+          <span v-if="scope.row.frequency >= 2">{{scope.row.secondStartTime}} - {{scope.row.secondEndTime}}</span>
+        </template>
       </el-table-column>
-      <el-table-column prop="mateNote" header-align="center" align="center" label="结束时间">
-      </el-table-column>
-      <el-table-column prop="mateNote" header-align="center" align="center" label="开始时间">
-      </el-table-column>
-      <el-table-column prop="mateNote" header-align="center" align="center" label="结束时间">
-      </el-table-column>
-      <el-table-column prop="mateNote" header-align="center" align="center" label="开始时间">
-      </el-table-column>
-      <el-table-column prop="mateNote" header-align="center" align="center" label="结束时间">
+      <el-table-column header-align="center" align="center" label="第三班上班时间">
+        <template slot-scope="scope">
+          <span v-if="scope.row.frequency >= 3">{{scope.row.thirdStartTime}} - {{scope.row.thirdEndTime}}</span>
+        </template>
       </el-table-column>
       <el-table-column align="center" label="操作" width="100" fixed="right">
         <template slot-scope="scope">
-          <el-button size="small" icon="el-icon-edit" type="primary" @click="addOrUpdateHandle('2', scope.row.mateId)"
+          <el-button size="small" icon="el-icon-edit" type="primary" @click="addOrUpdateHandle('2', scope.row.id)"
             circle></el-button>
-          <el-button size="small" icon="el-icon-delete" type="danger" @click="deleteHandle(scope.row.mateId)" circle></el-button>
+          <el-button size="small" icon="el-icon-delete" type="danger" @click="deleteHandle(scope.row.id)" circle></el-button>
         </template>
       </el-table-column>
     </el-table>
-    <el-pagination @size-change="sizeChangeHandle" @current-change="currentChangeHandle" :current-page="pageIndex"
-      :page-sizes="[10, 20, 50, 100]" :page-size="pageSize" :total="totalPage" layout="total, sizes, prev, pager, next, jumper">
-    </el-pagination>
     <frequencyAddOrUpdate v-if="addOrUpdateVisible" ref="frequencyAddOrUpdate" @refreshDataList="getDataList"></frequencyAddOrUpdate>
-	<calendarSetting v-if="calendarSettingVisible" ref="calendarSetting" @refreshDataList="getDataList"></calendarSetting>
+    <calendarSetting v-if="calendarSettingVisible" ref="calendarSetting" @refreshDataList="getDataList"></calendarSetting>
   </div>
 </template>
 
 <script>
+  import {
+    deleteFrequency,
+    listFrequencyByParam
+  } from '@/api/calendar/frequency'
   import frequencyAddOrUpdate from './frequency-add-or-update'
   import calendarSetting from './calendar-setting'
   export default {
@@ -62,21 +88,18 @@
           key: ''
         },
         addOrUpdateVisible: false,
-		calendarSettingVisible : false,
+        calendarSettingVisible: false,
         dataList: [],
-        pageIndex: 1,
-        pageSize: 10,
-        totalPage: 0,
         dataListLoading: false,
         selectionDataList: []
       }
     },
     components: {
       frequencyAddOrUpdate,
-	  calendarSetting
+      calendarSetting
     },
-    created() {
-      // this.getDataList()
+    mounted() {
+       this.getDataList()
     },
     methods: {
       dateFormat(dataValue) {
@@ -92,44 +115,17 @@
       // 获取数据列表
       getDataList() {
         this.dataListLoading = true
-        this.$http({
-          url: this.$http.adornBomUrl('/bom/v1/material/pagedQueryMaterialByParam'),
-          method: 'get',
-          params: {
-            'startIndex': (this.pageIndex - 1) * this.pageSize,
-            'pageSize': this.pageSize,
-            'param': this.dataForm.key
-          }
-        }).then(({
-          data
-        }) => {
-          if (data) {
-            this.dataList = data.data
-            this.totalPage = data.totalCount
-          } else {
-            this.dataList = []
-            this.totalPage = 0
-          }
+        listFrequencyByParam(this.dataForm.key).then(response => {
           this.dataListLoading = false
+          this.dataList = response.data
         })
       },
-      // 每页数
-      sizeChangeHandle(val) {
-        this.pageSize = val
-        this.pageIndex = 1
-        this.getDataList()
+      calendarSettingOpen() {
+        this.calendarSettingVisible = true
+        this.$nextTick(() => {
+          this.$refs.calendarSetting.init()
+        })
       },
-      // 当前页
-      currentChangeHandle(val) {
-        this.pageIndex = val
-        this.getDataList()
-      },
-	  calendarSettingOpen() {
-		  this.calendarSettingVisible = true
-		  this.$nextTick(() => {
-		    this.$refs.calendarSetting.init()
-		  })
-	  },
       // 新增 / 修改
       addOrUpdateHandle(workType, id) {
         this.addOrUpdateVisible = true
@@ -144,26 +140,14 @@
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          this.$http({
-            url: this.$http.adornBomUrl('/bom/v1/material/deleteMaterialById'),
-            method: 'DELETE',
-            params: {
-              mateId: id
-            }
-          }).then(({
-            data
-          }) => {
-            if (data) {
-              this.$message({
-                message: '删除成功',
-                type: 'success',
-                onClose: () => {
-                  this.getDataList()
-                }
-              })
-            } else {
-              this.$message.error(data.msg)
-            }
+          deleteFrequency(id).then(response => {
+            this.$message({
+              message: '删除成功',
+              type: 'success',
+              onClose: () => {
+                this.getDataList()
+              }
+            })
           })
         }).catch(() => {})
       }

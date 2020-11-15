@@ -22,6 +22,12 @@ const smeltingRouter = {
     name: 'SmeltingStock',
     meta: { title: 'smeltingStock', icon: 'stock' }
   },
+  {
+    path: 'semlting-crucible',
+    component: () => import('@/views/smelting/crucible/crucible'),
+    name: 'Crucible',
+    meta: { title: 'crucible', icon: 'stock' }
+  }
   ]
 }
 export default smeltingRouter

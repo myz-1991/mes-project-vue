@@ -92,7 +92,8 @@ export default {
     smeltingStock: '原料库存',
 		quality : '质量管理',
 		qualityTask: '检验任务',
-		qualityHistory : '检验历史记录'
+		qualityHistory : '检验历史记录',
+    crucible : '坩锅管理'
   },
   navbar: {
     dashboard: '首页',

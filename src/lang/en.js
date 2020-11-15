@@ -90,6 +90,7 @@ export default {
     smelting : 'Smelting Manage',
     smeltingTask : 'Smelting Task',
     smeltingStock: 'Smelting Stock',
+    crucible : 'Crucible Manage',
 		quality : 'Quality Manage',
 		qualityTask: 'Quality Task',
 		qualityHistory: 'Quality History'

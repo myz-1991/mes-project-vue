@@ -67,6 +67,26 @@ module.exports = {
 					['^' + process.env.VUE_APP_BASE_API + '/bom']: '/bom'
 				}
 			},
+      [process.env.VUE_APP_BASE_API + '/calendar']: {
+      	//本地服务接口地址
+      	target: 'http://localhost:8085',
+      	//远程演示服务地址,可用于直接启动项目
+      	//target: 'https://saber.bladex.vip/api',
+      	changeOrigin: true,
+      	pathRewrite: {
+      		['^' + process.env.VUE_APP_BASE_API + '/calendar']: '/calendar'
+      	}
+      },
+      [process.env.VUE_APP_BASE_API + '/smelt']: {
+      	//本地服务接口地址
+      	target: 'http://localhost:8086',
+      	//远程演示服务地址,可用于直接启动项目
+      	//target: 'https://saber.bladex.vip/api',
+      	changeOrigin: true,
+      	pathRewrite: {
+      		['^' + process.env.VUE_APP_BASE_API + '/smelt']: '/smelt'
+      	}
+      },
 		},
 		before: require('./mock/mock-server.js')
 	},
