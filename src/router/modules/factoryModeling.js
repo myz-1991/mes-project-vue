@@ -7,26 +7,27 @@ const factoryModelingRouter = {
   name: 'FactoryModeling',
   meta: {
     title: 'factoryModeling',
-    icon: 'factory'
+    icon: 'factory',
+	permission : '/factoryModeling'
   },
   children: [
 	{
 	  path: 'factory-equipment',
 	  component: () => import('@/views/factoryModeling/Equipment/Equipment'),
 	  name: 'Equipment',
-	  meta: { title: 'equipment', icon: 'equipment' }
+	  meta: { title: 'equipment', permission: '/factoryModeling/Equipment', icon: 'equipment' }
 	},
     {
       path: 'factoryModeling-Frequency',
       component: () => import('@/views/factoryModeling/Frequency/Frequency'),
       name: 'Frequency',
-      meta: { title: 'frequency', icon: 'frequency' }
+      meta: { title: 'frequency', permission: '/factoryModeling/Frequency' icon: 'frequency' }
     },
 	{
 	  path: 'factoryModeling-ShopCalendar',
 	  component: () => import('@/views/factoryModeling/ShopCalendar/ShopCalendar'),
 	  name: 'ShopCalendar',
-	  meta: { title: 'shopCalendar', icon: 'calendar' }
+	  meta: { title: 'shopCalendar', permission: '/factoryModeling/ShopCalendar', icon: 'calendar' }
 	}
   ]
 }

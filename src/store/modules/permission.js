@@ -6,10 +6,10 @@ import { asyncRoutes, constantRoutes } from '@/router'
  * @param route
  */
 function hasPermission(roles, route) {
-  if (route.meta && route.meta.roles) {
-    return roles.some(role => route.meta.roles.includes(role))
+  if (route.meta && route.meta.permission) {
+    return roles.some(role => role.menuUrl.includes(route.meta.permission))
   } else {
-    return true
+    return false
   }
 }
 

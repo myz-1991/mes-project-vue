@@ -1,32 +1,33 @@
 import Layout from '@/layout'
 
 const smeltingRouter = {
-  path: '/smelting',
+  path: '/smelt',
   component: Layout,
   //redirect: '/table/complex-table',
-  name: 'Smelting',
+  name: 'Smelt',
   meta: {
     title: 'smelting',
-    icon: 'smelting'
+    icon: 'smelting',
+		permission: 'smelt'
   },
   children: [
 	{
 	  path: 'semlting-task',
-	  component: () => import('@/views/smelting/smeltingTask/smeltingTask'),
+	  component: () => import('@/views/smelt/smeltTask/smeltTask'),
 	  name: 'SmeltingTask',
-	  meta: { title: 'smeltingTask', icon: 'smeltingTask' }
+	  meta: { title: 'smeltingTask', permission: '/smelt/smeltTask', icon: 'smeltingTask' }
 	},
   {
     path: 'semlting-stock',
-    component: () => import('@/views/smelting/smeltingStock/smeltingStock'),
+    component: () => import('@/views/smelt/smeltStock/smeltStock'),
     name: 'SmeltingStock',
-    meta: { title: 'smeltingStock', icon: 'stock' }
+    meta: { title: 'smeltingStock', permission: '/smelt/smeltStock', icon: 'stock' }
   },
   {
     path: 'semlting-crucible',
-    component: () => import('@/views/smelting/crucible/crucible'),
+    component: () => import('@/views/smelt/crucible/crucible'),
     name: 'Crucible',
-    meta: { title: 'crucible', icon: 'stock' }
+    meta: { title: 'crucible', permission: '/smelt/crucible', icon: 'stock' }
   }
   ]
 }
