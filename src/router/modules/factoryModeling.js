@@ -21,7 +21,7 @@ const factoryModelingRouter = {
       path: 'factoryModeling-Frequency',
       component: () => import('@/views/factoryModeling/Frequency/Frequency'),
       name: 'Frequency',
-      meta: { title: 'frequency', permission: '/factoryModeling/Frequency' icon: 'frequency' }
+      meta: { title: 'frequency', permission: '/factoryModeling/Frequency', icon: 'frequency' }
     },
 	{
 	  path: 'factoryModeling-ShopCalendar',

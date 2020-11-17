@@ -1,23 +1,3 @@
-// import Layout from '@/layout'
-
-// const planRouter = {
-//   path: '/planManage',
-//   component: Layout,
-//   name: 'planManage',
-//   meta: {
-//     title: 'planManage',
-//     icon: 'plan'
-//   },
-//   children: [
-//     {
-//       path: 'plan-planManage',
-//       component: () => import('@/views/plan/planManage/planManage'),
-//       name: 'PlanManage',
-//       meta: { title: 'planManage', icon: 'planManage' }
-//     },
-//   ]
-// }
-// export default planRouter
 import Layout from '@/layout'
 
 const planRouter = {
@@ -26,20 +6,21 @@ const planRouter = {
   name: 'Plan Manage',
   meta: {
     title: 'plan',
-    icon: 'plan'
+    icon: 'plan',
+		permission : '/plan'
   },
   children: [
     {
       path: 'plan-receive',
       component: () => import('@/views/plan/planManage/planManage'),
       name: 'PlanManage',
-      meta: { title: 'planManage', icon: 'receive' }
+      meta: { title: 'planManage', permission: '/plan/planManage', icon: 'receive' }
     },
     {
       path: 'plan-dispatch',
       component: () => import('@/views/plan/workJobManage/workJobManage'),
       name: 'PlanDispatch',
-      meta: { title: 'planDispatch', icon: 'dispatch' }
+      meta: { title: 'planDispatch', permission: '/plan/workJobManage', icon: 'dispatch' }
     }
   ]
 }
