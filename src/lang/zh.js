@@ -93,7 +93,10 @@ export default {
 		quality : '质量管理',
 		qualityTask: '检验任务',
 		qualityHistory : '检验历史记录',
-    crucible : '坩锅管理'
+    crucible : '坩锅管理',
+    qualitySpcManager : 'SPC管理',
+    storage: '库房管理',
+    storageDefinition : '库房定义'
   },
   navbar: {
     dashboard: '首页',

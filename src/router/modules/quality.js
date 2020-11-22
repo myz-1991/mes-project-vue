@@ -21,6 +21,12 @@ const planRouter = {
       component: () => import('@/views/quality/qualityHistory/qualityHistory'),
       name: 'QualityHistory',
       meta: { title: 'qualityHistory', permission: '/quality/qualityHistory', icon: 'qualityHistory' }
+    },
+    {
+      path: 'quality-spcManager',
+      component: () => import('@/views/quality/spcManager/spc'),
+      name: 'QualitySpcManager',
+      meta: { title: 'qualitySpcManager', permission: '/quality/spcManager', icon: 'qualityHistory' }
     }
   ]
 }
