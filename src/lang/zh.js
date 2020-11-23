@@ -96,7 +96,10 @@ export default {
     crucible : '坩锅管理',
     qualitySpcManager : 'SPC管理',
     storage: '库房管理',
-    storageDefinition : '库房定义'
+    storageDefinition : '库房定义',
+		storageIn : '入库管理',
+		storageOut : '出库管理',
+		storageHistory: '出入库记录'
   },
   navbar: {
     dashboard: '首页',
