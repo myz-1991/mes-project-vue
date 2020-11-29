@@ -101,7 +101,9 @@ export default {
 		storageOut : '出库管理',
 		storageHistory: '出入库记录',
     supplier: '供应商主数据',
-    customer : '客户主数据'
+    customer : '客户主数据',
+    defects : '缺陷项管理',
+    checkitem: '检测项管理'
   },
   navbar: {
     dashboard: '首页',

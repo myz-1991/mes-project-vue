@@ -52,22 +52,22 @@
       </el-table-column>
       <el-table-column prop="note" header-align="center" align="center" label="加工内容">
       </el-table-column>
-      <!-- <el-table-column align="center" label="操作" width="150" fixed="right">
+      <el-table-column align="center" label="操作" width="150" fixed="right">
         <template slot-scope="scope">
           <el-dropdown size="small">
             <el-button type="primary" size="small">操作
               <i class="el-icon-arrow-down el-icon--right"></i>
             </el-button>
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item @click.native="materielsDetailedListOpen(scope.row)">物料清单</el-dropdown-item>
-              <el-dropdown-item @click.native="productionRelationOpen(scope.row)">生产单元</el-dropdown-item>
+              <!-- <el-dropdown-item @click.native="materielsDetailedListOpen(scope.row)">物料清单</el-dropdown-item>
+              <el-dropdown-item @click.native="productionRelationOpen(scope.row)">生产单元</el-dropdown-item> -->
               <el-dropdown-item @click.native="checkRequirementAddOpen(scope.row)">检验要求</el-dropdown-item>
-              <el-dropdown-item v-show="isShow" @click.native="materielsDetailedListOpen(scope.row)">工装要求</el-dropdown-item>
-              <el-dropdown-item v-show="isShow" @click.native="materielsDetailedListOpen(scope.row)">设备要求</el-dropdown-item>
+              <!-- <el-dropdown-item v-show="isShow" @click.native="materielsDetailedListOpen(scope.row)">工装要求</el-dropdown-item>
+              <el-dropdown-item v-show="isShow" @click.native="materielsDetailedListOpen(scope.row)">设备要求</el-dropdown-item> -->
             </el-dropdown-menu>
           </el-dropdown>
         </template>
-      </el-table-column> -->
+      </el-table-column>
     </el-table>
     <el-pagination @size-change="sizeChangeHandle" @current-change="currentChangeHandle" :current-page="pageIndex"
       :page-sizes="[10, 20, 50, 100]" :page-size="pageSize" :total="totalPage" layout="total, sizes, prev, pager, next, jumper">

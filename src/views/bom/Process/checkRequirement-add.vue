@@ -1,25 +1,23 @@
 <template>
-  <el-dialog :title="titleText" :close-on-click-modal="false" :visible.sync="visible" width="50%">
-    <el-form :model="dataForm" size="small" style="margin-bottom: 5px;" @keyup.enter.native="getDataList()">
-      <el-button type="primary" icon="el-icon-plus" size="small" round @click="addHandle()">增加一行</el-button>
+  <el-dialog :title="titleText" :close-on-click-modal="false" :visible.sync="visible" width="60%">
+    <el-form :model="dataForm" size="mini" style="margin-bottom: 5px;" inline>
+      <el-form-item label="检测项选择">
+        <el-select>
+        </el-select>
+      </el-form-item>
+      <el-button type="primary" icon="el-icon-plus" size="mini" round>保存</el-button>
     </el-form>
-    <el-table ref="processsTable" v-loading="dataListLoading" size="small" :data="dataList" border style="width: 100%">
+    <el-table ref="processsTable" v-loading="dataListLoading" size="mini" :data="dataList" border style="width: 100%">
       <el-table-column type="index" align="center" width="50" />
       <el-table-column header-align="center" align="center" label="检验项点名称" width="150">
         <template slot-scope="scope">
-          <el-input v-show="scope.row.show" v-model="scope.row.itemName" size="small" placeholder="检验项点名称" style="width: 100%;" />
+          <el-input v-show="scope.row.show" v-model="scope.row.itemName" size="mini" placeholder="检验项点名称" style="width: 100%;" />
           <span v-show="!scope.row.show">{{ scope.row.itemName }}</span>
         </template>
       </el-table-column>
       <el-table-column header-align="center" align="center" label="值类型" width="120">
         <template slot-scope="scope">
-          <el-select
-            v-show="scope.row.show"
-            v-model="scope.row.itemType"
-            size="small"
-            placeholder="请选择"
-            style="width: 100%;"
-          >
+          <el-select v-show="scope.row.show" v-model="scope.row.itemType" size="mini" placeholder="请选择" style="width: 100%;">
             <el-option v-for="item in itemTypeList" :key="item.dictCode" :label="item.dictName" :value="item.dictCode" />
           </el-select>
           <el-tag v-show="!scope.row.show" v-if="scope.row.itemType == 2" size="small" type="danger">判断型</el-tag>
@@ -50,10 +48,8 @@
           <span v-show="!scope.row.show">{{ scope.row.itemSize }}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="操作" width="150" fixed="right">
+      <el-table-column align="center" label="操作" fixed="right">
         <template slot-scope="scope">
-          <el-button size="small" icon="el-icon-edit" type="primary" circle @click="editHandle(scope.row)" />
-          <el-button size="mini" icon="el-icon-check" type="success" circle @click="submitFormHandle(scope.row)" />
           <el-button size="small" icon="el-icon-delete" type="danger" circle @click="deleteHandle(scope.row, scope.$index)" />
         </template>
       </el-table-column>
@@ -62,153 +58,154 @@
 </template>
 
 <script>
-export default {
-  data() {
-    return {
-      visible: false,
-      dataListLoading: false,
-      copyMaterielsList: [],
-      materielsList: [],
-      itemTypeList: [{
-        dictCode: 1,
-        dictName: '数值型'
-      },
-      {
-        dictCode: 2,
-        dictName: '判断型'
-      }
-      ],
-      processTypeList: [],
-      dataList: [],
-      procId: null,
-      titleText: '检验项点'
-    }
-  },
-  methods: {
-    init(id) {
-      // this.dataForm.userId = id || 0
-      this.procId = id
-      this.getDataList(id)
-      this.initMaterielsList()
-    },
-    getDataList(id) {
-      this.dataListLoading = true
-      this.$http({
-        url: this.$http.adornBomUrl('/bom/v1/checkItem/selectCheckItemByParam'),
-        method: 'get',
-        params: {
-          procId: id
-        }
-      }).then(({
-        data
-      }) => {
-        this.dataListLoading = false
-        this.visible = true
-        if (data) {
-          const resultList = []
-          for (const i in data) {
-            data[i].show = false
-            resultList.push(data[i])
+  export default {
+    data() {
+      return {
+        visible: false,
+        dataListLoading: false,
+        copyMaterielsList: [],
+        materielsList: [],
+        itemTypeList: [{
+            dictCode: 1,
+            dictName: '数值型'
+          },
+          {
+            dictCode: 2,
+            dictName: '判断型'
           }
-          this.dataList = resultList
-        }
-      })
-    },
-    // 初始化物料类型可选项
-    addHandle() {
-      const addRow = {}
-      addRow.show = true
-      this.dataList.push(addRow)
-    },
-    editHandle(row) {
-      row.show = true
-    },
-    // 表单提交
-    submitFormHandle(row) {
-      row.show = false
-      if (row.itemId == null) {
-        this.$http({
-          url: this.$http.adornBomUrl('/bom/v1/checkItem/insertCheckItem'),
-          method: 'post',
-          data: this.$http.adornData({
-            itemName: row.itemName,
-            itemType: row.itemType,
-            itemStandardValue: row.itemStandardValue,
-            itemPositiveerror: row.itemPositiveerror,
-            itemNegativeerror: row.itemNegativeerror,
-            itemSize: row.itemSize,
-            procId: this.procId
-          })
-        }).then(({
-          data
-        }) => {
-          this.$message({
-            message: '操作成功',
-            type: 'success',
-            onClose: () => {
-              this.getDataList(this.procId)
-            }
-          })
-        })
-      } else {
-        this.$http({
-          url: this.$http.adornBomUrl('/bom/v1/checkItem/updateCheckItemById'),
-          method: 'put',
-          data: this.$http.adornData({
-            itemId: row.itemId,
-            itemName: row.itemName,
-            itemType: row.itemType,
-            itemStandardValue: row.itemStandardValue,
-            itemPositiveerror: row.itemPositiveerror,
-            itemNegativeerror: row.itemNegativeerror,
-            itemSize: row.itemSize,
-            procId: this.procId
-          })
-        }).then(({
-          data
-        }) => {
-          this.$message({
-            message: '操作成功',
-            type: 'success',
-            onClose: () => {
-              this.getDataList(this.procId)
-            }
-          })
-        })
+        ],
+        processTypeList: [],
+        dataList: [],
+        procId: null,
+        titleText: '检验项点'
       }
     },
-    deleteHandle(row, rowIndex) {
-      this.$confirm('是否删除?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        if (row.itemId != null) {
-          this.$http({
-            url: this.$http.adornBomUrl('/bom/v1/checkItem/deleteCheckItemById'),
-            method: 'delete',
-            params: {
-              itemId: row.itemId
+    methods: {
+      init(id) {
+        // this.dataForm.userId = id || 0
+        this.visible = true
+        // this.procId = id
+        // this.getDataList(id)
+        // this.initMaterielsList()
+      },
+      getDataList(id) {
+        this.dataListLoading = true
+        this.$http({
+          url: this.$http.adornBomUrl('/bom/v1/checkItem/selectCheckItemByParam'),
+          method: 'get',
+          params: {
+            procId: id
+          }
+        }).then(({
+          data
+        }) => {
+          this.dataListLoading = false
+          this.visible = true
+          if (data) {
+            const resultList = []
+            for (const i in data) {
+              data[i].show = false
+              resultList.push(data[i])
             }
+            this.dataList = resultList
+          }
+        })
+      },
+      // 初始化物料类型可选项
+      addHandle() {
+        const addRow = {}
+        addRow.show = true
+        this.dataList.push(addRow)
+      },
+      editHandle(row) {
+        row.show = true
+      },
+      // 表单提交
+      submitFormHandle(row) {
+        row.show = false
+        if (row.itemId == null) {
+          this.$http({
+            url: this.$http.adornBomUrl('/bom/v1/checkItem/insertCheckItem'),
+            method: 'post',
+            data: this.$http.adornData({
+              itemName: row.itemName,
+              itemType: row.itemType,
+              itemStandardValue: row.itemStandardValue,
+              itemPositiveerror: row.itemPositiveerror,
+              itemNegativeerror: row.itemNegativeerror,
+              itemSize: row.itemSize,
+              procId: this.procId
+            })
           }).then(({
             data
           }) => {
-            this.visible = true
-            if (data) {
-              this.$message({
-                message: '操作成功',
-                type: 'success',
-                onClose: () => {
-                  this.getDataList(this.procId)
-                }
-              })
-            }
+            this.$message({
+              message: '操作成功',
+              type: 'success',
+              onClose: () => {
+                this.getDataList(this.procId)
+              }
+            })
           })
         } else {
-          this.dataList.splice(rowIndex, 1)
+          this.$http({
+            url: this.$http.adornBomUrl('/bom/v1/checkItem/updateCheckItemById'),
+            method: 'put',
+            data: this.$http.adornData({
+              itemId: row.itemId,
+              itemName: row.itemName,
+              itemType: row.itemType,
+              itemStandardValue: row.itemStandardValue,
+              itemPositiveerror: row.itemPositiveerror,
+              itemNegativeerror: row.itemNegativeerror,
+              itemSize: row.itemSize,
+              procId: this.procId
+            })
+          }).then(({
+            data
+          }) => {
+            this.$message({
+              message: '操作成功',
+              type: 'success',
+              onClose: () => {
+                this.getDataList(this.procId)
+              }
+            })
+          })
         }
-      }).catch(() => {})
+      },
+      deleteHandle(row, rowIndex) {
+        this.$confirm('是否删除?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          if (row.itemId != null) {
+            this.$http({
+              url: this.$http.adornBomUrl('/bom/v1/checkItem/deleteCheckItemById'),
+              method: 'delete',
+              params: {
+                itemId: row.itemId
+              }
+            }).then(({
+              data
+            }) => {
+              this.visible = true
+              if (data) {
+                this.$message({
+                  message: '操作成功',
+                  type: 'success',
+                  onClose: () => {
+                    this.getDataList(this.procId)
+                  }
+                })
+              }
+            })
+          } else {
+            this.dataList.splice(rowIndex, 1)
+          }
+        }).catch(() => {})
+      }
     }
   }
-}
 </script>

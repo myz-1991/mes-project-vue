@@ -1,7 +1,7 @@
 <template>
-	<div class="mod-user">
+	<div class="app-container">
 		<el-row>
-			<el-form :model="dataForm">
+			<el-form size="mini" :model="dataForm">
 				<el-row>
 					<el-col :span="8">
 						<el-form-item label="">
@@ -23,7 +23,7 @@
 			</el-form>
 		</el-row>
 		<el-row>
-				<el-table :data="dataList" border v-loading="dataListLoading" style="width: 100%;">
+				<el-table size="mini" :data="dataList" border v-loading="dataListLoading" style="width: 100%;">
 					<el-table-column type="selection" align="center" width="50">
 					</el-table-column>
 					<el-table-column prop="itemName" align="center" label="检验项点名称">

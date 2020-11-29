@@ -20,8 +20,10 @@
       		</el-form-item>
       	</el-col>
       	<el-col :span="12">
-      		<el-form-item label="适用产品" prop="suitProduct">
-      			<el-input v-model="dataForm.suitProduct" placeholder="适用产品" />
+      		<el-form-item label="适用产品" prop="suitProductId">
+            <el-select v-model="dataForm.suitProductId" placeholder="适用产品" style="width: 100%;" @change="((val)=>{materielChange(val, index)})">
+              <el-option v-for="item in materielList" :key="item.id" :label="item.name" :value="item.id" />
+            </el-select>
       		</el-form-item>
       	</el-col>
       </el-row>
@@ -52,7 +54,7 @@
       <el-row>
       	<el-col :span="12">
       		<el-form-item label="开始使用日期" prop="startDate">
-            <el-date-picker v-model="dataForm.startDate" placeholder="开始使用日期"></el-date-picker>
+            <el-date-picker v-model="dataForm.startDate" placeholder="开始使用日期" style="width: 100%;"></el-date-picker>
       		</el-form-item>
       	</el-col>
       	<el-col :span="12">
@@ -76,7 +78,9 @@
       <el-row>
       	<el-col :span="12">
       		<el-form-item label="供应商" prop="supplierId">
-      			<el-input v-model="dataForm.supplierId" placeholder="供应商" />
+            <el-select v-model="dataForm.supplierId" placeholder="供应商" style="width: 100%;" @change="((val)=>{supplierChange(val, index)})">
+              <el-option v-for="item in supplierList" :key="item.id" :label="item.name" :value="item.id" />
+            </el-select>
       		</el-form-item>
       	</el-col>
       	<el-col :span="12">
@@ -93,7 +97,9 @@
 				</el-col>
 				<el-col :span="12">
 					<el-form-item label="产品客户" prop="customersId">
-						<el-input v-model="dataForm.customersId" placeholder="产品客户" />
+            <el-select v-model="dataForm.customersId" placeholder="产品客户" style="width: 100%;" @change="((val)=>{customersChange(val, index)})">
+              <el-option v-for="item in customersList" :key="item.id" :label="item.name" :value="item.id" />
+            </el-select>
 					</el-form-item>
 				</el-col>
 			</el-row>
@@ -119,14 +125,17 @@
 		findMouldById
 	} from '@/api/base/mould'
 
+  import { findMaterielList } from '@/api/base/materiel'
+
+  import { findSupplierList } from '@/api/base/supplier'
+
 	export default {
 		data() {
 			return {
 				visible: false,
-				mateTypeList: [],
-				mateUnitList: [],
-				mateSourceList: [],
-				mateWeightUnitList: [],
+				materielList: [],
+				supplierList: [],
+				customersList: [],
 				titleText: '模具添加',
 				workType: 1,
 				dataForm: {
@@ -141,6 +150,7 @@
 					readIdentifying : 1,
           cavities : '',
           suitProduct : '',
+          suitProductId : '',
           mouldNo : '',
           mouldLength : '',
           mouldWidth : '',
@@ -171,13 +181,67 @@
 					this.dataForm.earlywarning = null
 					this.dataForm.note = null
 					this.dataForm.readIdentifying = 1
+          this.dataForm.cavities = ''
+          this.dataForm.suitProductId = ''
+          this.dataForm.suitProduct = ''
+          this.dataForm.mouldNo = ''
+          this.dataForm.mouldLength = ''
+          this.dataForm.mouldWidth = ''
+          this.dataForm.mouldLand = ''
+          this.dataForm.startDate = ''
+          this.dataForm.waterGap = ''
+          this.dataForm.compositeModule = ''
+          this.dataForm.supplierId = ''
+          this.dataForm.supplierName = ''
+          this.dataForm.weight = ''
+          this.dataForm.customersId = ''
+          this.dataForm.customersName = ''
 				} else {
 					this.titleText = '模具修改'
 					findMouldById(id).then(response => {
 						this.dataForm = response.data
 					})
 				}
+        this.initMate()
+        this.initSupplier()
+        this.initCustomers()
 			},
+      initMate() {
+        findMaterielList(null).then(response => {
+          this.materielList = response.data
+        })
+      },
+      initSupplier() {
+        findSupplierList(null, '2').then(response => {
+          this.supplierList = response.data
+        })
+      },
+      initCustomers() {
+        findSupplierList(null, '1').then(response => {
+          this.customersList = response.data
+        })
+      },
+      materielChange(val) {
+        let obj = {}
+        obj = this.materielList.find((item) => {
+        	return item.id === val
+        })
+        this.dataForm.suitProduct = obj.name
+      },
+      supplierChange(val) {
+        let obj = {}
+        obj = this.supplierList.find((item) => {
+        	return item.id === val
+        })
+        this.dataForm.supplierName = obj.name
+      },
+      customersChange(val) {
+        let obj = {}
+        obj = this.customersList.find((item) => {
+        	return item.id === val
+        })
+        this.dataForm.customersName = obj.name
+      },
 			// 表单提交
 			dataFormSubmit() {
 				this.$refs['dataForm'].validate((valid) => {

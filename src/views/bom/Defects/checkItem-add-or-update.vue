@@ -1,29 +1,19 @@
 <template>
   <el-dialog :title="titleText" :close-on-click-modal="false" :visible.sync="visible">
-    <el-form size="mini" :model="checkItemDataForm" ref="dataForm" @keyup.enter.native="dataFormSubmit()" label-width="80px">
-      <el-form-item label="名称" prop="name">
-        <el-input v-model="checkItemDataForm.name" placeholder="名称"></el-input>
+    <el-form :model="checkItemDataForm" size="mini" ref="dataForm" @keyup.enter.native="dataFormSubmit()" label-width="120px">
+      <el-form-item label="缺陷项名称" prop="name">
+        <el-input v-model="checkItemDataForm.name" placeholder="缺陷项名称"></el-input>
       </el-form-item>
-      <el-form-item label="值类型" size="mini" prop="gender">
+      <el-form-item label="顺序" prop="code">
+        <el-input v-model="checkItemDataForm.code" placeholder="顺序"></el-input>
+      </el-form-item>
+      </el-form-item>
+      <el-form-item label="是否有效" size="mini" prop="gender">
         <el-radio-group v-model="checkItemDataForm.gender" size="mini">
-          <el-radio :label="1">判断</el-radio>
-          <el-radio :label="2">数值</el-radio>
+          <el-radio :label="1">是</el-radio>
+          <el-radio :label="2">否</el-radio>
         </el-radio-group>
       </el-form-item>
-      <el-form-item label="标准值" prop="userName">
-        <el-input v-model="checkItemDataForm.userName" placeholder="标准值"></el-input>
-      </el-form-item>
-      <el-form-item label="正误差" prop="passWord">
-        <el-input v-model="checkItemDataForm.passWord" type="password" placeholder="正误差"></el-input>
-      </el-form-item>
-      <el-form-item label="负误差" prop="email">
-        <el-input v-model="checkItemDataForm.email" placeholder="负误差"></el-input>
-      </el-form-item>
-      <el-form-item label="尺寸" prop="telephone">
-        <el-input v-model="checkItemDataForm.telephone" placeholder="尺寸"></el-input>
-      </el-form-item>
-      </el-form-item>
-
     </el-form>
     <span slot="footer" class="dialog-footer">
       <el-button size="mini" type="danger" icon="el-icon-delete" @click="visible = false" round>取消</el-button>
@@ -38,7 +28,7 @@
       return {
         visible: false,
         roleList: [],
-        titleText: '检测项增加',
+        titleText: '缺陷项增加',
         workType: 1,
         checkItemDataForm: {
           userId: 0,
@@ -70,7 +60,7 @@
           this.checkItemDataForm.gender = 1
           this.checkItemDataForm.stuts = ''
         } else {
-          this.titleText = '检测项修改'
+          this.titleText = '缺陷项修改'
           this.$http({
             url: this.$http.adornSystemUrl('/sys/v1/user/selectUserById'),
             method: 'get',

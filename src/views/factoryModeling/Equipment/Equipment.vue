@@ -74,8 +74,12 @@
             <el-table-column type="selection" align="center" width="50" />
             <el-table-column prop="code" header-align="center" align="center" label="设备编码" />
             <el-table-column prop="name" header-align="center" align="center" label="设备名称" />
-            <el-table-column prop="fixedCode" header-align="center" align="center" label="固定资产编码" />
+            <el-table-column prop="fixedCode" header-align="center" align="center" width="120" label="固定资产编码" />
             <el-table-column prop="model" header-align="center" align="center" label="规格型号" />
+            <el-table-column prop="orgName" header-align="center" align="center" label="部门" />
+            <el-table-column prop="productionDate" header-align="center" align="center" label="出厂日期" />
+            <el-table-column prop="productionName" header-align="center" align="center" label="生产厂家" />
+            <el-table-column prop="supplierName" header-align="center" align="center" label="供应商" />
             <el-table-column prop="typeName" header-align="center" align="center" label="设备类型" />
             <el-table-column prop="note" header-align="center" align="center" label="设备描述" />
             <!-- <el-table-column prop="status" header-align="center" align="center" label="状态">

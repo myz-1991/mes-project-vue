@@ -27,20 +27,20 @@
 			</el-table-column>
 			<el-table-column prop="name" header-align="center" align="center" label="模具名称">
 			</el-table-column>
-      <el-table-column header-align="center" align="center" label="模穴数">
+      <el-table-column prop="cavities" header-align="center" align="center" label="模穴数">
       </el-table-column>
-      <el-table-column header-align="center" align="center" label="适用产品"></el-table-column>
-      <el-table-column header-align="center" align="center" label="模具图号"></el-table-column>
-      <el-table-column header-align="center" align="center" label="模具长度"></el-table-column>
-      <el-table-column header-align="center" align="center" label="模具宽度"></el-table-column>
-      <el-table-column header-align="center" align="center" label="模具厚度"></el-table-column>
-      <el-table-column header-align="center" align="center" width="120" label="开始使用日期"></el-table-column>
-      <el-table-column header-align="center" align="center" label="水口重量"></el-table-column>
+      <el-table-column prop="suitProduct" header-align="center" align="center" label="适用产品"></el-table-column>
+      <el-table-column prop="mouldNo" header-align="center" align="center" label="模具图号"></el-table-column>
+      <el-table-column prop="mouldLength" header-align="center" align="center" label="模具长度"></el-table-column>
+      <el-table-column prop="mouldWidth" header-align="center" align="center" label="模具宽度"></el-table-column>
+      <el-table-column prop="mouldLand" header-align="center" align="center" label="模具厚度"></el-table-column>
+      <el-table-column prop="startDate" header-align="center" align="center" width="120" label="开始使用日期"></el-table-column>
+      <el-table-column prop="waterGap" header-align="center" align="center" label="水口重量"></el-table-column>
       <el-table-column prop="ratedlife" header-align="center" align="center" label="设计寿命"></el-table-column>
-      <el-table-column header-align="center" align="center" label="合模数"></el-table-column>
-      <el-table-column header-align="center" align="center" label="供应商"></el-table-column>
-      <el-table-column header-align="center" align="center" label="重量(千克)"></el-table-column>
-      <el-table-column header-align="center" align="center" label="产品客户"></el-table-column>
+      <el-table-column prop="compositeModule" header-align="center" align="center" label="合模数"></el-table-column>
+      <el-table-column prop="supplierName" header-align="center" align="center" label="供应商"></el-table-column>
+      <el-table-column prop="weight" header-align="center" align="center" label="重量(千克)"></el-table-column>
+      <el-table-column prop="customersName" header-align="center" align="center" label="产品客户"></el-table-column>
 			<el-table-column prop="model" header-align="center" align="center" label="规格型号">
 			</el-table-column>
 			<el-table-column prop="note" header-align="center" align="center" label="备注">

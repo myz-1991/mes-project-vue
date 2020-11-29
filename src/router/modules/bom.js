@@ -28,7 +28,19 @@ const bomRouter = {
 	  component: () => import('@/views/bom/Process/process'),
 	  name: 'Process',
 	  meta: { title: 'process', permission: '/bom/Process', icon: 'process' }
-	}
+	},
+  {
+    path: 'bom-defects',
+    component: () => import('@/views/bom/Defects/Defects'),
+    name: 'Defects',
+    meta: { title: 'defects', permission: '/bom/Defects', icon: 'checkItem' }
+  },
+  {
+    path: 'bom-checkitem',
+    component: () => import('@/views/bom/CheckItem/checkitem'),
+    name: 'CheckItem',
+    meta: { title: 'checkitem', permission: '/bom/CheckItem', icon: 'checkItem' }
+  }
   ]
 }
 export default bomRouter
