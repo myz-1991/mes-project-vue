@@ -1,6 +1,6 @@
 <template>
 	<el-dialog :title="titleText" :close-on-click-modal="false" :visible.sync="visible">
-		<el-form ref="dataForm" :model="dataForm" size="small" label-width="80px">
+		<el-form ref="dataForm" :model="dataForm" size="small" label-width="100px">
 			<el-row>
 				<el-col :span="12">
 					<el-form-item label="模具编码" prop="code">
@@ -13,6 +13,78 @@
 					</el-form-item>
 				</el-col>
 			</el-row>
+      <el-row>
+      	<el-col :span="12">
+      		<el-form-item label="模穴数" prop="cavities">
+      			<el-input v-model="dataForm.cavities" placeholder="模穴数" />
+      		</el-form-item>
+      	</el-col>
+      	<el-col :span="12">
+      		<el-form-item label="适用产品" prop="suitProduct">
+      			<el-input v-model="dataForm.suitProduct" placeholder="适用产品" />
+      		</el-form-item>
+      	</el-col>
+      </el-row>
+      <el-row>
+      	<el-col :span="12">
+      		<el-form-item label="模具图号" prop="mouldNo">
+      			<el-input v-model="dataForm.mouldNo" placeholder="模具图号" />
+      		</el-form-item>
+      	</el-col>
+      	<el-col :span="12">
+      		<el-form-item label="模具长度" prop="mouldLength">
+      			<el-input v-model="dataForm.mouldLength" placeholder="模具长度" />
+      		</el-form-item>
+      	</el-col>
+      </el-row>
+      <el-row>
+      	<el-col :span="12">
+      		<el-form-item label="模具宽度" prop="mouldWidth">
+      			<el-input v-model="dataForm.mouldWidth" placeholder="模具宽度" />
+      		</el-form-item>
+      	</el-col>
+      	<el-col :span="12">
+      		<el-form-item label="模具厚度" prop="mouldLand">
+      			<el-input v-model="dataForm.mouldLand" placeholder="模具厚度" />
+      		</el-form-item>
+      	</el-col>
+      </el-row>
+      <el-row>
+      	<el-col :span="12">
+      		<el-form-item label="开始使用日期" prop="startDate">
+            <el-date-picker v-model="dataForm.startDate" placeholder="开始使用日期"></el-date-picker>
+      		</el-form-item>
+      	</el-col>
+      	<el-col :span="12">
+      		<el-form-item label="水口重量" prop="waterGap">
+      			<el-input v-model="dataForm.waterGap" placeholder="水口重量" />
+      		</el-form-item>
+      	</el-col>
+      </el-row>
+      <el-row>
+      	<el-col :span="12">
+      		<el-form-item label="设计寿命" prop="ratedlife">
+      			<el-input v-model="dataForm.ratedlife" placeholder="设计寿命" />
+      		</el-form-item>
+      	</el-col>
+      	<el-col :span="12">
+      		<el-form-item label="合模数" prop="compositeModule">
+      			<el-input v-model="dataForm.compositeModule" placeholder="合模数" />
+      		</el-form-item>
+      	</el-col>
+      </el-row>
+      <el-row>
+      	<el-col :span="12">
+      		<el-form-item label="供应商" prop="supplierId">
+      			<el-input v-model="dataForm.supplierId" placeholder="供应商" />
+      		</el-form-item>
+      	</el-col>
+      	<el-col :span="12">
+      		<el-form-item label="重量(千克)" prop="weight">
+      			<el-input v-model="dataForm.weight" placeholder="重量(千克)" />
+      		</el-form-item>
+      	</el-col>
+      </el-row>
 			<el-row>
 				<el-col :span="12">
 					<el-form-item label="规格型号" prop="model">
@@ -20,20 +92,8 @@
 					</el-form-item>
 				</el-col>
 				<el-col :span="12">
-					<el-form-item label="精度" prop="accuracy">
-						<el-input v-model="dataForm.accuracy" placeholder="精度" />
-					</el-form-item>
-				</el-col>
-			</el-row>
-			<el-row>
-				<el-col :span="12">
-					<el-form-item label="额定寿命" prop="ratedlife">
-						<el-input v-model="dataForm.ratedlife" placeholder="额定寿命" />
-					</el-form-item>
-				</el-col>
-				<el-col :span="12">
-					<el-form-item label="寿命预警" prop="earlywarning">
-						<el-input v-model="dataForm.earlywarning" placeholder="寿命预警" />
+					<el-form-item label="产品客户" prop="customersId">
+						<el-input v-model="dataForm.customersId" placeholder="产品客户" />
 					</el-form-item>
 				</el-col>
 			</el-row>
@@ -58,7 +118,7 @@
 		updateMould,
 		findMouldById
 	} from '@/api/base/mould'
-	
+
 	export default {
 		data() {
 			return {
@@ -78,7 +138,21 @@
 					ratedlife : null,
 					earlywarning : null,
 					note : null,
-					readIdentifying : 1
+					readIdentifying : 1,
+          cavities : '',
+          suitProduct : '',
+          mouldNo : '',
+          mouldLength : '',
+          mouldWidth : '',
+          mouldLand : '',
+          startDate : '',
+          waterGap : '',
+          compositeModule : '',
+          supplierId : '',
+          supplierName : '',
+          weight : '',
+          customersId : '',
+          customersName : ''
 				}
 			}
 		},

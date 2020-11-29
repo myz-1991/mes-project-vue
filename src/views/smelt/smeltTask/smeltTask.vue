@@ -47,6 +47,11 @@
               <el-input-number v-model="dataForm.waste" precision="2" style="width: 90%;" /><span> KG</span>
             </el-col>
           </el-form-item>
+          <el-form-item label="废品重量:" label-width="120">
+            <el-col :span="20">
+              <el-input-number v-model="dataForm.waste" precision="2" style="width: 90%;" /><span> KG</span>
+            </el-col>
+          </el-form-item>
           <el-form-item label="废品号:" label-width="120">
             <el-row>
               <el-col :span="20">

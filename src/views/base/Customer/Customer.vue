@@ -11,7 +11,7 @@
 				<el-col :offset="8" :span="8">
 					<el-form-item label="">
 						<el-col :span="18">
-							<el-input type="text" size="small" v-model="dataForm.key" placeholder="模具编码或名称查询" @keyup.enter.native="getDataList()"></el-input>
+							<el-input type="text" size="small" v-model="dataForm.key" placeholder="供应商信息查询" @keyup.enter.native="getDataList()"></el-input>
 						</el-col>
 						<el-col :offset="1" :span="3">
 							<el-button type="primary" size="small" icon="el-icon-search" @click="getDataList()" round>查询</el-button>
@@ -23,32 +23,24 @@
 		<el-table :data="dataList" border v-loading="dataListLoading" size="small" style="width: 100%">
 			<el-table-column type="selection" align="center" width="50">
 			</el-table-column>
-			<el-table-column prop="code" header-align="center" align="center" label="模具编号">
+			<el-table-column prop="name" header-align="center" align="center" label="客户名称">
 			</el-table-column>
-			<el-table-column prop="name" header-align="center" align="center" label="模具名称">
+			<el-table-column prop="address" header-align="center" align="center" label="地址">
 			</el-table-column>
-      <el-table-column header-align="center" align="center" label="模穴数">
+			<el-table-column prop="contacts" header-align="center" align="center" label="联络人">
+			</el-table-column>
+			<el-table-column prop="telephone" header-align="center" align="center" label="联系电话">
+			</el-table-column>
+			<el-table-column prop="email" header-align="center" align="center" label="邮件地址">
+			</el-table-column>
+			<el-table-column prop="grade" header-align="center" align="center" label="信誉等级">
+			</el-table-column>
+      <el-table-column prop="note" header-align="center" align="center" label="备注">
       </el-table-column>
-      <el-table-column header-align="center" align="center" label="适用产品"></el-table-column>
-      <el-table-column header-align="center" align="center" label="模具图号"></el-table-column>
-      <el-table-column header-align="center" align="center" label="模具长度"></el-table-column>
-      <el-table-column header-align="center" align="center" label="模具宽度"></el-table-column>
-      <el-table-column header-align="center" align="center" label="模具厚度"></el-table-column>
-      <el-table-column header-align="center" align="center" width="120" label="开始使用日期"></el-table-column>
-      <el-table-column header-align="center" align="center" label="水口重量"></el-table-column>
-      <el-table-column prop="ratedlife" header-align="center" align="center" label="设计寿命"></el-table-column>
-      <el-table-column header-align="center" align="center" label="合模数"></el-table-column>
-      <el-table-column header-align="center" align="center" label="供应商"></el-table-column>
-      <el-table-column header-align="center" align="center" label="重量(千克)"></el-table-column>
-      <el-table-column header-align="center" align="center" label="产品客户"></el-table-column>
-			<el-table-column prop="model" header-align="center" align="center" label="规格型号">
-			</el-table-column>
-			<el-table-column prop="note" header-align="center" align="center" label="备注">
-			</el-table-column>
 			<el-table-column align="center" label="操作" width="100" fixed="right">
 				<template slot-scope="scope">
 					<el-button size="small" icon="el-icon-edit" type="primary" @click="addOrUpdateHandle('2', scope.row.id)" circle></el-button>
-					<el-button size="small" icon="el-icon-delete" type="danger" @click="deleteHandle(scope.row)" circle></el-button>
+					<el-button size="small" icon="el-icon-delete" type="danger" @click="deleteHandle(scope.row.id)" circle></el-button>
 				</template>
 			</el-table-column>
 		</el-table>
@@ -61,10 +53,10 @@
 
 <script>
 	import {
-		findMouldPage,
-		updateMould
-	} from '@/api/base/mould'
-	import mouldAddOrUpdate from './mould-add-or-update'
+		findSupplierPage,
+    deleteSupplierById
+	} from '@/api/base/supplier'
+	import mouldAddOrUpdate from './customer-add-or-update'
 	export default {
 		data() {
 			return {
@@ -100,7 +92,7 @@
 			// 获取数据列表
 			getDataList() {
 				this.dataListLoading = true
-				findMouldPage(this.dataForm.key, this.pageSize, this.pageIndex).then(response => {
+				findSupplierPage(this.dataForm.key, '1', this.pageSize, this.pageIndex).then(response => {
 					if (response) {
 						this.dataList = response.data.records
 						this.totalPage = response.data.total
@@ -130,14 +122,14 @@
 				})
 			},
 			// 删除
-			deleteHandle(row) {
+			deleteHandle(id) {
 				this.$confirm('是否删除?', '提示', {
 					confirmButtonText: '确定',
 					cancelButtonText: '取消',
 					type: 'warning'
 				}).then(() => {
-					row.readIdentifying = 2
-					updateMould(row).then(response => {
+					//row.readIdentifying = 2
+					deleteSupplierById(id).then(response => {
 						this.$message({
 							message: '删除成功',
 							type: 'success',

@@ -99,7 +99,9 @@ export default {
     storageDefinition : '库房定义',
 		storageIn : '入库管理',
 		storageOut : '出库管理',
-		storageHistory: '出入库记录'
+		storageHistory: '出入库记录',
+    supplier: '供应商主数据',
+    customer : '客户主数据'
   },
   navbar: {
     dashboard: '首页',

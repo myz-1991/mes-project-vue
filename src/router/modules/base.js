@@ -41,6 +41,18 @@ const baseRouter = {
 	  name: 'Clamp',
 	  meta: { title: 'fixture', permission: '/base/Clamp', icon: 'fixture' }
 	},
+  {
+    path: 'base-supplier',
+    component: () => import('@/views/base/Supplier/Supplier'),
+    name: 'Supplier',
+    meta: { title: 'supplier', permission: '/base/Supplier', icon: 'fixture' }
+  },
+  {
+    path: 'base-customer',
+    component: () => import('@/views/base/Customer/Customer'),
+    name: 'Customer',
+    meta: { title: 'customer', permission: '/base/Customer', icon: 'fixture' }
+  },
 	// {
 	//   path: 'base-equipment',
 	//   component: () => import('@/views/base/Equipment/Equipment'),

@@ -78,13 +78,13 @@
             <el-table-column prop="model" header-align="center" align="center" label="规格型号" />
             <el-table-column prop="typeName" header-align="center" align="center" label="设备类型" />
             <el-table-column prop="note" header-align="center" align="center" label="设备描述" />
-            <el-table-column prop="status" header-align="center" align="center" label="状态">
+            <!-- <el-table-column prop="status" header-align="center" align="center" label="状态">
               <template slot-scope="scope">
                 <el-tag v-if="scope.row.status === 3" size="small" type="warning">维修</el-tag>
               	<el-tag v-else-if="scope.row.status === 2" size="small" type="danger">停机</el-tag>
               	<el-tag v-else size="small">运行</el-tag>
               </template>
-            </el-table-column>
+            </el-table-column> -->
             <el-table-column align="center" label="操作" width="100" fixed="right">
               <template slot-scope="scope">
                 <el-button

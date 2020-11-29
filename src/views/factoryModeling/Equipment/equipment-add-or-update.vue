@@ -34,14 +34,14 @@
             </el-select>
           </el-form-item>
         </el-col>
-        <el-col :span="12">
+        <!-- <el-col :span="12">
           <el-form-item label="状态" prop="status">
             <el-select v-model="dataForm.status" placeholder="请选择" style="width: 100%;">
               <el-option v-for="item in statusList" :key="item.dictCode" :label="item.dictName" :value="item.dictCode">
               </el-option>
             </el-select>
           </el-form-item>
-        </el-col>
+        </el-col> -->
       </el-row>
       <el-row>
         <el-col :span="24">
