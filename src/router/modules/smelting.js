@@ -28,7 +28,13 @@ const smeltingRouter = {
     component: () => import('@/views/smelt/crucible/crucible'),
     name: 'Crucible',
     meta: { title: 'crucible', permission: '/smelt/crucible', icon: 'stock' }
-  }
+  },
+	{
+	  path: 'semlting-check',
+	  component: () => import('@/views/smelt/check/check'),
+	  name: 'check',
+	  meta: { title: 'semltCheck', permission: '/smelt/check', icon: 'stock' }
+	}
   ]
 }
 export default smeltingRouter

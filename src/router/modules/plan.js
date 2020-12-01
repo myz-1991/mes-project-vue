@@ -21,7 +21,13 @@ const planRouter = {
       component: () => import('@/views/plan/workJobManage/workJobManage'),
       name: 'PlanDispatch',
       meta: { title: 'planDispatch', permission: '/plan/workJobManage', icon: 'dispatch' }
-    }
+    },
+		{
+		  path: 'plan-PressFit',
+		  component: () => import('@/views/plan/PressFit/PressFit'),
+		  name: 'PressFit',
+		  meta: { title: 'pressFit', permission: '/plan/PressFit', icon: 'dispatch' }
+		}
   ]
 }
 export default planRouter

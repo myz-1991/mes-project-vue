@@ -86,10 +86,12 @@ export default {
     shopCalendar: '工厂日历',
     plan: '计划管理',
     planManage: '计划接收',
+	pressFit : '压装管理',
     planDispatch: '工单管理',
     smelting: '熔炼管理',
     smeltingTask : '熔炼任务',
     smeltingStock: '原料库存',
+	semltCheck : '光谱分析',
 		quality : '质量管理',
 		qualityTask: '检验任务',
 		qualityHistory : '检验历史记录',
@@ -103,7 +105,9 @@ export default {
     supplier: '供应商主数据',
     customer : '客户主数据',
     defects : '缺陷项管理',
-    checkitem: '检测项管理'
+    checkitem: '检测项管理',
+	ledger : '库房总账',
+	storageCheck : '库房盘点'
   },
   navbar: {
     dashboard: '首页',

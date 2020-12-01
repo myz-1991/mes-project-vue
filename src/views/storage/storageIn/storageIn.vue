@@ -2,7 +2,7 @@
 	<div class="app-container">
 		<el-form :model="dataForm" inline>
 			<el-row>
-				<el-col :span="6">
+				<el-col :span="5">
 					<el-form-item label="选择库房">
 						<el-select v-model="selectStorage" @change="storageChange">
 							<el-option label="成品库" value="1"></el-option>
@@ -10,7 +10,10 @@
 						</el-select>
 					</el-form-item>
 				</el-col>
-				<el-col :span="3" :offset="2">
+				<el-col :span="6">
+					<el-form-item>
+						<el-input v-model="searchText" icon="search" placeholder="扫码入库" style="width: 100%;" @change="realTime"></el-input>
+					</el-form-item>
 					<el-form-item>
 						<el-input v-model="searchText" icon="search" placeholder="按物料编码或名称查询" style="width: 100%;" @change="realTime"></el-input>
 					</el-form-item>
@@ -25,7 +28,7 @@
 		</el-form>
 		<el-row>
 			<el-col :span="11">
-				<el-table :data="tableData" height="750" border style="width: 100%;margin-bottom: 0px" @selection-change="handleSelectionChange">
+				<el-table :data="tableData" height="700" border style="width: 100%;margin-bottom: 0px" @selection-change="handleSelectionChange">
 					<el-table-column type="selection" width="40">
 					</el-table-column>
 					<el-table-column prop="code" align="center" label="物料编码">
@@ -50,7 +53,7 @@
 			</el-col>
 
 			<el-col :span="11">
-				<el-table :data="resultData" height="750" style="width: 100%;margin-bottom: 0px" border>
+				<el-table :data="resultData" height="700" style="width: 100%;margin-bottom: 0px" border>
 					<el-table-column prop="code" align="center" label="物料编码">
 					</el-table-column>
 					<el-table-column prop="name" align="center" label="物料名称">
