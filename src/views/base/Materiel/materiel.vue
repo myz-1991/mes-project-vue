@@ -53,6 +53,8 @@
 			</el-table-column>
 			<el-table-column prop="furnaceNumber" header-align="center" align="center" label="物料炉号">
 			</el-table-column>
+      <el-table-column prop="customerName" header-align="center" align="center" label="客户名称">
+      </el-table-column>
 			<el-table-column prop="updateTime" header-align="center" align="center" label="更新时间">
 				<template slot-scope="scope">
 					<span>{{dateFormat(scope.row.updateTime)}}</span>

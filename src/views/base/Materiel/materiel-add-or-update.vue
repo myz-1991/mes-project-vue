@@ -101,6 +101,14 @@
 						<el-input v-model="dataForm.furnaceNumber" placeholder="物料炉号" />
 					</el-form-item>
 				</el-col>
+        <el-col :span="12">
+          <el-form-item label="选择客户" prop="customerId">
+            <el-select v-model="dataForm.customerId" placeholder="请选择" style="width: 100%;" @change="((val)=>{supplierChange(val, index)})">
+              <el-option v-for="item in supplierList" :key="item.id" :label="item.name" :value="item.id">
+              </el-option>
+            </el-select>
+          </el-form-item>
+        </el-col>
 			</el-row>
 			<el-row>
 				<el-col :span="24">
@@ -123,13 +131,16 @@
 		updateMateriel,
 		saveMateriel
 	} from '@/api/base/materiel'
-	
+
+  import { findSupplierList } from '@/api/base/supplier'
+
 	import { findDictionaryByCode } from '@/api/system/dict'
-	
+
 	export default {
 		data() {
 			return {
 				visible: false,
+        supplierList : [],
 				mateTypeList: [],
 				mateUnitList: [],
 				mateSourceList: [],
@@ -159,7 +170,9 @@
 					auxiliaryUnit: '',
 					auxiliaryUnitName: '',
 					note : '',
-					readIdentifying : 1
+					readIdentifying : 1,
+          customerId : '',
+          customerName : ''
 				}
 			}
 		},
@@ -192,6 +205,8 @@
 					this.dataForm.auxiliaryUnitName = ''
 					this.dataForm.note = ''
 					this.dataForm.readIdentifying = 1
+          this.dataForm.customerId = ''
+          this.dataForm.customerName = ''
 				} else {
 					this.titleText = '物料修改'
 					findMaterielById(id).then(response => {
@@ -202,7 +217,20 @@
 				this.initMateUnitList()
 				this.initMateSourceList()
 				this.initMateWeightUnitList()
+        this.initSupplier()
 			},
+      initSupplier() {
+        findSupplierList(null, '1').then(response => {
+          this.supplierList = response.data
+        })
+      },
+      supplierChange(val) {
+        let obj = {}
+        obj = this.supplierList.find((item) => {
+        	return item.id === val
+        })
+        this.dataForm.customerName = obj.name
+      },
 			initMateWeightUnitList() {
 				findDictionaryByCode('BASE.MATERIEL.WEIGHTUNIT.').then(response => {
 					if (response) {
