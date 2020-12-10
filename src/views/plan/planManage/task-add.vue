@@ -1,5 +1,5 @@
 <template>
-	<el-dialog :title="titleText" size="small" :close-on-click-modal="false" :visible.sync="visible" width="60%">
+	<el-dialog :title="titleText" size="small" :close-on-click-modal="false" :visible.sync="visible" width="70%">
 		<div v-show="showFlag === 1">
 			<el-form ref="dataForm" :model="dataForm" size="small" label-width="120px">
 				<el-row>
@@ -45,8 +45,8 @@
 						</el-form-item>
 					</el-col>
 					<el-col :span="12">
-						<el-form-item label="选择设备" prop="planNum">
-							<el-input v-model="dataForm.customerName" placeholder="选择设备" style="width: 85%;margin-left: 5px;" readonly/>
+						<el-form-item label="选择设备" prop="equiName">
+							<el-input v-model="dataForm.equiName" placeholder="选择设备" style="width: 80%;margin-left: 5px;" readonly/>
 							<el-link size="mini" type="success" style="margin-top: 5px;" @click="initProuduct">查询设备</el-link>
 						</el-form-item>
 					</el-col>
@@ -65,14 +65,14 @@
 				</el-row>
 				<el-row>
 					<el-col :span="12">
-						<el-form-item label="选择模/夹具" prop="planNum">
-							<el-input v-model="dataForm.customerName" placeholder="选择模/夹具" readonly style="width: 80%;"/>
-							<el-link size="mini" type="success" style="margin-top: 5px;" @click="initProuduct">查询模/夹具</el-link>
+						<el-form-item label="选择模/夹具" prop="mouldClampName">
+							<el-input v-model="dataForm.mouldClampName" placeholder="选择模/夹具" readonly style="width: 80%;"/>
+							<el-link size="mini" type="success" style="margin-top: 5px;" @click="initMould">查询模/夹具</el-link>
 						</el-form-item>
 					</el-col>
 					<el-col :span="12">
-						<el-form-item label="单模产量" prop="planNum">
-							<el-input v-model="dataForm.planNum" placeholder="单模产量" />
+						<el-form-item label="单模产量" prop="cavities">
+							<el-input v-model="dataForm.cavities" placeholder="单模产量" />
 						</el-form-item>
 					</el-col>
 				</el-row>
@@ -110,25 +110,39 @@
 			</el-form>
 		</div>
 		<div v-show="showFlag === 2">
-			<el-table :data="materialList" size="small" border>
+			<el-table :data="equiList" size="small" border>
 				<el-table-column type="selection" width="55" />
-				<el-table-column prop="code" align="center" label="产品编码"/>
-				<el-table-column prop="name" align="center" label="产品名称" />
-				<el-table-column prop="code" align="center" label="零件号" />
-				<el-table-column prop="netWeight" align="center" label="产品重量" />
-				<!-- <el-table-column prop="" align="center" label="箱体容量" />
-				<el-table-column prop="" align="center" label="压铸毛坯重量（kg）" width="180"/>
-				<el-table-column prop="" align="center" label="机加成品重量（kg）" width="180"/> -->
-				<el-table-column prop="customerName" align="center" label="客户" />
+				<el-table-column prop="code" align="center" label="设备编号"/>
+				<el-table-column prop="name" align="center" label="设备名称" />
+        <el-table-column prop="fixedCode" align="center" label="资产编码" />
+				<el-table-column prop="" align="center" label="状态" />
+				<el-table-column prop="" align="center" label="IP地址" />
 				<el-table-column label="操作" align="center" width="150" fixed="right">
 					<template slot-scope="scope">
-						<el-button size="mini" icon="el-icon-data-analysis" type="success" round @click="selectProuduct(scope.row)">选择</el-button>
+						<el-button size="mini" icon="el-icon-data-analysis" type="success" round @click="selectEqui(scope.row)">选择</el-button>
 					</template>
 				</el-table-column>
 			</el-table>
 			<el-pagination @current-change="currentChangeHandle" :current-page="pageIndex" :page-size="pageSize" :total="totalPage" layout="sizes, prev, pager, next, jumper">
 			</el-pagination>
 		</div>
+    <div v-show="showFlag === 3">
+    	<el-table :data="mouldList" size="small" border>
+    		<el-table-column type="selection" width="55" />
+    		<el-table-column prop="code" align="center" label="模具编号"/>
+    		<el-table-column prop="name" align="center" label="模具名称" />
+        <el-table-column prop="cavities" align="center" label="模具腔数" />
+    		<el-table-column prop="" align="center" label="状态" />
+    		<el-table-column prop="" align="center" label="适用产品名称" />
+    		<el-table-column label="操作" align="center" width="150" fixed="right">
+    			<template slot-scope="scope">
+    				<el-button size="mini" icon="el-icon-data-analysis" type="success" round @click="selectMould(scope.row)">选择</el-button>
+    			</template>
+    		</el-table-column>
+    	</el-table>
+    	<el-pagination @current-change="currentChangeHandle1" :current-page="pageIndex1" :page-size="pageSize1" :total="totalPage1" layout="sizes, prev, pager, next, jumper">
+    	</el-pagination>
+    </div>
 		<span slot="footer" class="dialog-footer">
 			<el-button type="danger" size="small" icon="el-icon-delete" round @click="visible = false">取消</el-button>
 			<el-button type="primary" size="small" icon="el-icon-check" round @click="dataFormSubmit()">确定</el-button>
@@ -137,14 +151,16 @@
 </template>
 
 <script>
-	import {findMaterielPage} from '@/api/base/materiel'
-	import {saveTask, updateTask, findTask} from '@/api/plan/task'
+	import { pageEquipmentByParam } from '@/api/base/equipment'
+	import { saveTask, updateTask, findTask } from '@/api/plan/task'
+  import { findMouldPage } from '@/api/base/mould'
 	export default {
 		data() {
 			return {
 				visible: false,
 				showFlag : 1,
-				materialList: [],
+				equiList: [],
+        mouldList : [],
 				taskPriorityList: [],
 				processingMethodList: [],
 				workshopList: [],
@@ -152,6 +168,9 @@
 				pageIndex: 1,
 				pageSize: 10,
 				totalPage: 0,
+        pageIndex1: 1,
+        pageSize1: 10,
+        totalPage1: 0,
 				workType: 1,
 				props: {
 					label: 'mateName',
@@ -198,7 +217,11 @@
 					mouldClampId : null,
 					mouldClampName : null,
 					mouldClampCode : null,
+          equiId : null,
+          equiName : null,
+          equiCode : null,
 					taskType : null,
+          cavities : null,
 					leaf : null
 				}
 			}
@@ -211,8 +234,6 @@
 				if (workType == 1) {
 					this.showFlag = 1
 					this.dataForm.id  = null
-					this.dataForm.name  = 'P' + this.dateFormat(new Date())
-					this.dataForm.code  = 'OR' + this.dateFormat(new Date())
 					this.dataForm.mateId  = rowData.mateId
 					this.dataForm.mateCode  = rowData.mateCode
 					this.dataForm.mateName  = rowData.mateName
@@ -250,7 +271,7 @@
 					this.dataForm.mouldClampId  = null
 					this.dataForm.mouldClampName  = null
 					this.dataForm.mouldClampCode  = null
-					this.dataForm.taskType  = '1'
+					this.dataForm.taskType  = '2'
 					this.dataForm.leaf = null
 				} else {
 					findTask(id).then(response => {
@@ -267,30 +288,50 @@
 			},
 			initProuduct() {
 				this.showFlag = 2
-				findMaterielPage(null, this.pageSize, this.pageIndex).then(response => {
+				pageEquipmentByParam(null, null, this.pageSize, this.pageIndex).then(response => {
 					if (response) {
-					  this.materialList = response.data.records
+					  this.equiList = response.data.records
 					  this.totalPage = response.data.total
 					} else {
-					  this.materialList = []
+					  this.equiList = []
 					  this.totalPage = 0
 					}
 				})
 			},
+      initMould() {
+        this.showFlag = 3
+        findMouldPage(null, this.pageSize1, this.pageIndex1).then(response => {
+          if (response) {
+            this.mouldList = response.data.records
+            this.totalPage1 = response.data.total
+          } else {
+            this.mouldList = []
+            this.totalPage1 = 0
+          }
+        })
+      },
 			currentChangeHandle(val) {
 			  this.pageIndex = val
 			  this.initProuduct()
 			},
-			selectProuduct(row) {
+      currentChangeHandle1(val) {
+        this.pageIndex = val
+        this.initMould()
+      },
+			selectEqui(row) {
 				this.showFlag = 1
-				this.dataForm.mateId  = row.id
-				this.dataForm.mateCode  = row.code
-				this.dataForm.mateName  = row.name
-				this.dataForm.mateModel = row.specifications
-				this.dataForm.weight = row.netWeight
-				this.dataForm.customerId = row.customerId
-				this.dataForm.customerName = row.customerName
+				this.dataForm.equiId  = row.id
+				this.dataForm.equiName  = row.name
+				this.dataForm.equiCode  = row.code
+        this.dataForm.code  = row.code + '-' + this.dateFormat(new Date())
 			},
+      selectMould(row) {
+        this.showFlag = 1
+        this.dataForm.mouldClampId  = row.id
+        this.dataForm.mouldClampName  = row.name
+        this.dataForm.mouldClampCode  = row.code
+        this.dataForm.cavities = row.cavities
+      },
 			// 表单提交
 			dataFormSubmit() {
 				this.$refs['dataForm'].validate((valid) => {
