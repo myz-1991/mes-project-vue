@@ -53,8 +53,8 @@
 			</el-table-column>
 			<el-table-column prop="furnaceNumber" header-align="center" align="center" label="物料炉号">
 			</el-table-column>
-      <el-table-column prop="customerName" header-align="center" align="center" label="客户名称">
-      </el-table-column>
+			<el-table-column prop="customerName" header-align="center" align="center" label="客户名称">
+			</el-table-column>
 			<el-table-column prop="updateTime" header-align="center" align="center" label="更新时间">
 				<template slot-scope="scope">
 					<span>{{dateFormat(scope.row.updateTime)}}</span>
@@ -64,8 +64,7 @@
 			</el-table-column>
 			<el-table-column align="center" label="操作" width="100" fixed="right">
 				<template slot-scope="scope">
-					<el-button size="small" icon="el-icon-edit" type="primary" @click="addOrUpdateHandle('2', scope.row.id)"
-					 circle></el-button>
+					<el-button size="small" icon="el-icon-edit" type="primary" @click="addOrUpdateHandle('2', scope.row.id)" circle></el-button>
 					<el-button size="small" icon="el-icon-delete" type="danger" @click="deleteHandle(scope.row)" circle></el-button>
 				</template>
 			</el-table-column>
