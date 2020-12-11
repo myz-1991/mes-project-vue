@@ -112,7 +112,7 @@
 
 <script>
 	import {findMaterielPage} from '@/api/base/materiel'
-	import {saveTask, updateTask, findTask} from '@/api/plan/task'
+	import {savePlan, updateTask, findTask} from '@/api/plan/task'
 	export default {
 		data() {
 			return {
@@ -193,8 +193,8 @@
 					this.dataForm.deliverTime  = null
 					this.dataForm.actualStartTime  = null
 					this.dataForm.actualEndTime  = null
-					this.dataForm.status  = null
-					this.dataForm.statusName  = null
+					this.dataForm.status  = 'PLAN.STATUS.001'
+					this.dataForm.statusName  = '未分配'
 					this.dataForm.priority  = null
 					this.dataForm.priorityName  = null
 					this.dataForm.planNum  = null
@@ -266,7 +266,7 @@
 					if (valid) {
 						if (this.workType == 1) {
 							this.dataForm.surplusNum = this.dataForm.planNum
-							saveTask(this.dataForm).then(response => {
+							savePlan(this.dataForm).then(response => {
 								this.$message({
 									message: '操作成功',
 									type: 'success',

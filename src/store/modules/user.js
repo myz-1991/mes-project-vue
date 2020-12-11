@@ -5,6 +5,7 @@ import router, { resetRouter } from '@/router'
 
 const state = {
   token: getToken(),
+	userId : '',
   name: '',
   avatar: '',
   introduction: '',
@@ -26,7 +27,10 @@ const mutations = {
   },
   SET_ROLES: (state, roles) => {
     state.roles = roles
-  }
+  },
+	SET_USERID : (state, userId) => {
+		state.userId = userId
+	}
 }
 
 const actions = {
@@ -37,6 +41,7 @@ const actions = {
       login({ account: account.trim(), password: password }).then(response => {
         const { data } = response
         commit('SET_TOKEN', data.id)
+				commit('SET_USERID', data.id)
         setToken(data.id)
         resolve()
       }).catch(error => {

@@ -41,17 +41,17 @@
 				</el-row>
 			</el-col>
 			<el-col :span="16" style="padding: 5px;">
-				<el-table border size="mini" :data="tableData">
+				<el-table border size="mini" :data="taskDataList">
 					<el-table-column type="index" label="任务优先号" align="center" width="100">
 					</el-table-column>
-					<el-table-column label="设备名称" prop="name" align="center" />
-					<el-table-column label="产品编码" prop="name" align="center" />
-					<el-table-column label="产品名称" prop="name" align="center" />
-					<el-table-column label="任务单号" prop="name" align="center" />
-					<el-table-column label="订单编号" prop="name" align="center" />
-					<el-table-column label="开工时间" prop="name" align="center" />
-					<el-table-column label="完工时间" prop="name" align="center" />
-					<el-table-column label="生产数量" prop="name" align="center" />
+					<el-table-column label="设备名称" prop="equiName" align="center" />
+					<el-table-column label="产品编码" prop="mateCode" align="center" />
+					<el-table-column label="产品名称" prop="mateName" align="center" />
+					<el-table-column label="任务单号" prop="code" align="center" />
+					<el-table-column label="订单编号" prop="planName" align="center" />
+					<el-table-column label="开工时间" prop="scheduledStartTime" align="center" />
+					<el-table-column label="完工时间" prop="scheduledEndTime" align="center" />
+					<el-table-column label="生产数量" prop="planNum" align="center" />
 					<el-table-column label="操作" align="center" width="180" fixed="right">
 						<template slot-scope="scope">
 							<!-- <el-button size="mini" icon="el-icon-edit" type="success" @click="materialPrepareHandle(scope.row.taskId)" round>物料齐套</el-button> -->
@@ -68,96 +68,12 @@
 		  <el-button type="info" style="margin-left: 20px;margin-right: 180px;">三坐标查看</el-button>
 		  <el-button type="info" style="margin-left: 20px;margin-right: 180px;">光谱查看</el-button>
 		  <el-button type="info" style="margin-left: 20px;margin-right: 180px;">X光查看</el-button>
-		  <el-button type="info">改派</el-button>
 		</span>
-		<!-- <el-container>
-      <el-header height="40%">
-        <el-row style="margin-bottom: 10px;">
-          <el-button type="primary" icon="el-icon-check" round>开工</el-button>
-        </el-row>
-        <el-row>
-          <el-table border size="mini" :data="tableData">
-            <el-table-column type="selection" width="55" />
-            <el-table-column label="批次号" prop="name" align="center" />
-            <el-table-column label="产品编码" prop="name" align="center" />
-            <el-table-column label="产品名称" prop="name" align="center" />
-            <el-table-column label="规格型号" prop="name" align="center" />
-            <el-table-column label="计划状态" prop="name" align="center" />
-            <el-table-column label="任务数量" prop="name" align="center" />
-          </el-table>
-        </el-row>
-      </el-header>
-      <el-main>
-        <el-container>
-          <el-aside style="width: 40%;background-color: #FFFFFF;">
-            <el-row style="margin-bottom: 50px;">
-              <el-col :span="12">
-                <span style="font-size: 24px;">批次号:</span>
-              </el-col>
-              <el-col :span="12">
-                <span style="font-size: 24px">产品编码:</span>
-              </el-col>
-            </el-row>
-            <el-row style="margin-bottom: 50px;">
-              <el-col :span="12">
-                <span style="font-size: 24px">产品名称:</span>
-              </el-col>
-              <el-col :span="12">
-                <span style="font-size: 24px">规格型号:</span>
-              </el-col>
-            </el-row>
-            <el-row>
-              <el-col :span="12">
-                <span style="font-size: 24px">加工数量:</span>
-              </el-col>
-              <el-col :span="12">
-                <span style="font-size: 24px">完成数量:</span>
-              </el-col>
-            </el-row>
-            <el-row>
-              <el-col :span="12">
-                <span style="font-size: 24px">模具号:</span>
-              </el-col>
-              <el-col :span="11" :offset="1">
-                <el-button>选择模具</el-button>
-              </el-col>
-            </el-row>
-          </el-aside>
-          <el-main>
-            <el-row style="margin-bottom: 10px;">
-              <el-col :span="12">
-                <el-input type="text" placeholder="开始扫码" />
-              </el-col>
-              <el-col :span="11" :offset="1">
-                <el-button type="primary" icon="el-icon-check" round>送检</el-button>
-                <el-button type="warning" round>设备报警</el-button>
-                <el-button type="warning" round>物料报警</el-button>
-                <el-button type="warning" round>工装报警</el-button>
-              </el-col>
-            </el-row>
-            <el-table border>
-              <el-table-column type="selection" width="55" />
-              <el-table-column label="二维码" align="center" />
-              <el-table-column label="检验结果" align="center" />
-              <el-table-column label="处理结果" align="center" />
-            </el-table>
-            <el-pagination
-              :current-page="pageIndex"
-              :page-sizes="[10, 20, 50, 100]"
-              :page-size="pageSize"
-              :total="totalPage"
-              layout="total, sizes, prev, pager, next, jumper"
-              @size-change="sizeChangeHandle"
-              @current-change="currentChangeHandle"
-            />
-          </el-main>
-        </el-container>
-      </el-main>
-    </el-container> -->
 	</div>
 </template>
 
 <script>
+	import { listTaskByWorkerId } from '@/api/plan/task'
 	export default {
 		data() {
 			return {
@@ -191,7 +107,7 @@
 				uploadUrl: []
 			}
 		},
-		activated() {
+		mounted() {
 			this.taskDataInit()
 		},
 		methods: {
@@ -209,26 +125,10 @@
 				this.taskDataInit()
 			},
 			taskDataInit() {
+				debugger
 				this.taskDataList = []
-				this.$http({
-					url: this.$http.adornPlanUrl('/plan/v1/task/selectTaskTreeByParam'),
-					method: 'get',
-					params: {
-						param: ''
-					}
-				}).then(({
-					data
-				}) => {
-					if (data) {
-						this.taskDataList = data
-						for (let i = 0; i < this.taskDataList.length; i++) {
-							if (this.taskDataList[i].leaf > 0) {
-								this.taskDataList[i].leaf = true
-							} else {
-								this.taskDataList[i].leaf = false
-							}
-						}
-					}
+				listTaskByWorkerId(this.$store.getters.userId).then(response => {
+					this.taskDataList = response.data
 				})
 			},
 			load(tree, treeNode, resolve) {
