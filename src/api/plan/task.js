@@ -84,3 +84,13 @@ export function listTaskByWorkerId(workerId) {
 	})
 }
 
+export function importTaskData(path) {
+	return request({
+		url: '/plan/v1/task/importTaskData',
+		method: 'post',
+    data: path
+		// params: {
+		// 	file : path
+		// }
+	})
+}
