@@ -141,7 +141,15 @@
       beforeUpload(file) {
         debugger
         let fd = new FormData();
-
+		var testmsg=file.name.substring(file.name.lastIndexOf('.')+1)
+		const extension = testmsg === 'xls'  
+		if(!extension) {    
+			this.$message({    
+			message: '上传文件只能是 xls 格式!',    
+			type: 'warning'    
+			});
+			return
+		}  
         fd.append('file', file);
         importTaskData(fd).then(response => {
 

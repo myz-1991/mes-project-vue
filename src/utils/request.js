@@ -10,10 +10,10 @@ import {
 
 // create an axios instance
 const service = axios.create({
-  baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
+  // baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
   withCredentials: true, // send cookies when cross-domain requests
   headers: {
-    'Content-Type': 'application/json;text/plain;charset=utf-8'
+    'Content-Type': 'access-control-allow-origin: *;application/json;text/plain;charset=utf-8'
   },
   timeout: 300000 // request timeout
 })

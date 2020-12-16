@@ -18,7 +18,7 @@
               <span style="font-size: 24px;margin-top: 10px;">产品编号：{{dataForm.mateCode}}</span><br /><br />
               <span style="font-size: 24px;margin-top: 10px;">产品名称: {{dataForm.mateName}}</span><br /><br />
               <span style="font-size: 24px;margin-top: 10px;">关联模具：{{dataForm.mouldCode}} </span>
-              <el-button size="mini" type="primary" icon="el-icon-search" round>选择</el-button>
+              <el-button size="mini" type="primary" icon="el-icon-search" @click="initMould" round>选择</el-button>
             </el-card>
           </el-col>
         </el-row>
@@ -26,7 +26,7 @@
           <el-col :span="24">
             <el-card class="box-card">
               <span style="font-size: 24px;margin-top: 10px;">生产数量：{{dataForm.planNum}}</span><br /><br />
-              <span style="font-size: 24px;margin-top: 10px;">预计时长:25小时</span>
+              <span style="font-size: 24px;margin-top: 10px;">预计时长:</span>
             </el-card>
           </el-col>
         </el-row>
@@ -35,7 +35,7 @@
             <el-card class="box-card">
               <span style="font-size: 24px;margin-top: 10px;">生产状态：在制</span><br /><br />
               <span style="font-size: 24px;margin-top: 10px;">完成数量: {{dataForm.finishNum}}</span><br /><br />
-              <span style="font-size: 24px;margin-top: 10px;">完成百分比：31%</span>
+              <span style="font-size: 24px;margin-top: 10px;">完成百分比：</span>
             </el-card>
           </el-col>
         </el-row>
@@ -44,7 +44,7 @@
         <span style="margin-bottom: 10px;">
           <el-button type="primary">生产任务</el-button>
           <el-button type="info">文件查看</el-button>
-          <el-button type="info">三坐标查看</el-button>
+          <el-button v-if="buttonShow === false" type="info">三坐标查看</el-button>
           <el-button type="info">光谱查看</el-button>
           <el-button type="info">X光查看</el-button>
         </span>
@@ -62,24 +62,51 @@
           <el-table-column label="操作" align="center" width="180" fixed="right">
             <template slot-scope="scope">
               <!-- <el-button size="mini" icon="el-icon-edit" type="success" @click="materialPrepareHandle(scope.row.taskId)" round>物料齐套</el-button> -->
-              <el-tooltip class="item" effect="dark" content="选择" placement="top-start">
-                <el-button size="mini" icon="el-icon-check" type="success" @click="selectTask(scope.row)" round></el-button>
+              <el-tooltip v-if="scope.row.isSelect === false" class="item" effect="dark" content="选择" placement="top-start">
+                <el-button size="mini" icon="el-icon-check" type="success" @click="selectTask(scope.row)" round>选择</el-button>
               </el-tooltip>
-              <el-tooltip class="item" effect="dark" content="取消" placement="top-start">
-                <el-button size="mini" icon="el-icon-close" type="danger" round></el-button>
+              <el-tooltip v-if="scope.row.isSelect === true" class="item" effect="dark" content="取消" placement="top-start">
+                <el-button size="mini" icon="el-icon-close" type="danger" round>取消</el-button>
               </el-tooltip>
             </template>
           </el-table-column>
         </el-table>
       </el-col>
     </el-row>
+	
+	<el-dialog title="选择模具" size="small" :close-on-click-modal="false" :visible.sync="visible" width="75%">
+	  <el-table :data="mouldList" size="small" border>
+	  	<el-table-column type="selection" width="55" />
+	  	<el-table-column prop="code" align="center" label="模具编号" />
+	  	<el-table-column prop="name" align="center" label="模具名称" />
+	  	<el-table-column prop="cavities" align="center" label="模具腔数" />
+	  	<el-table-column prop="" align="center" label="状态" />
+	  	<el-table-column prop="" align="center" label="适用产品名称" />
+	  	<el-table-column label="操作" align="center" width="150" fixed="right">
+	  		<template slot-scope="scope">
+	  			<el-button size="mini" icon="el-icon-data-analysis" type="success" round @click="selectMould(scope.row)">选择</el-button>
+	  		</template>
+	  	</el-table-column>
+	  </el-table>
+	  <el-pagination @current-change="currentChangeHandle1" :current-page="pageIndex1" :page-size="pageSize1" :total="totalPage1"
+	   layout="sizes, prev, pager, next, jumper">
+	  </el-pagination>
+	</el-dialog>
   </div>
 </template>
 
 <script>
   import {
-    listTaskByWorkerId
+    listTaskByWorkerId,
+	updateTask
   } from '@/api/plan/task'
+  import {
+  	findMouldPage
+  } from '@/api/base/mould'
+  import {
+	  findEquipmentById
+  } from '@/api/base/equipment'
+  
   export default {
     data() {
       return {
@@ -89,6 +116,8 @@
         visible: false,
         orderVisible: false,
         processingProgressVisible: false,
+		buttonShow : true,
+		mouldList : [],
         searchFormData: {
           searchTextValue: ''
         },
@@ -132,18 +161,59 @@
         this.taskDataList = []
         listTaskByWorkerId(this.$store.getters.userId).then(response => {
           this.taskDataList = response.data
+		  if (this.taskDataList.length > 0) {
+			  this.selectTask(this.taskDataList[0])
+			  this.taskDataList[0].isSelect = true
+			  findEquipmentById(this.taskDataList[0].equiId).then(res => {
+				  debugger
+				  let data = res.data
+				  if (data.type = 'BASE.EQUIPMENT.TYPE.001') {
+					  this.buttonShow = true
+				  } else {
+					  this.buttonShow = false
+				  }
+			  })
+		  }
+		  for (let i = 1; i < this.taskDataList.length; i++) {
+			  this.taskDataList[i].isSelect = false
+		  }
         })
       },
-      // 新增 / 修改
-      addOrUpdateHandle() {
-        this.addOrUpdateVisible = true
-        this.$nextTick(() => {
-          this.$refs.planAdd.init()
-        })
+      initMould() {
+      	this.visible = true
+      	findMouldPage(null, this.pageSize1, this.pageIndex1).then(response => {
+      		if (response) {
+      			this.mouldList = response.data.records
+      			this.totalPage1 = response.data.total
+      		} else {
+      			this.mouldList = []
+      			this.totalPage1 = 0
+      		}
+      	})
       },
-      openD() {
-        this.visible = true
-      },
+	  selectMould(row) {
+		  let rowData = null
+		  for (let i = 0; i < this.taskDataList.length; i++) {
+			  if (this.taskDataList[i].isSelect == true) {
+				  rowData = this.taskDataList[i]
+				  break
+			  }
+		  }
+		  rowData.mouldClampId = row.id
+		  rowData.mouldClampName = row.name
+		  rowData.mouldClampCode = row.code
+		  updateTask(rowData).then(response => {
+		  	this.$message({
+		  		message: '操作成功',
+		  		type: 'success',
+		  		onClose: () => {
+		  			this.visible = false
+		  			// this.taskAddOrUpdateVisible = false
+		  			this.taskDataInit()
+		  		}
+		  	})
+		  })
+	  },
       selectTask(row) {
           this.dataForm.equiName = row.equiName
           this.dataForm.equiCode = row.equiCode
