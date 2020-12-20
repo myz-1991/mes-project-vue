@@ -10,6 +10,7 @@
                   <el-button type="primary" size="small" icon="el-icon-refresh" round @click="refreshUserTable()">刷新</el-button>
                   <el-button type="primary" size="small" icon="el-icon-plus" round @click="addOrUpdateHandle(1, 0)">增加</el-button>
                   <el-button type="success" size="small" icon="el-icon-s-custom" round @click="allocationRole()">角色分配</el-button>
+                  <el-button type="primary" icon="el-icon-edit-outline" size="small" round @click="visible = true">导入</el-button>
                 </el-form-item>
               </el-col>
               <el-col :offset="8" :span="8">
@@ -46,7 +47,7 @@
                 <el-tag v-else size="small">正常</el-tag>
               </template>
             </el-table-column>
-            <el-table-column prop="createTime" align="center" label="创建时间">
+            <!-- <el-table-column prop="createTime" align="center" label="创建时间">
               <template slot-scope="scope">
                 <span>{{ dateFormat(scope.row.createTime) }}</span>
               </template>
@@ -55,7 +56,7 @@
               <template slot-scope="scope">
                 <span>{{ dateFormat(scope.row.updateTime) }}</span>
               </template>
-            </el-table-column>
+            </el-table-column> -->
             <el-table-column align="center" label="操作" width="200">
               <template slot-scope="scope">
                 <el-button size="mini" icon="el-icon-edit" type="primary" round @click="addOrUpdateHandle(2, scope.row)"></el-button>
@@ -65,10 +66,8 @@
             </el-table-column>
           </el-table>
         </el-row>
-        <div class="pagination-container">
-          <el-pagination :current-page="pageIndex" :page-sizes="[10, 20, 50, 100]" :page-size="pageSize" :total="totalPage"
-            layout="total, sizes, prev, pager, next, jumper" @size-change="sizeChangeHandle" @current-change="currentChangeHandle" />
-        </div>
+        <el-pagination @size-change="sizeChangeHandle" @current-change="currentChangeHandle" :current-page="pageIndex"
+          :page-sizes="[10, 20, 30, 40]" :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper" :total="totalPage"/>
       </el-col>
     </el-row>
 
@@ -178,6 +177,14 @@
         <el-button type="primary" size="small" icon="el-icon-check" round @click="roleSave()">确定</el-button>
       </span>
     </el-dialog>
+
+    <el-dialog title="人员导入" size="small" :close-on-click-modal="false" :visible.sync="visible" width="75%">
+      <el-upload ref="upload" class="upload-demo" :file-list="fileList" :on-change="handleChange" action=""
+        :before-upload="beforeUpload" :show-file-list="true" :auto-upload="false">
+        <el-button slot="trigger" type="primary">选取文件</el-button>
+      </el-upload>
+      <el-button type="primary" style="margin-top: 5px;" @click="importUsers">提交</el-button>
+    </el-dialog>
   </div>
 </template>
 
@@ -188,7 +195,8 @@
     getUserDetail,
     updateUser,
     saveUserRoleRelation,
-    findUserRoleRelation
+    findUserRoleRelation,
+    importUsers
   } from '@/api/system/user'
   import {
     getOrganizationTreeExpend
@@ -206,18 +214,20 @@
         dataForm: {
           searchTextValue: ''
         },
-        dialogRoleVisible : false,
+        dialogRoleVisible: false,
         dialogVisible: false,
+        visible: false,
         dialogType: 'add',
         dataList: [],
         pageIndex: 1,
-        pageSize: 20,
+        pageSize: 10,
         totalPage: 0,
         dataListLoading: false,
         dataListSelections: [],
         addOrUpdateVisible: false,
         roleList: [],
-        selectUserId : '',
+        fileList: [],
+        selectUserId: '',
         option: {
           select: {
             filterable: true,
@@ -272,7 +282,6 @@
         this.dataListLoading = true
         getUserInfoPage(this.dataForm.searchTextValue, this.pageIndex, this.pageSize).then(response => {
           this.dataListLoading = false
-          debugger
           const {
             data
           } = response
@@ -311,27 +320,27 @@
       },
       allocationRole() {
         this.roleList = []
-        	const _selectData = this.$refs.userList.selection
-        	if (_selectData.length != 1) {
-        		this.$message('请选择一个用户！！！')
-        		return false
-        	} else if (_selectData.length == 1) {
-        		this.selectUserId = _selectData[0].id
-        	}
-          this.dialogRoleVisible = true
-          getRoleList('').then(response => {
-            this.roleList = response.data
-            findUserRoleRelation(this.selectUserId).then(respond => {
-              let checkRole = respond.data
-              for (let i = 0; i < this.roleList.length; i++) {
-                for (let j = 0; j < checkRole.length; j++) {
-                  if (this.roleList[i].id == checkRole[j].roleId) {
-                    this.$refs.roleTable.toggleRowSelection(this.roleList[i]);
-                  }
+        const _selectData = this.$refs.userList.selection
+        if (_selectData.length != 1) {
+          this.$message('请选择一个用户！！！')
+          return false
+        } else if (_selectData.length == 1) {
+          this.selectUserId = _selectData[0].id
+        }
+        this.dialogRoleVisible = true
+        getRoleList('').then(response => {
+          this.roleList = response.data
+          findUserRoleRelation(this.selectUserId).then(respond => {
+            let checkRole = respond.data
+            for (let i = 0; i < this.roleList.length; i++) {
+              for (let j = 0; j < checkRole.length; j++) {
+                if (this.roleList[i].id == checkRole[j].roleId) {
+                  this.$refs.roleTable.toggleRowSelection(this.roleList[i]);
                 }
               }
-            })
+            }
           })
+        })
       },
       // 新增 / 修改
       addOrUpdateHandle(workType, row) {
@@ -340,7 +349,7 @@
         getOrganizationTreeExpend().then(resp => {
           this.option.tree.data = resp.data
         })
-        
+
         this.userDataForm.id = ''
         this.userDataForm.name = ''
         this.userDataForm.code = ''
@@ -360,18 +369,18 @@
           })
         }
       },
-      roleSave(){
+      roleSave() {
         const _selectData = this.$refs.roleTable.selection
         const relations = new Array();
         if (_selectData.length < 1) {
-        	this.$message('请选择一个用户！！！')
-        	return false
+          this.$message('请选择一个用户！！！')
+          return false
         } else {
           for (let i = 0; i < _selectData.length; i++) {
             let id = _selectData[i].id
             let relation = {
-              userId : this.selectUserId,
-              roleId : id
+              userId: this.selectUserId,
+              roleId: id
             }
             relations.push(relation);
           }
@@ -415,6 +424,45 @@
             })
           })
         }
+      },
+      handleChange(file, fileList) {
+        if (fileList.length > 0) {
+          this.fileList = [fileList[fileList.length - 1]] // 这一步，是 展示最后一次选择的csv文件
+        }
+      },
+      beforeUpload(file) {
+        debugger
+        let fd = new FormData();
+        var testmsg = file.name.substring(file.name.lastIndexOf('.') + 1)
+        const extension = testmsg === 'xls'
+        if (!extension) {
+          this.$message({
+            message: '上传文件只能是 xls 格式!',
+            type: 'warning'
+          });
+          return
+        }
+        fd.append('file', file);
+        importUsers(fd).then(response => {
+          if (response.data == '导入成功！') {
+            this.$message({
+              message: response.data,
+              type: 'success',
+              onClose: () => {
+                this.visible = false
+                this.getDataList()
+              }
+            });
+          } else {
+            this.$message({
+              message: response.data,
+              type: 'warning'
+            });
+          }
+        })
+      },
+      importUsers() {
+        this.$refs.upload.submit();
       }
     }
   }

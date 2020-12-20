@@ -6,6 +6,7 @@
 					<el-form-item label="">
 						<el-button type="primary" size="small" icon="el-icon-refresh" @click="getDataList()" round>刷新</el-button>
 						<el-button type="primary" size="small" icon="el-icon-plus" @click="addOrUpdateHandle(1, 0)" round>增加</el-button>
+            <el-button type="primary" icon="el-icon-edit-outline" size="small" round @click="visible = true">导入</el-button>
 					</el-form-item>
 				</el-col>
 				<el-col :offset="8" :span="8">
@@ -27,12 +28,16 @@
 			</el-table-column>
 			<el-table-column prop="name" header-align="center" align="center" label="物料名称">
 			</el-table-column>
+      <el-table-column prop="englishName" header-align="center" align="center" label="英文名称">
+      </el-table-column>
 			<el-table-column prop="designnumber" header-align="center" align="center" label="物料图号">
 			</el-table-column>
 			<el-table-column prop="specifications" header-align="center" align="center" label="物料规格">
 			</el-table-column>
 			<el-table-column prop="typeName" header-align="center" align="center" label="物料类型">
 			</el-table-column>
+      <el-table-column prop="volume" header-align="center" align="center" label="容积">
+      </el-table-column>
 			<el-table-column prop="unitName" header-align="center" align="center" label="计量单位">
 			</el-table-column>
 			<el-table-column prop="mateSize" header-align="center" align="center" label="物料尺寸">
@@ -55,11 +60,11 @@
 			</el-table-column>
 			<el-table-column prop="customerName" header-align="center" align="center" label="客户名称">
 			</el-table-column>
-			<el-table-column prop="updateTime" header-align="center" align="center" label="更新时间">
+			<!-- <el-table-column prop="updateTime" header-align="center" align="center" label="更新时间">
 				<template slot-scope="scope">
 					<span>{{dateFormat(scope.row.updateTime)}}</span>
 				</template>
-			</el-table-column>
+			</el-table-column> -->
 			<el-table-column prop="note" header-align="center" align="center" label="备注">
 			</el-table-column>
 			<el-table-column align="center" label="操作" width="100" fixed="right">
@@ -73,13 +78,22 @@
 		 :page-sizes="[10, 20, 50, 100]" :page-size="pageSize" :total="totalPage" layout="total, sizes, prev, pager, next, jumper">
 		</el-pagination>
 		<materielAddOrUpdate v-if="addOrUpdateVisible" ref="materielAddOrUpdate" @refreshDataList="getDataList"></materielAddOrUpdate>
-	</div>
+
+    <el-dialog title="物料导入" size="small" :close-on-click-modal="false" :visible.sync="visible" width="75%">
+      <el-upload ref="upload" class="upload-demo" :file-list="fileList" :on-change="handleChange" action=""
+        :before-upload="beforeUpload" :show-file-list="true" :auto-upload="false">
+        <el-button slot="trigger" type="primary">选取文件</el-button>
+      </el-upload>
+      <el-button type="primary" style="margin-top: 5px;" @click="importOrganizations">提交</el-button>
+    </el-dialog>
+  </div>
 </template>
 
 <script>
 	import {
 		findMaterielPage,
-		updateMateriel
+		updateMateriel,
+    importMateriels
 	} from '@/api/base/materiel'
 	import materielAddOrUpdate from './materiel-add-or-update'
 	export default {
@@ -93,6 +107,8 @@
 				pageIndex: 1,
 				pageSize: 10,
 				totalPage: 0,
+        visible : false,
+        fileList: [],
 				dataListLoading: false,
 				selectionDataList: []
 			}
@@ -164,7 +180,46 @@
 						})
 					})
 				}).catch(() => {})
-			}
+			},
+      handleChange(file, fileList) {
+        if (fileList.length > 0) {
+          this.fileList = [fileList[fileList.length - 1]] // 这一步，是 展示最后一次选择的csv文件
+        }
+      },
+      beforeUpload(file) {
+        debugger
+        let fd = new FormData();
+        var testmsg = file.name.substring(file.name.lastIndexOf('.') + 1)
+        const extension = testmsg === 'xls'
+        if (!extension) {
+          this.$message({
+            message: '上传文件只能是 xls 格式!',
+            type: 'warning'
+          });
+          return
+        }
+        fd.append('file', file);
+        importMateriels(fd).then(response => {
+          if (response.data == '导入成功！') {
+            this.$message({
+              message: response.data,
+              type: 'success',
+              onClose: () => {
+                this.visible = false
+                this.getDataList()
+              }
+            });
+          } else {
+            this.$message({
+              message: response.data,
+              type: 'warning'
+            });
+          }
+        })
+      },
+      importOrganizations() {
+        this.$refs.upload.submit();
+      }
 		}
 	}
 </script>

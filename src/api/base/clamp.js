@@ -47,3 +47,11 @@ export function findClampList(param) {
     }
   })
 }
+
+export function importClamps(data) {
+  return request({
+    url : '/base/v1/clamp/importClamps',
+    method : 'post',
+    data : data
+  })
+}

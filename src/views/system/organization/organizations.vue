@@ -7,6 +7,7 @@
             <el-form-item label="">
               <el-button type="primary" icon="el-icon-refresh" size="small" round @click="refreshorgTable()">刷新</el-button>
               <el-button type="primary" icon="el-icon-plus" size="small" round @click="addOrUpdateHandle(1, 0)">增加</el-button>
+              <el-button type="primary" icon="el-icon-edit-outline" size="small" round @click="visible = true">导入</el-button>
             </el-form-item>
           </el-col>
           <el-col :offset="8" :span="8">
@@ -54,12 +55,20 @@
       </el-table>
     </el-row>
     <organizationAddOrUpdate v-if="addOrUpdateVisible" ref="organizationAddOrUpdate" @refreshDataList="refreshorgTable" />
+
+    <el-dialog title="组织导入" size="small" :close-on-click-modal="false" :visible.sync="visible" width="75%">
+      <el-upload ref="upload" class="upload-demo" :file-list="fileList" :on-change="handleChange" action=""
+        :before-upload="beforeUpload" :show-file-list="true" :auto-upload="false">
+        <el-button slot="trigger" type="primary">选取文件</el-button>
+      </el-upload>
+      <el-button type="primary" style="margin-top: 5px;" @click="importOrganizations">提交</el-button>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import organizationAddOrUpdate from './organization-add-or-update'
-import { findOrganizationTree, deleteOrganization } from '@/api/system/organization'
+import { findOrganizationTree, deleteOrganization, importOrganizations } from '@/api/system/organization'
 export default {
   components: {
     organizationAddOrUpdate
@@ -67,7 +76,9 @@ export default {
   data() {
     return {
       orgDataList: [],
+      visible : false,
       addOrUpdateVisible: false,
+      fileList: [],
       searchFormData: {
         searchTextValue: ''
       }
@@ -164,7 +175,46 @@ export default {
           this.refreshorgTable()
         })
       }
-    }
+    },
+    handleChange(file, fileList) {
+      if (fileList.length > 0) {
+        this.fileList = [fileList[fileList.length - 1]] // 这一步，是 展示最后一次选择的csv文件
+      }
+    },
+    beforeUpload(file) {
+      debugger
+      let fd = new FormData();
+      var testmsg = file.name.substring(file.name.lastIndexOf('.') + 1)
+      const extension = testmsg === 'xls'
+      if (!extension) {
+        this.$message({
+          message: '上传文件只能是 xls 格式!',
+          type: 'warning'
+        });
+        return
+      }
+      fd.append('file', file);
+      importOrganizations(fd).then(response => {
+        if (response.data == '导入成功！') {
+          this.$message({
+            message: response.data,
+            type: 'success',
+            onClose: () => {
+              this.visible = false
+              this.orgDataInit()
+            }
+          });
+        } else {
+          this.$message({
+            message: response.data,
+            type: 'warning'
+          });
+        }
+      })
+    },
+    importOrganizations() {
+      this.$refs.upload.submit();
+    },
   }
 }
 </script>

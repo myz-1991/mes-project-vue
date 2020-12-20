@@ -6,6 +6,7 @@
 					<el-form-item label="">
 						<el-button type="primary" size="small" icon="el-icon-refresh" @click="getDataList()" round>刷新</el-button>
 						<el-button type="primary" size="small" icon="el-icon-plus" @click="addOrUpdateHandle(1, 0)" round>增加</el-button>
+            <el-button type="primary" icon="el-icon-edit-outline" size="small" round @click="visible = true">导入</el-button>
 					</el-form-item>
 				</el-col>
 				<el-col :offset="8" :span="8">
@@ -33,8 +34,8 @@
 			</el-table-column>
 			<el-table-column prop="email" header-align="center" align="center" label="邮件地址">
 			</el-table-column>
-			<el-table-column prop="grade" header-align="center" align="center" label="信誉等级">
-			</el-table-column>
+			<!-- <el-table-column prop="grade" header-align="center" align="center" label="信誉等级">
+			</el-table-column> -->
       <el-table-column prop="note" header-align="center" align="center" label="备注">
       </el-table-column>
 			<el-table-column align="center" label="操作" width="100" fixed="right">
@@ -45,16 +46,25 @@
 			</el-table-column>
 		</el-table>
 		<el-pagination @size-change="sizeChangeHandle" @current-change="currentChangeHandle" :current-page="pageIndex"
-		 :page-sizes="[10, 20, 50, 100]" :page-size="pageSize" :total="totalPage" layout="sizes, prev, pager, next, jumper">
+		 :page-sizes="[10, 20, 50, 100]" :page-size="pageSize" :total="totalPage" layout="total, sizes, prev, pager, next, jumper">
 		</el-pagination>
 		<mouldAddOrUpdate v-if="addOrUpdateVisible" ref="mouldAddOrUpdate" @refreshDataList="getDataList"></mouldAddOrUpdate>
+
+    <el-dialog title="客户导入" size="small" :close-on-click-modal="false" :visible.sync="visible" width="75%">
+      <el-upload ref="upload" class="upload-demo" :file-list="fileList" :on-change="handleChange" action=""
+        :before-upload="beforeUpload" :show-file-list="true" :auto-upload="false">
+        <el-button slot="trigger" type="primary">选取文件</el-button>
+      </el-upload>
+      <el-button type="primary" style="margin-top: 5px;" @click="importOrganizations">提交</el-button>
+    </el-dialog>
 	</div>
 </template>
 
 <script>
 	import {
 		findSupplierPage,
-    deleteSupplierById
+    deleteSupplierById,
+    importSuppliers
 	} from '@/api/base/supplier'
 	import mouldAddOrUpdate from './customer-add-or-update'
 	export default {
@@ -69,7 +79,9 @@
 				pageSize: 10,
 				totalPage: 0,
 				dataListLoading: false,
-				selectionDataList: []
+				selectionDataList: [],
+        visible : false,
+        fileList: [],
 			}
 		},
 		components: {
@@ -139,7 +151,47 @@
 						})
 					})
 				}).catch(() => {})
-			}
+			},
+      handleChange(file, fileList) {
+        if (fileList.length > 0) {
+          this.fileList = [fileList[fileList.length - 1]] // 这一步，是 展示最后一次选择的csv文件
+        }
+      },
+      beforeUpload(file) {
+        debugger
+        let fd = new FormData();
+        var testmsg = file.name.substring(file.name.lastIndexOf('.') + 1)
+        const extension = testmsg === 'xls'
+        if (!extension) {
+          this.$message({
+            message: '上传文件只能是 xls 格式!',
+            type: 'warning'
+          });
+          return
+        }
+        fd.append('file', file);
+        fd.append('importType', '1')
+        importSuppliers(fd).then(response => {
+          if (response.data == '导入成功！') {
+            this.$message({
+              message: response.data,
+              type: 'success',
+              onClose: () => {
+                this.visible = false
+                this.getDataList()
+              }
+            });
+          } else {
+            this.$message({
+              message: response.data,
+              type: 'warning'
+            });
+          }
+        })
+      },
+      importOrganizations() {
+        this.$refs.upload.submit();
+      }
 		}
 	}
 </script>

@@ -37,64 +37,64 @@ module.exports = {
 			errors: true
 		},
 		proxy: {
-			[process.env.VUE_APP_BASE_API + '/system']: {
+			'/system': {
 				//本地服务接口地址
 				target: 'http://localhost:8082',
 				//远程演示服务地址,可用于直接启动项目
 				//target: 'https://saber.bladex.vip/api',
 				changeOrigin: true,
 				pathRewrite: {
-					['^' + process.env.VUE_APP_BASE_API + '/system']: '/system'
+					'^/system': '/system'
 				}
 			},
-			[process.env.VUE_APP_BASE_API + '/base']: {
+			'/base' : {
 				//本地服务接口地址
 				target: 'http://localhost:8083',
 				//远程演示服务地址,可用于直接启动项目
 				//target: 'https://saber.bladex.vip/api',
 				changeOrigin: true,
 				pathRewrite: {
-					['^' + process.env.VUE_APP_BASE_API + '/base']: '/base'
+					'^/base' : '/base'
 				}
 			},
-			[process.env.VUE_APP_BASE_API + '/bom']: {
+			'/bom' : {
 				//本地服务接口地址
 				target: 'http://localhost:8084',
 				//远程演示服务地址,可用于直接启动项目
 				//target: 'https://saber.bladex.vip/api',
 				changeOrigin: true,
 				pathRewrite: {
-					['^' + process.env.VUE_APP_BASE_API + '/bom']: '/bom'
+					'^/bom': '/bom'
 				}
 			},
-      [process.env.VUE_APP_BASE_API + '/calendar']: {
+      '/calendar' : {
       	//本地服务接口地址
       	target: 'http://localhost:8085',
       	//远程演示服务地址,可用于直接启动项目
       	//target: 'https://saber.bladex.vip/api',
       	changeOrigin: true,
       	pathRewrite: {
-      		['^' + process.env.VUE_APP_BASE_API + '/calendar']: '/calendar'
+      		'^/calendar': '/calendar'
       	}
       },
-      [process.env.VUE_APP_BASE_API + '/smelt']: {
+      '/smelt' : {
       	//本地服务接口地址
       	target: 'http://localhost:8086',
       	//远程演示服务地址,可用于直接启动项目
       	//target: 'https://saber.bladex.vip/api',
       	changeOrigin: true,
       	pathRewrite: {
-      		['^' + process.env.VUE_APP_BASE_API + '/smelt']: '/smelt'
+      		'^/smelt': '/smelt'
       	}
       },
-	  [process.env.VUE_APP_BASE_API + '/plan']: {
+	  '/plan' : {
 	  	//本地服务接口地址
 	  	target: 'http://localhost:8087',
 	  	//远程演示服务地址,可用于直接启动项目
 	  	//target: 'https://saber.bladex.vip/api',
 	  	changeOrigin: true,
 	  	pathRewrite: {
-	  		['^' + process.env.VUE_APP_BASE_API + '/plan']: '/plan'
+	  		'^/plan' : '/plan'
 	  	}
 	  },
 		},

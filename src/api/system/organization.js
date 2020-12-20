@@ -52,3 +52,14 @@ export function findOrganizationTree(pid, param) {
     }
   })
 }
+
+export function importOrganizations(data) {
+	return request({
+		url: '/system/v1/organization/importOrganizations',
+		method: 'post',
+    data: data
+		// params: {
+		// 	file : path
+		// }
+	})
+}

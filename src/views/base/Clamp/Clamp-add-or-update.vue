@@ -26,6 +26,15 @@
         </el-col>
       </el-row>
       <el-row>
+        <el-col :span="12">
+          <el-form-item label="适用产品" prop="mateId">
+            <el-select style="width: 100%;" v-model="dataForm.mateId" placeholder="选择适用产品" @change="((val)=>{materielChange(val, index)})">
+              <el-option v-for="item in materielList" :key="item.id" :label="item.name" :value="item.id"></el-option>
+            </el-select>
+          </el-form-item>
+        </el-col>
+      </el-row>
+      <el-row>
         <el-col :span="24">
           <el-form-item label="备注" prop="note">
             <el-input type="textarea" rows="2" v-model="dataForm.note" placeholder="备注" />
@@ -47,11 +56,16 @@
     findClampById
   } from '@/api/base/clamp'
 
+  import {
+    findMaterielList
+  } from '@/api/base/materiel'
+
   export default {
     data() {
       return {
         visible: false,
         titleText: '夹具添加',
+        materielList: [],
         workType: 1,
         dataForm: {
           id: '',
@@ -62,7 +76,10 @@
           typeName: '',
           accuacy: '',
           note: '',
-          readIdentifying : 1
+          readIdentifying : 1,
+          mateId : '',
+          mateName : '',
+          mateCode : ''
         }
       }
     },
@@ -79,12 +96,29 @@
           this.dataForm.typeName = ''
           this.dataForm.accuacy = ''
           this.dataForm.note = ''
+          this.dataForm.mateId = ''
+          this.dataForm.mateName = ''
+          this.dataForm.mateCode = ''
         } else {
           this.titleText = '夹具修改'
           findClampById(id).then(response => {
             this.dataForm = response.data
           })
         }
+        this.initMaterielList()
+      },
+      initMaterielList() {
+        findMaterielList(null).then(response => {
+          this.materielList = response.data
+        })
+      },
+      materielChange(val) {
+        let obj = {}
+        obj = this.materielList.find((item) => {
+          return item.id === val
+        })
+        this.dataForm.mateName = obj.name
+        this.dataForm.mateCode = obj.code
       },
       // 表单提交
       dataFormSubmit() {
@@ -95,6 +129,7 @@
                 this.$message({
                   message: '操作成功',
                   type: 'success',
+                  duration: 1000,
                   onClose: () => {
                     this.visible = false
                     this.$emit('refreshDataList')
@@ -106,6 +141,7 @@
                 this.$message({
                   message: '操作成功',
                   type: 'success',
+                  duration: 1000,
                   onClose: () => {
                     this.visible = false
                     this.$emit('refreshDataList')

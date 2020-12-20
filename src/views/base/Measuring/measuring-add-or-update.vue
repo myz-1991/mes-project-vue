@@ -31,6 +31,11 @@
             <el-input v-model="dataForm.range" placeholder="量程" />
           </el-form-item>
         </el-col>
+        <el-col :span="12">
+          <el-form-item label="检定周期" prop="checkPeriod">
+            <el-input v-model="dataForm.checkPeriod" placeholder="检定周期" />
+          </el-form-item>
+        </el-col>
       </el-row>
       <el-row>
         <el-col :span="24">
@@ -73,6 +78,7 @@
           accuracy : '',
           range : '',
           note : '',
+          checkPeriod : '',
           readIdentifying : 1
         }
       }
@@ -93,7 +99,8 @@
           this.dataForm.accuacy = ''
           this.dataForm.range = ''
           this.dataForm.note = ''
-          this.readIdentifying = 1
+          this.dataForm.readIdentifying = 1
+          this.dataForm.checkPeriod = ''
         } else {
           this.titleText = '量具修改'
           findMeasuringToolById(id).then(response => {

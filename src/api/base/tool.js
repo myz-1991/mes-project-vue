@@ -47,3 +47,11 @@ export function findToolList(param) {
     }
   })
 }
+
+export function importTools(data) {
+  return request({
+    url : '/base/v1/tool/importTools',
+    method : 'post',
+    data : data
+  })
+}

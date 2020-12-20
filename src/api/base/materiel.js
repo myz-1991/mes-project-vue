@@ -47,3 +47,11 @@ export function findMaterielList(param) {
     }
   })
 }
+
+export function importMateriels(data) {
+  return request({
+    url : '/base/v1/materiel/importMateriels',
+    method : 'post',
+    data : data
+  })
+}

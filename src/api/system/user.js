@@ -86,3 +86,11 @@ export function findUserList(param) {
 		}
 	})
 }
+
+export function importUsers(data) {
+	return request({
+		url : '/system/v1/user/importUsers',
+		method : 'post',
+		data : data
+	})
+}

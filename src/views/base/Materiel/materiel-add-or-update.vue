@@ -25,6 +25,18 @@
 					</el-form-item>
 				</el-col>
 			</el-row>
+      <el-row>
+      	<el-col :span="12">
+      		<el-form-item label="英文名称" prop="englishName">
+      			<el-input v-model="dataForm.englishName" placeholder="英文名称" />
+      		</el-form-item>
+      	</el-col>
+      	<el-col :span="12">
+      		<el-form-item label="容积" prop="volume">
+      			<el-input v-model="dataForm.volume" placeholder="容积" />
+      		</el-form-item>
+      	</el-col>
+      </el-row>
 			<el-row>
 				<el-col :span="12">
 					<el-form-item label="物料类型" prop="typeName">
@@ -176,7 +188,9 @@
 					note: '',
 					readIdentifying: 1,
 					customerId: '',
-					customerName: ''
+					customerName: '',
+          volume : '',
+          englishName : ''
 				}
 			}
 		},

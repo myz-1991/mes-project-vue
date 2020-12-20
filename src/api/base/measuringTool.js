@@ -47,3 +47,11 @@ export function findMeasuringToolList(param) {
     }
   })
 }
+
+export function importMeasuringTools(data) {
+  return request({
+    url : '/base/v1/measuringTool/importMeasuringTools',
+    method : 'post',
+    data : data
+  })
+}

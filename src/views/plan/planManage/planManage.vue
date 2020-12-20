@@ -55,7 +55,8 @@
         <el-table-column label="操作" align="center" width="200" fixed="right">
           <template slot-scope="scope">
             <el-tooltip class="item" effect="dark" content="编辑" placement="top-start">
-              <el-button size="mini" icon="el-icon-edit" type="warning" @click="addOrUpdateHandle('2', scope.row)" round></el-button>
+              <el-button size="mini" icon="el-icon-edit" type="warning" @click="addOrUpdateHandle('2', scope.row)"
+                round></el-button>
             </el-tooltip>
             <el-tooltip class="item" effect="dark" content="查看任务单" placement="top-start">
               <el-button size="mini" icon="el-icon-view" type="primary" round @click="taskViewOpen(scope.row.id)"></el-button>
@@ -102,7 +103,7 @@
         taskDataList: [],
         addOrUpdateVisible: false,
         taskAddVisible: false,
-        taskViewVisible : false,
+        taskViewVisible: false,
         materialPrepareVisible: false,
         visible: false,
         orderVisible: false,
@@ -141,15 +142,15 @@
       beforeUpload(file) {
         debugger
         let fd = new FormData();
-		var testmsg=file.name.substring(file.name.lastIndexOf('.')+1)
-		const extension = testmsg === 'xls'  
-		if(!extension) {    
-			this.$message({    
-			message: '上传文件只能是 xls 格式!',    
-			type: 'warning'    
-			});
-			return
-		}  
+        var testmsg = file.name.substring(file.name.lastIndexOf('.') + 1)
+        const extension = testmsg === 'xls'
+        if (!extension) {
+          this.$message({
+            message: '上传文件只能是 xls 格式!',
+            type: 'warning'
+          });
+          return
+        }
         fd.append('file', file);
         importTaskData(fd).then(response => {
 

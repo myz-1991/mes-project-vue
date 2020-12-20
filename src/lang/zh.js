@@ -93,7 +93,7 @@ export default {
     smeltingStock: '原料库存',
 	semltCheck : '光谱分析',
 		quality : '质量管理',
-		qualityTask: '检验任务',
+		qualityTask: '光普分析任务',
 		qualityHistory : '检验历史记录',
     crucible : '坩锅管理',
     qualitySpcManager : 'SPC管理',

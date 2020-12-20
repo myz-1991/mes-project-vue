@@ -59,3 +59,11 @@ export function findSupplierList(param, type) {
     }
   })
 }
+
+export function importSuppliers(data) {
+  return request({
+    url : '/base/v1/supplier/importSuppliers',
+    method : 'post',
+    data : data
+  })
+}

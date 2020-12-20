@@ -31,11 +31,11 @@
 						<el-input v-model="dataForm.email" placeholder="邮件地址" />
 					</el-form-item>
 				</el-col>
-        <el-col :span="12">
+        <!-- <el-col :span="12">
         	<el-form-item label="信誉等级" prop="grade">
         		<el-input v-model="dataForm.grade" placeholder="信誉等级"></el-input>
         	</el-form-item>
-        </el-col>
+        </el-col> -->
 			</el-row>
 			<el-row>
 				<el-col :span="24">
