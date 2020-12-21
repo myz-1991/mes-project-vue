@@ -59,3 +59,11 @@ export function listEquipmentByParam(param, orgId) {
     }
   })
 }
+
+export function importEquipments(data) {
+  return request({
+    url : '/base/v1/equipment/importEquipments',
+    method : 'post',
+    data : data
+  })
+}

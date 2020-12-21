@@ -55,6 +55,13 @@
           </el-form-item>
         </el-col>
       </el-row>
+			<el-row>
+			  <el-col :span="12">
+			    <el-form-item label="设备IP" prop="deviceIp">
+			      <el-input v-model="dataForm.deviceIp" placeholder="设备IP">></el-input>
+			    </el-form-item>
+			  </el-col>
+			</el-row>
       <el-row>
         <el-col :span="24">
           <el-form-item label="设备描述" size="mini" prop="note">
@@ -110,7 +117,8 @@
           productionDate : '',
           productionName : '',
           supplierId : '',
-          supplierName : ''
+          supplierName : '',
+					deviceIp : ''
         }
       }
     },

@@ -47,3 +47,11 @@ export function findMouldList(param) {
     }
   })
 }
+
+export function importMoulds(data) {
+  return request({
+    url : '/base/v1/mould/importMoulds',
+    method : 'post',
+    data : data
+  })
+}
