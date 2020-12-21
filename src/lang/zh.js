@@ -94,6 +94,8 @@ export default {
 	semltCheck : '光谱分析',
 		quality : '质量管理',
 		qualityTask: '光普分析任务',
+    densityTask: '密度分析任务',
+    hardnessTask: '硬度分析任务',
 		qualityHistory : '检验历史记录',
     crucible : '坩锅管理',
     qualitySpcManager : 'SPC管理',

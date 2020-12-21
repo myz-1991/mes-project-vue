@@ -26,24 +26,18 @@
 				<el-table size="mini" :data="dataList" border v-loading="dataListLoading" style="width: 100%;">
 					<el-table-column type="selection" align="center" width="50">
 					</el-table-column>
-					<el-table-column prop="itemName" align="center" label="缺陷项名称">
+					<el-table-column prop="name" align="center" label="缺陷项名称">
 					</el-table-column>
-					<el-table-column prop="itemStandardValue" align="center" label="顺序">
-					</el-table-column>
-					<el-table-column prop="itemPositiveerror" align="center" label="是否有效">
-					</el-table-column>
-          <el-table-column align="center" label="创建人">
-          </el-table-column>
-					<el-table-column prop="itemNegativeerror" align="center" label="创建时间">
-					</el-table-column>
-          <el-table-column align="center" label="修改人">
-          </el-table-column>
-					<el-table-column prop="itemSize"align="center" label="修改时间">
+					<el-table-column prop="status" align="center" label="状态">
+            <template slot-scope="scope">
+              <el-tag v-if="scope.row.status == 2" type="danger">禁用</el-tag>
+              <el-tag v-else type="success">正常</el-tag>
+            </template>
 					</el-table-column>
 					<el-table-column align="center" label="操作" width="200">
 						<template slot-scope="scope">
-							<el-button size="mini" icon="el-icon-edit" type="primary" @click="addOrUpdateHandle('2', scope.row.userId)" round>修改</el-button>
-							<el-button size="mini" icon="el-icon-delete" type="danger" @click="deleteHandle(scope.row.userId)" round>删除</el-button>
+							<el-button size="mini" icon="el-icon-edit" type="primary" @click="addOrUpdateHandle('2', scope.row.id)" round>修改</el-button>
+							<el-button size="mini" icon="el-icon-delete" type="danger" @click="deleteHandle(scope.row.id)" round>删除</el-button>
 						</template>
 					</el-table-column>
 				</el-table>
@@ -56,6 +50,7 @@
 </template>
 
 <script>
+  import { findDefectsPage, deleteDefets } from '@/api/bom/defects'
 	import checkItemAddOrUpdate from './checkItem-add-or-update'
 	export default {
 		data() {
@@ -75,7 +70,7 @@
 		components: {
 			checkItemAddOrUpdate
 		},
-		activated() {
+		mounted() {
 			this.getDataList()
 		},
 		methods: {
@@ -95,26 +90,16 @@
 			// 获取数据列表
 			getDataList() {
 				this.dataListLoading = true
-				this.$http({
-					url: this.$http.adornBomUrl('/bom/v1/checkItem/pagedQueryCheckItemByParam'),
-					method: 'get',
-					params: {
-						'startIndex': (this.pageIndex - 1) * this.pageSize,
-						'pageSize': this.pageSize,
-						'param': this.dataForm.searchTextValue
-					}
-				}).then(({
-					data
-				}) => {
-					if (data) {
-						this.dataList = data.data
-						this.totalPage = data.totalCount
-					} else {
-						this.dataList = []
-						this.totalPage = 0
-					}
-					this.dataListLoading = false
-				})
+        findDefectsPage(this.dataForm.searchTextValue, this.pageSize, this.pageIndex).then(response => {
+          if (response) {
+            this.dataList = response.data.records
+            this.totalPage = response.data.total
+          } else {
+            this.dataList = []
+            this.totalPage = 0
+          }
+          this.dataListLoading = false
+        })
 			},
 			// 每页数
 			sizeChangeHandle(val) {
@@ -141,27 +126,16 @@
 					cancelButtonText: '取消',
 					type: 'warning'
 				}).then(() => {
-					this.$http({
-						url: this.$http.adornBomUrl('/bom/v1/checkItem/deleteCheckItemById'),
-						method: 'DELETE',
-						params: {
-							userId : id
-						}
-					}).then(({
-						data
-					}) => {
-						if (data) {
-							this.$message({
-								message: '删除成功',
-								type: 'success',
-								onClose: () => {
-									this.refreshCheckItemTable()
-								}
-							})
-						} else {
-							this.$message.error(data.msg)
-						}
-					})
+          deleteDefets(id).then(response => {
+            this.$message({
+            	message: '删除成功',
+            	type: 'success',
+              duration: 1000,
+            	onClose: () => {
+            		this.refreshCheckItemTable()
+            	}
+            })
+          })
 				}).catch(() => {})
 			}
 		}

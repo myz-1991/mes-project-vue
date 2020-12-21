@@ -8,7 +8,7 @@
               <el-button type="primary" icon="el-icon-refresh" round @click="refreshorgTable()">刷新</el-button>
               <el-button type="primary" icon="el-icon-view" round @click="standardVisible = true">查看标准</el-button>
               <!-- <el-button type="primary" icon="el-icon-plus" round @click="orderVisible=true">新建</el-button> -->
-              <el-button type="primary" icon="el-icon-receiving" round @click="visible = true">附件上传</el-button>
+              <!-- <el-button type="primary" icon="el-icon-receiving" round @click="visible = true">附件上传</el-button> -->
               <el-button type="primary" icon="el-icon-check" round>完工</el-button>
             </el-form-item>
           </el-col>
@@ -29,14 +29,14 @@
       <el-table ref="taskTable" :data="taskDataList" size="small" row-key="taskId" border lazy :load="load" :tree-props="{children: 'children', hasChildren: 'leaf'}">
         <el-table-column type="selection" width="55" />
         <el-table-column prop="taskName" align="center" label="任务号" />
-		<el-table-column prop="mateCode" align="center" label="熔炼炉号" />
-		<el-table-column prop="mateName" align="center" label="精炼炉号" />
+        <el-table-column prop="mateCode" align="center" label="炉批号" />
+        <el-table-column prop="mateName" align="center" label="包号" />
         <el-table-column align="center" label="检验结果">
-			<template slot-scope="scope">
-				<el-tag v-if="scope.row.status === 2" type="danger">不合格</el-tag>
-				<el-tag v-else type="success">合格</el-tag>
-			</template>
-		</el-table-column>
+          <template slot-scope="scope">
+            <el-tag v-if="scope.row.status === 2" type="danger">不合格</el-tag>
+            <el-tag v-else type="success">合格</el-tag>
+          </template>
+        </el-table-column>
         <el-table-column prop="checkDate" align="center" label="送检日期" width="150">
         </el-table-column>
         <el-table-column prop="checkName" align="center" label="送检人" />
@@ -44,13 +44,13 @@
           <template slot-scope="scope">
             <!-- <el-button size="mini" icon="el-icon-edit" type="success" @click="materialPrepareHandle(scope.row.taskId)" round>物料齐套</el-button> -->
             <el-button size="mini" icon="el-icon-data-analysis" type="success" round @click="checkVisible = true">检验明细</el-button>
-            <el-button size="mini" icon="el-icon-data-analysis" type="success" round @click="processingProgressHandle(scope.row.taskId)">投放合金</el-button>
+            <el-button size="mini" icon="el-icon-data-analysis" type="success" round @click="visible = true">导入结果</el-button>
           </template>
         </el-table-column>
       </el-table>
     </el-row>
 
-    <el-dialog title="文件上传" size="small" :close-on-click-modal="false" :visible.sync="visible" width="75%">
+    <el-dialog title="导入结果" size="small" :close-on-click-modal="false" :visible.sync="visible" width="75%">
       <el-upload ref="upload" class="upload-demo" :file-list="fileList" :on-change="handleChange" :action="uploadUrl"
         :show-file-list="true" :on-success="onSuccess" :on-error="onError" :auto-upload="false">
         <el-button slot="trigger" type="primary">选取文件</el-button>
@@ -58,67 +58,56 @@
       <el-button type="primary" style="margin-top: 5px;" @click="handleSubmit">提交</el-button>
     </el-dialog>
 
-    <el-dialog title="新建检验任务" size="small" :close-on-click-modal="false" :visible.sync="orderVisible" width="60%">
-      <el-form ref="dataForm" size="small" label-width="80px">
+    <el-dialog title="密度分析标准值" size="small" :close-on-click-modal="false" :visible.sync="standardVisible" width="20%">
+      <el-form :model="dataFrom" inline="">
+        <el-form-item label="密度标准">
+          <el-input style="width: 100%;" v-model="dataFrom.value2" placeholder="密度标准"></el-input>
+        </el-form-item>
+        <el-form-item label="密度当量">
+          <el-input style="width: 100%;" v-model="dataFrom.value3" placeholder="密度当量"></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="danger" size="small" icon="el-icon-delete" round @click="standardVisible = false">取消</el-button>
+        <el-button type="primary" size="small" icon="el-icon-check" round>确定</el-button>
+      </span>
+    </el-dialog>
+
+    <el-dialog title="检验结果" size="small" :close-on-click-modal="false" :visible.sync="checkVisible" width="40%">
+      <el-form :model="dataFrom1" label-width="100px">
         <el-row>
           <el-col :span="12">
-            <el-form-item label="检验类型">
-              <el-select v-model="value" placeholder="请选择检验类型" style="width: 100%;">
-                <el-option label="广普分析" value="1" />
-                <el-option label="拉棒" value="2" />
-                <el-option label="三座标" value="3" />
-              </el-select>
+            <el-form-item label="炉批号">
+              <el-input v-model="dataFrom1.value1" style="width: 100%;" placeholder="炉批号" readonly></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="批次号">
-              <el-select v-model="value" placeholder="请选择批次号" style="width: 100%;">
-                <el-option label="20201028-1" value="1" />
-                <el-option label="20201028-2" value="2" />
-              </el-select>
+            <el-form-item label="包号">
+              <el-input v-model="dataFrom1.value4" style="width: 100%;" placeholder="包号" readonly></el-input>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item label="产品编码">
-              <el-input placeholder="产品编码" read-only />
+            <el-form-item label="密度标准值">
+              <el-input v-model="dataFrom1.value2" style="width: 100%;" placeholder="密度标准值" readonly></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="产品名称">
-              <el-input placeholder="产品名称" read-only />
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="12">
-            <el-form-item label="规格型号">
-              <el-input placeholder="规格型号" read-only />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="送检时间">
-              <el-date-picker type="date" placeholder="送检时间" style="width: 100%;" />
+            <el-form-item label="密度实测值">
+              <el-input v-model="dataFrom1.value5" style="width: 100%;" placeholder="密度实测值"></el-input>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item label="二维码">
-              <el-input placeholder="二维码" />
+            <el-form-item label="当量标准值">
+              <el-input v-model="dataFrom1.value3" style="width: 100%;" placeholder="当量标准值" readonly></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="检验数量">
-              <el-input-number placeholder="检验数量" style="width: 100%;" />
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="12">
-            <el-form-item label="坩锅号">
-              <el-select placeholder="二维码" />
+            <el-form-item label="当量实测值">
+              <el-input v-model="dataFrom1.value6" style="width: 100%;" placeholder="当量实测值"></el-input>
             </el-form-item>
           </el-col>
         </el-row>
@@ -128,84 +117,6 @@
         <el-button type="primary" size="small" icon="el-icon-check" round @click="dataFormSubmit()">确定</el-button>
       </span>
     </el-dialog>
-
-    <el-dialog title="光谱分析标准值" size="small" :close-on-click-modal="false" :visible.sync="standardVisible" width="90%">
-      <el-table :data="tableData" style="width: 100%" border>
-        <el-table-column prop="value1" width="130">
-        </el-table-column>
-        <el-table-column prop="value2" label="Si硅">
-        </el-table-column>
-        <el-table-column prop="value3" label="MG镁">
-        </el-table-column>
-        <el-table-column prop="value4" label="Ti钛">
-        </el-table-column>
-        <el-table-column prop="value5" label="Sr锶">
-        </el-table-column>
-        <el-table-column prop="value6" label="Fe铁">
-        </el-table-column>
-        <el-table-column prop="value7" label="Cu铜">
-        </el-table-column>
-        <el-table-column prop="value8" label="Mn锰">
-        </el-table-column>
-        <el-table-column prop="value9" label="Cd镉">
-        </el-table-column>
-        <el-table-column prop="value10" label="Ca钙">
-        </el-table-column>
-        <el-table-column prop="value11" label="Na钠">
-        </el-table-column>
-        <el-table-column prop="value12" label="Sb锑">
-        </el-table-column>
-        <el-table-column prop="value13" label="P磷">
-        </el-table-column>
-        <el-table-column prop="value14" label="其他单个">
-        </el-table-column>
-        <el-table-column prop="value15" label="其他总量">
-        </el-table-column>
-      </el-table>
-      <!-- <span slot="footer" class="dialog-footer">
-        <el-button type="danger" size="small" icon="el-icon-delete" round @click="orderVisible = false">取消</el-button>
-        <el-button type="primary" size="small" icon="el-icon-check" round @click="dataFormSubmit()">确定</el-button>
-      </span> -->
-    </el-dialog>
-	
-	<el-dialog title="检验结果" size="small" :close-on-click-modal="false" :visible.sync="checkVisible" width="90%">
-	  <el-table :data="tableData1" style="width: 100%" border>
-	    <el-table-column prop="value1" width="130">
-	    </el-table-column>
-	    <el-table-column prop="value2" label="Si硅">
-	    </el-table-column>
-	    <el-table-column prop="value3" label="MG镁">
-	    </el-table-column>
-	    <el-table-column prop="value4" label="Ti钛">
-	    </el-table-column>
-	    <el-table-column prop="value5" label="Sr锶">
-	    </el-table-column>
-	    <el-table-column prop="value6" label="Fe铁">
-	    </el-table-column>
-	    <el-table-column prop="value7" label="Cu铜">
-	    </el-table-column>
-	    <el-table-column prop="value8" label="Mn锰">
-	    </el-table-column>
-	    <el-table-column prop="value9" label="Cd镉">
-	    </el-table-column>
-	    <el-table-column prop="value10" label="Ca钙">
-	    </el-table-column>
-	    <el-table-column prop="value11" label="Na钠">
-	    </el-table-column>
-	    <el-table-column prop="value12" label="Sb锑">
-	    </el-table-column>
-	    <el-table-column prop="value13" label="P磷">
-	    </el-table-column>
-	    <el-table-column prop="value14" label="其他单个">
-	    </el-table-column>
-	    <el-table-column prop="value15" label="其他总量">
-	    </el-table-column>
-	  </el-table>
-	  <!-- <span slot="footer" class="dialog-footer">
-	    <el-button type="danger" size="small" icon="el-icon-delete" round @click="orderVisible = false">取消</el-button>
-	    <el-button type="primary" size="small" icon="el-icon-check" round @click="dataFormSubmit()">确定</el-button>
-	  </span> -->
-	</el-dialog>
   </div>
 </template>
 
@@ -214,21 +125,21 @@
     data() {
       return {
         taskDataList: [{
-			taskName : '2020-12-12-01',
-			mateCode : '1#',
-			mateName : '',
-			status : 1,
-			checkDate : '2020-12-12',
-			checkName : '张三'
-		},{
-			taskName : '2020-12-12-01',
-			mateCode : '',
-			mateName : 'M1',
-			status : 1,
-			checkDate : '2020-12-12',
-			checkName : '张三'
-		}],
-		checkVisible : false,
+          taskName: '2020-12-12-01',
+          mateCode: '20201212-01',
+          mateName: 'M1',
+          status: 1,
+          checkDate: '2020-12-12',
+          checkName: '张三'
+        }, {
+          taskName: '2020-12-12-02',
+          mateCode: '20201212-02',
+          mateName: 'M2',
+          status: 1,
+          checkDate: '2020-12-12',
+          checkName: '张三'
+        }],
+        checkVisible: false,
         addOrUpdateVisible: false,
         materialPrepareVisible: false,
         visible: false,
@@ -238,104 +149,18 @@
         searchFormData: {
           searchTextValue: ''
         },
-        tableData : [{
-          value1 : '熔炼炉内铝液',
-          value2 : '6.5-7.5',
-          value3 : '0.38-0.43',
-          value4 : '0.08-0.15',
-          value5 : '≤0.026',
-          value6 : '≤0.13',
-          value7 : '≤0.02',
-          value8 : '0.02-0.05',
-          value9 : '≤0.0075',
-          value10 : '≤0.002',
-          value11 : '≤0.0015',
-          value12 : '≤0.004',
-          value13 : '≤0.002',
-          value14 : '≤0.03',
-          value15 : '≤0.10'
-        },{
-          value1 : '保温炉内铝液',
-          value2 : '6.5-7.5',
-          value3 : '0.38-0.43',
-          value4 : '0.08-0.15',
-          value5 : '0.2-0.026',
-          value6 : '≤0.13',
-          value7 : '≤0.02',
-          value8 : '0.02-0.05',
-          value9 : '≤0.0075',
-          value10 : '≤0.002',
-          value11 : '≤0.0015',
-          value12 : '≤0.004',
-          value13 : '≤0.002',
-          value14 : '≤0.03',
-          value15 : '≤0.10'
-        }],
-		tableData1 : [{
-		  value1 : '熔炼炉内铝液',
-		  value2 : '6.5-7.5',
-		  value3 : '0.38-0.43',
-		  value4 : '0.08-0.15',
-		  value5 : '≤0.026',
-		  value6 : '≤0.13',
-		  value7 : '≤0.02',
-		  value8 : '0.02-0.05',
-		  value9 : '≤0.0075',
-		  value10 : '≤0.002',
-		  value11 : '≤0.0015',
-		  value12 : '≤0.004',
-		  value13 : '≤0.002',
-		  value14 : '≤0.03',
-		  value15 : '≤0.10'
-		},{
-		  value1 : '1#',
-		  value2 : '6.5',
-		  value3 : '0.38',
-		  value4 : '0.08',
-		  value5 : '0.025',
-		  value6 : '0.13',
-		  value7 : '0.02',
-		  value8 : '0.02',
-		  value9 : '0.0065',
-		  value10 : '0.002',
-		  value11 : '0.0015',
-		  value12 : '0.004',
-		  value13 : '0.002',
-		  value14 : '0.03',
-		  value15 : '0.10'
-		}, {
-		  value1 : '保温炉内铝液',
-		  value2 : '6.5-7.5',
-		  value3 : '0.38-0.43',
-		  value4 : '0.08-0.15',
-		  value5 : '0.2-0.026',
-		  value6 : '≤0.13',
-		  value7 : '≤0.02',
-		  value8 : '0.02-0.05',
-		  value9 : '≤0.0075',
-		  value10 : '≤0.002',
-		  value11 : '≤0.0015',
-		  value12 : '≤0.004',
-		  value13 : '≤0.002',
-		  value14 : '≤0.03',
-		  value15 : '≤0.10'
-		},{
-		  value1 : 'M1',
-		  value2 : '6.5',
-		  value3 : '0.43',
-		  value4 : '0.15',
-		  value5 : '0.026',
-		  value6 : '0.13',
-		  value7 : '0.02',
-		  value8 : '0.05',
-		  value9 : '0.0075',
-		  value10 : '0.002',
-		  value11 : '0.0015',
-		  value12 : '0.004',
-		  value13 : '0.002',
-		  value14 : '0.03',
-		  value15 : '0.10'
-		}],
+        dataFrom: {
+          value2: '≥2.55g/cm³',
+          value3: '≤3%',
+        },
+        dataFrom1: {
+          value1 : '20201212-01',
+          value2: '≥2.55g/cm³',
+          value3: '≤3%',
+          value4: 'M1',
+          value5 : '2.54g/cm³',
+          value6 : '2%'
+        },
         fileList: [],
         uploadUrl: []
       }

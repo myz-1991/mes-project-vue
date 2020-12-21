@@ -17,6 +17,18 @@ const planRouter = {
       meta: { title: 'qualityTask', permission: '/quality/qualityTask', icon: 'qualityTask' }
     },
     {
+      path: 'quality-density',
+      component: () => import('@/views/quality/densityTask/densityTask'),
+      name: 'DensityTask',
+      meta: { title: 'densityTask', permission: '/quality/densityTask', icon: 'qualityTask' }
+    },
+    {
+      path: 'quality-hardness',
+      component: () => import('@/views/quality/hardnessTask/hardnessTask'),
+      name: 'HardnessTask',
+      meta: { title: 'hardnessTask', permission: '/quality/hardnessTask', icon: 'qualityTask' }
+    },
+    {
       path: 'quality-History',
       component: () => import('@/views/quality/qualityHistory/qualityHistory'),
       name: 'QualityHistory',
