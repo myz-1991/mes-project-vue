@@ -183,8 +183,8 @@
 				if (workType == 1) {
 					this.showFlag = 1
 					this.dataForm.id  = null
-					this.dataForm.name  = 'P' + this.dateFormat(new Date())
-					this.dataForm.code  = 'OR' + this.dateFormat(new Date())
+					this.dataForm.name  = 'P' + this.dateFormat(new Date()) + "-01"
+					this.dataForm.code  = 'OR' + this.dateFormat(new Date()) + "-01"
 					this.dataForm.mateId  = null
 					this.dataForm.mateCode  = null
 					this.dataForm.mateName  = null

@@ -6,7 +6,7 @@
           <el-col :span="16">
             <el-form-item label="">
               <el-button type="primary" icon="el-icon-refresh" round @click="refreshorgTable()">刷新</el-button>
-              <el-button type="primary" icon="el-icon-plus" round @click="addOrUpdateHandle(1, 0)">新建计划</el-button>
+              <el-button type="primary" icon="el-icon-plus" round @click="addOrUpdateHandle(1)">新建计划</el-button>
               <el-button type="primary" icon="el-icon-plus" round @click="addOrUpdateHandle1(1, 0)">新建任务</el-button>
               <el-button type="primary" icon="el-icon-receiving" round @click="visible = true">导入</el-button>
             </el-form-item>
@@ -168,6 +168,10 @@
       },
       // 新增 / 修改
       addOrUpdateHandle(workType, row) {
+		  let id = null
+		  if (workType == '2') {
+			  id = row.id
+		  }
         if (workType == '2' && row.status != 'PLAN.STATUS.001') {
           this.$message({
             message: '只能修改未分配的计划任务！',

@@ -59,7 +59,9 @@
 					</el-col>
 					<el-col :span="12">
 						<el-form-item label="是否紧急" prop="planCode">
-							<el-input v-model="dataForm.planCode" placeholder="是否紧急" readonly />
+							<el-select v-model="dataForm.isJi" placeholder="是否紧急" style="width: 100%;">
+								<el-option v-for="item in priorityList" :key="item.value" :label="item.label" :value="item.value" />
+							</el-select>
 						</el-form-item>
 					</el-col>
 				</el-row>
@@ -186,6 +188,16 @@
 					label: 'mateName',
 					isLeaf: 'leaf'
 				},
+				priorityList: [{
+					value : 1,
+					label : '否'
+				}, {
+					value : 2,
+					label : '紧急'
+				}, {
+					value : 3,
+					label : '特急'
+				}],
 				dataForm: {
 					planCode: '',
 					planName: '',
@@ -232,6 +244,7 @@
 					equiCode: null,
 					taskType: null,
 					cavities: null,
+					isJi : 1,
 					leaf: null
 				}
 			}
@@ -282,6 +295,7 @@
 					this.dataForm.mouldClampName = null
 					this.dataForm.mouldClampCode = null
 					this.dataForm.taskType = '2'
+					this.dataForm.isJi = 1
 					this.dataForm.leaf = null
 				} else {
 					findTask(id).then(response => {
