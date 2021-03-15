@@ -109,7 +109,17 @@ export default {
     defects : '缺陷项管理',
     checkitem: '检测项管理',
 	ledger : '库房总账',
-	storageCheck : '库房盘点'
+  storageCheck : '库房盘点',
+  equipment: '设备',
+    equipmentManage: '可视化',
+    equipmentStatus: '设备状态总览',
+    realTimeEquipment: '设备实时数据',
+    utilization: '设备稼动率',
+    schedule: '计划进度看板',
+    yield: '产量信息统计',
+    yieldStatement: '产量信息报表',
+    warningMessage: '报警数据报表信息',
+    reject: '不合格品报表信息'
   },
   navbar: {
     dashboard: '首页',

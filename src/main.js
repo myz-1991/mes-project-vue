@@ -19,6 +19,25 @@ import './permission' // permission control
 import './utils/error-log' // error log
 
 import * as filters from './filters' // global filters
+import dataV from '@jiaminghi/data-view';
+Vue.use(dataV);
+// 引入echarts
+import echarts from 'echarts'
+Vue.prototype.$echarts = echarts
+// 按需引入vue-awesome图标
+import Icon from 'vue-awesome/components/Icon';
+import 'vue-awesome/icons/chart-bar.js';
+import 'vue-awesome/icons/chart-area.js';
+import 'vue-awesome/icons/chart-pie.js';
+import 'vue-awesome/icons/chart-line.js';
+import 'vue-awesome/icons/align-left.js';
+// 全局注册图标
+Vue.component('icon', Icon);
+// 适配flex
+import '@/common/flexible.js';
+
+// 引入全局css
+import './assets/scss/style.scss';
 
 /**
  * If you don't want to use mock-server

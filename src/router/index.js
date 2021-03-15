@@ -19,7 +19,7 @@ import planRouter from './modules/plan.js'
 import smeltingRouter from './modules/smelting.js'
 import qualityRouter from './modules/quality.js'
 import storageRouter from './modules/storage'
-
+import eqRouter from './modules/equipment'
 /**
  * Note: sub-menu only appear when route children.length >= 1
  * Detail see: https://panjiachen.github.io/vue-element-admin-site/guide/essentials/router-and-nav.html
@@ -205,6 +205,7 @@ export const asyncRoutes = [
   smeltingRouter,
   qualityRouter,
   storageRouter,
+  eqRouter,
   // {
   //   path: '/example',
   //   component: Layout,
