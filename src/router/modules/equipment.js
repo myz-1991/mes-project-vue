@@ -28,6 +28,12 @@ const eqRouter = {
       name: 'realTimeEquipment',
       meta: { title: 'realTimeEquipment', permission: '/equipment/realTimeEquipment', icon: 'receive' }
     },
+    {
+      path: 'equipmentStatus',
+      component: () => import('@/views/equipment/status'),
+      name: 'equipmentStatus',
+      meta: { title: 'equipmentStatus', permission: '/equipment/equipmentStatus', icon: 'receive' }
+    },
     // {
     //   path: 'utilization',
     //   component: () => import('@/views/equipment/utilization'),
@@ -53,6 +59,13 @@ const eqRouter = {
       name: 'YieldStatement',
       meta: { title: 'yieldStatement', permission: '/equipment/yieldStatement', icon: 'receive' }
     },
+    {
+      path: 'equipmentStatusLeft1',
+      component: () => import('@/views/equipment/equipmentStatusLeft1'),
+      hidden: true,
+      name: 'EquipmentStatusLeft1',
+      meta: { title: 'equipmentStatusLeft1', permission: '/equipment/equipmentStatusLeft1', icon: 'receive' }
+    }
     // {
     //   path: 'warningMessage',
     //   component: () => import('@/views/equipment/warningMessage'),

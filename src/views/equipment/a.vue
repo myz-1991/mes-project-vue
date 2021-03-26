@@ -32,7 +32,7 @@
               class="react-right ml-4"
               style="width: 6.25rem; text-align: left;background-color: #0f1325;"
             >
-              <span class="react-before"></span>
+              <span class="react-before" />
               <span class="text">数据分析1</span>
             </div>
             <div class="react-right ml-3" style="background-color: #0f1325;">
@@ -47,8 +47,8 @@
               class="react-left mr-4"
               style="width: 6.25rem; background-color: #0f1325; text-align: right;"
             >
-              <span class="react-after"></span>
-              <span class="text">{{dateYear}} {{dateWeek}} {{dateDay}}</span>
+              <span class="react-after" />
+              <span class="text">{{ dateYear }} {{ dateWeek }} {{ dateDay }}</span>
             </div>
           </div>
         </div>
@@ -71,9 +71,9 @@
               <center />
             </div>
             <!-- 中间 -->
-            <div>
+            <!-- <div>
               <centerRight2 />
-            </div>
+            </div> -->
             <div>
               <dv-border-box-13>
                 <centerRight1 />
@@ -98,23 +98,14 @@
 
 <script>
 import { formatTime } from '../../utils/indexC.js'
-import centerLeft1 from "./centerLeft1";
-import centerLeft2 from "./centerLeft2";
-import centerRight1 from "./centerRight1";
-import centerRight2 from "./centerRight2";
-import center from "./center";
-import bottomLeft from "./bottomLeft";
-import bottomRight from "./bottomRight";
+import centerLeft1 from './centerLeft1'
+import centerLeft2 from './centerLeft2'
+import centerRight1 from './centerRight1'
+import centerRight2 from './centerRight2'
+import center from './center'
+import bottomLeft from './bottomLeft'
+import bottomRight from './bottomRight'
 export default {
-  data () {
-    return {
-      loading: true,
-      dateDay: null,
-      dateYear: null,
-      dateWeek: null,
-      weekday: ["周日", "周一", "周二", "周三", "周四", "周五", "周六"],
-    };
-  },
   components: {
     centerLeft1,
     centerLeft2,
@@ -124,25 +115,39 @@ export default {
     bottomLeft,
     bottomRight
   },
-  mounted () {
-    this.timeFn();
-    this.cancelLoading();
+  data() {
+    return {
+      loading: true,
+      dateDay: null,
+      dateYear: null,
+      dateWeek: null,
+      weekday: ['周日', '周一', '周二', '周三', '周四', '周五', '周六']
+    }
+  },
+  mounted() {
+    this.timeFn()
+    this.cancelLoading()
+  },
+  created() {
+    // 每次进入界面时，先清除之前的所有定时器，然后启动新的定时器
+    clearInterval(this.timer)
+    this.timer = null
   },
   methods: {
-    timeFn () {
+    timeFn() {
       setInterval(() => {
-        this.dateDay = formatTime(new Date(), 'HH: mm: ss');
-        this.dateYear = formatTime(new Date(), 'yyyy-MM-dd');
-        this.dateWeek = this.weekday[new Date().getDay()];
+        this.dateDay = formatTime(new Date(), 'HH: mm: ss')
+        this.dateYear = formatTime(new Date(), 'yyyy-MM-dd')
+        this.dateWeek = this.weekday[new Date().getDay()]
       }, 1000)
     },
-    cancelLoading () {
+    cancelLoading() {
       setTimeout(() => {
-        this.loading = false;
-      }, 500);
+        this.loading = false
+      }, 500)
     }
   }
-};
+}
 </script>
 
 <style lang="scss" >

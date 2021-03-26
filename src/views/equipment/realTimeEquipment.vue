@@ -8,89 +8,110 @@
             :key="item.value"
             :label="item.label"
             :value="item.value"
-          >
-          </el-option>
+          />
         </el-select>
       </div>
     </el-card>
     <!-- 锯钻床 -->
     <div v-if="value === '1'">
-      <jz />
+      <jzz />
     </div>
     <!-- 刻码机 -->
     <div v-if="value === '2'">
-      <km />
+      <kmm />
     </div>
     <!-- 熔炼炉 -->
     <div v-if="value === '3'">
-      <rll />
+      <rlll />
     </div>
     <!-- 热处理炉 -->
     <div v-if="value === '4'">
-      <rcll />
+      <rclll />
     </div>
     <!-- 切边机 -->
     <div v-if="value === '5'">
-      <qbj />
+      <qbjj />
     </div>
     <!-- 机床 -->
     <div v-if="value === '6'">
-      <jc />
+      <jcc />
+    </div>
+    <!-- 压装机 -->
+    <div v-if="value === '7'">
+      <yzj />
+    </div>
+    <!-- 差压机 -->
+    <div v-if="value === '8'">
+      <cyj />
     </div>
   </div>
 </template>
 
 <script>
-import jz from '@/views/equipment/equipments/jz.vue';
-import rll from '@/views/equipment/equipments/rll.vue';
-import rcll from '@/views/equipment/equipments/rcll.vue';
-import km from '@/views/equipment/equipments/km.vue';
-import qbj from '@/views/equipment/equipments/qbj.vue';
-import jc from '@/views/equipment/equipments/jc.vue';
-
+import jz from '@/views/equipment/equipments/jz.vue'
+import jzz from '@/views/equipment/equipments/jzz.vue'
+import rll from '@/views/equipment/equipments/rll.vue'
+import rlll from '@/views/equipment/equipments/rlll.vue'
+import rcll from '@/views/equipment/equipments/rcll.vue'
+import rclll from '@/views/equipment/equipments/rclll.vue'
+import km from '@/views/equipment/equipments/km.vue'
+import kmm from '@/views/equipment/equipments/kmm.vue'
+import qbj from '@/views/equipment/equipments/qbj.vue'
+import qbjj from '@/views/equipment/equipments/qbjj.vue'
+import jc from '@/views/equipment/equipments/jc.vue'
+import jcc from '@/views/equipment/equipments/jcc.vue'
+import yzj from '@/views/equipment/equipments/yzj.vue'
+import cyj from '@/views/equipment/equipments/cyj.vue'
 export default {
-  components: { jz, rll, rcll, km, qbj, jc }, 
+  components: { jz, rll, rcll, km, qbj, jc, jzz, kmm, rlll, rclll, qbjj, jcc, yzj, cyj },
   data() {
     return {
       options: [
         {
-          value: "1",
-          label: "锯钻床",
+          value: '1',
+          label: '锯钻床'
         },
         {
-          value: "2",
-          label: "刻码机",
+          value: '2',
+          label: '刻码机'
         },
         {
-          value: "3",
-          label: "熔炼炉",
+          value: '3',
+          label: '熔炼炉'
         },
         {
-          value: "4",
-          label: "热处理炉",
+          value: '4',
+          label: '热处理炉'
         },
         {
-          value: "5",
-          label: "切边机",
+          value: '5',
+          label: '切边机'
         },
         {
-          value: "6",
-          label: "机床",
+          value: '6',
+          label: '机床'
+        },
+        {
+          value: '7',
+          label: '压装机'
+        }, {
+          value: '8',
+          label: '差压机'
         }
       ],
-      value: "",
-      label: "",
+      value: '',
+      label: '',
       dataList: null,
       timer: null,
-      tableHeight: document.documentElement.clientHeight - 10 + "px",
-      input: "",
+      tableHeight: document.documentElement.clientHeight - 10 + 'px',
+      input: '',
       tableData: null
-    };
+    }
   },
   created() {
     // 每次进入界面时，先清除之前的所有定时器，然后启动新的定时器
-    clearInterval(this.timer);
-    this.timer = null;
+    clearInterval(this.timer)
+    this.timer = null
   },
 
   mounted() {
@@ -100,38 +121,38 @@ export default {
   methods: {
     drawLine() {
       // 基于准备好的dom，初始化echarts实例
-      //var myChart = this.$echarts.init(document.getElementById('myTempo'))
+      // var myChart = this.$echarts.init(document.getElementById('myTempo'))
       //  let myChart = this.$echarts.init(document.getElementsByClassName('myTempo')[0])
-      var ovar = {};
-      var chart = {};
+      var ovar = {}
+      var chart = {}
       for (let i = 0; i < this.dataList.length; i++) {
-        ovar["var_" + i] = {
-          color: ["#3398DB"],
+        ovar['var_' + i] = {
+          color: ['#3398DB'],
           title: {
-            text: "产量", //标题文本内容
+            text: '产量' // 标题文本内容
           },
           toolbox: {
-            //可视化的工具箱
+            // 可视化的工具箱
             show: true,
             feature: {
               restore: {
-                //重置
-                show: true,
+                // 重置
+                show: true
               },
               saveAsImage: {
-                //保存图片
-                show: true,
-              },
-            },
+                // 保存图片
+                show: true
+              }
+            }
           },
           tooltip: {
-            trigger: "axis",
+            trigger: 'axis',
             axisPointer: {
-              type: "cross",
+              type: 'cross',
               label: {
-                backgroundColor: "#283b56",
-              },
-            },
+                backgroundColor: '#283b56'
+              }
+            }
           },
           legend: {
             // data:[ '预购队列']
@@ -141,126 +162,126 @@ export default {
             feature: {
               dataView: { readOnly: false },
               restore: {},
-              saveAsImage: {},
-            },
+              saveAsImage: {}
+            }
           },
           dataZoom: {
             show: false,
             start: 0,
-            end: 100,
+            end: 100
           },
           xAxis: [
             {
-              type: "category",
+              type: 'category',
               boundaryGap: true,
-              data: (function () {
-                var now = new Date();
-                var res = [];
-                var len = 10;
+              data: (function() {
+                var now = new Date()
+                var res = []
+                var len = 10
                 while (len--) {
-                  res.unshift(now.toLocaleTimeString().replace(/^\D*/, ""));
-                  now = new Date(now - 2000);
+                  res.unshift(now.toLocaleTimeString().replace(/^\D*/, ''))
+                  now = new Date(now - 2000)
                 }
-                return res;
-              })(),
+                return res
+              })()
             },
             {
-              type: "category",
+              type: 'category',
               boundaryGap: true,
-              data: (function () {
-                var res = [];
-                var len = 10;
+              data: (function() {
+                var res = []
+                var len = 10
                 while (len--) {
-                  res.push(10 - len - 1);
+                  res.push(10 - len - 1)
                 }
-                return res;
-              })(),
-            },
+                return res
+              })()
+            }
           ],
           yAxis: [
             {
-              type: "value",
+              type: 'value',
               scale: true,
-              name: " ",
+              name: ' ',
               max: 1200,
               min: 0,
-              boundaryGap: [0.2, 0.2],
+              boundaryGap: [0.2, 0.2]
             },
             {
-              type: "value",
+              type: 'value',
               scale: true,
-              name: "",
+              name: '',
               max: 1200,
               min: 0,
-              boundaryGap: [0.2, 0.2],
-            },
+              boundaryGap: [0.2, 0.2]
+            }
           ],
           series: [
             {
-              name: "产量",
-              type: "bar",
+              name: '产量',
+              type: 'bar',
               xAxisIndex: 1,
               yAxisIndex: 1,
-              data: (function () {
-                var res = [];
-                var len = 10;
+              data: (function() {
+                var res = []
+                var len = 10
                 while (len--) {
-                  res.push(Math.round(Math.random() * 1000));
+                  res.push(Math.round(Math.random() * 1000))
                 }
-                return res;
-              })(),
+                return res
+              })()
             },
             {
-              name: "节拍",
-              type: "line",
-              data: (function () {
-                var res = [];
-                var len = 0;
+              name: '节拍',
+              type: 'line',
+              data: (function() {
+                var res = []
+                var len = 0
                 while (len < 10) {
-                  res.push(Math.round(Math.random() * 1000));
-                  len++;
+                  res.push(Math.round(Math.random() * 1000))
+                  len++
                 }
-                return res;
-              })(),
-            },
-          ],
-        };
+                return res
+              })()
+            }
+          ]
+        }
         //  chart['var_'+i] = this.$echarts.init(document.getElementById(this.dataList[i].id))
-        chart["var_" + i] = this.$echarts.init(
+        chart['var_' + i] = this.$echarts.init(
           document.getElementById(this.dataList[i].id)
-        );
-        chart["var_" + i].setOption(ovar["var_" + i]);
+        )
+        chart['var_' + i].setOption(ovar['var_' + i])
         // 绘制图表
       }
-      app.count = 11;
+      app.count = 11
       if (this.timer == null) {
         this.timer = setInterval(() => {
-          var num = Math.round(Math.random() * 1000);
-          var numm = Math.round(Math.random() * 1000);
-          var axisData = new Date().toLocaleTimeString().replace(/^\D*/, "");
-          var data0 = ovar["var_" + 0].series[0].data;
-          var data1 = ovar["var_" + 0].series[1].data;
+          var num = Math.round(Math.random() * 1000)
+          var numm = Math.round(Math.random() * 1000)
+          var axisData = new Date().toLocaleTimeString().replace(/^\D*/, '')
+          var data0 = ovar['var_' + 0].series[0].data
+          var data1 = ovar['var_' + 0].series[1].data
           // var data2 = ovar["var_" + 1].series[0].data;
           // var data3 = ovar["var_" + 1].series[1].data;
-          data0.shift();
-          data0.push(num);
-          data1.shift();
-          data1.push(num);
+          data0.shift()
+          data0.push(num)
+          data1.shift()
+          data1.push(num)
           // data2.shift();
           // data2.push(numm);
           // data3.shift();
           // data3.push(numm);
-          ovar["var_" + 0].xAxis[0].data.shift();
-          ovar["var_" + 0].xAxis[0].data.push(axisData);
-          ovar["var_" + 0].xAxis[1].data.shift();
-          ovar["var_" + 0].xAxis[1].data.push(app.count++);
+          ovar['var_' + 0].xAxis[0].data.shift()
+          ovar['var_' + 0].xAxis[0].data.push(axisData)
+          ovar['var_' + 0].xAxis[1].data.shift()
+          ovar['var_' + 0].xAxis[1].data.push(app.count++)
           // ovar["var_" + 1].xAxis[0].data.shift();
           // ovar["var_" + 1].xAxis[0].data.push(axisData);
           // ovar["var_" + 1].xAxis[1].data.shift();
           // ovar["var_" + 1].xAxis[1].data.push(app.count++);
-          chart["var_" + 0].setOption(ovar["var_" + 0], true);
+          chart['var_' + 0].setOption(ovar['var_' + 0], true)
           // chart["var_" + 1].setOption(ovar["var_" + 1]);
-        }, 2000);
+        }, 2000)
       }
     },
     /**
@@ -268,14 +289,14 @@ export default {
      * @return {[type]} [description]
      */
     beforeunloadHandler(e) {
-      e = e || window.event;
+      e = e || window.event
       if (e) {
-        e.returnValue = "您是否确认离开此页面-您输入的数据可能不会被保存";
+        e.returnValue = '您是否确认离开此页面-您输入的数据可能不会被保存'
       }
-      return "您是否确认离开此页面-您输入的数据可能不会被保存";
-    },
-  },
-};
+      return '您是否确认离开此页面-您输入的数据可能不会被保存'
+    }
+  }
+}
 </script>
 <style>
 a:hover{

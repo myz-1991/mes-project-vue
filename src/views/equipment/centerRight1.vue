@@ -3,59 +3,90 @@
     <div class="bg-color-black">
       <div class="d-flex pt-2 pl-2">
         <span style="color:#5cd9e8">
-          <icon name="chart-line"></icon>
+          <icon name="chart-line" />
         </span>
         <div class="d-flex">
-          <span class="fs-xl text mx-2">任务完成排行榜</span>
+          <span class="fs-xl text mx-2">任务完成情况</span>
         </div>
       </div>
       <div class="d-flex jc-center body-box">
-        <dv-scroll-board :config="config" style="width:3.375rem;height:4.28rem" />
+        <dv-scroll-board :config="config" style="width:7.975rem;height:4.28rem" />
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import { getTask } from '@/api/a/a'
 export default {
+  components: {},
   data() {
     return {
+      timer: null,
       config: {
-        header: ["设备名", "完成率"],
+        header: ['设备名', '任务量', '完成数量', '完成率(%)'],
         data: [
-          ["组件1",  "<span  class='colorGrass'>↑75%</span>"],
-          ["组件2",  "<span  class='colorRed'>↓33%</span>"],
-          ["组件3",  "<span  class='colorGrass'>↑100%</span>"],
-          ["组件4",  "<span  class='colorGrass'>↑94%</span>"],
-          ["组件5",  "<span  class='colorGrass'>↑95%</span>"],
-          ["组件6",  "<span  class='colorGrass'>↑63%</span>"],
-          ["组件7", "<span  class='colorGrass'>↑84%</span>"],
-          ["组件8",  "<span  class='colorRed'>↓46%</span>"],
-          ["组件9", "<span  class='colorRed'>↓13%</span>"],
-          ["组件10",  "<span  class='colorGrass'>↑76%</span>"]
         ],
-        rowNum: 7, //表格行数
+        rowNum: 5, // 表格行数
         headerHeight: 35,
-        headerBGC: "#0f1325", //表头
-        oddRowBGC: "#0f1325", //奇数行
-        evenRowBGC: "#171c33", //偶数行
+        headerBGC: '#0f1325', // 表头
+        oddRowBGC: '#0f1325', // 奇数行
+        evenRowBGC: '#171c33', // 偶数行
         index: true,
-        columnWidth: [50],
-        align: ["center"]
+        columnWidth: [40],
+        align: 'center'
       }
-    };
+    }
   },
-  components: {},
-  mounted() {},
-  methods: {}
-};
+  mounted() {
+    this.initTask()
+    this.changeTiming()
+  },
+  destroyed() {
+    console.log('关闭')
+    clearInterval(this.timer)
+    this.timer = null
+  },
+  methods: {
+    changeTiming() {
+      this.timer = setInterval(() => {
+        this.initTask()
+      }, 60000)
+    },
+    initTask() {
+      getTask().then((respone) => {
+        var list = respone.data
+        var list1 = []
+        for (let i = 0; i < list.length; i++) {
+          var task = []
+          task[0] = list[i].equiName
+          task[1] = list[i].planNum
+          task[2] = list[i].finishNum
+          task[3] = list[i].percent
+          list1.push(task)
+        }
+        this.config = {
+          header: ['设备名', '任务量', '完成数量', '完成率(%)'],
+          data: list1,
+          rowNum: 4, // 表格行数
+          headerBGC: '#0f1325', // 表头
+          oddRowBGC: '#0f1325', // 奇数行
+          evenRowBGC: '#171c33', // 偶数行
+          index: true
+        // align: 'center'
+        }
+        this.config = { ...this.config }
+      })
+    }
+  }
+}
 </script>
 
 <style lang="scss">
 #centreRight1 {
   padding: 0.2rem;
   height: 5.125rem;
-  min-width: 3.75rem;
+  min-width: 6.775rem;
   border-radius: 0.0625rem;
   .bg-color-black {
     height: 4.8125rem;
