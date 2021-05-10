@@ -220,3 +220,25 @@ export function getCYJ() {
     }
   })
 }
+
+export function getHeatLine(ip, time) {
+  return request({
+    url: '/equipment/api/getHeatLine',
+    method: 'get',
+    params: {
+      ip: ip,
+      time: time
+    }
+  })
+}
+export function getHeatLineCopy(ip, time) {
+  return request({
+    url: '/equipment/api/getHeatLineCopy',
+    method: 'get',
+    params: {
+      ip: ip,
+      time: time
+    }
+  })
+}
+
